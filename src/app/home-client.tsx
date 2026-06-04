@@ -92,6 +92,9 @@ export default function HomeClient({
           resolvedLink = "/store";
         } else if (titleLower.includes("برنامج") || titleLower.includes("برامج") || titleLower.includes("programs")) {
           resolvedLink = "/programs";
+        } else {
+          // If still "/" after keyword checks, force undefined to use the defaultLink in normalizeLink
+          resolvedLink = undefined;
         }
       }
 
