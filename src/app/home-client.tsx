@@ -82,7 +82,8 @@ export default function HomeClient({
       const banner = sanityHomeBanners[0];
       let resolvedLink = banner.link;
       
-      if (!resolvedLink || resolvedLink === "/") {
+      // If link is empty, "/", or "#", try to auto-resolve it
+      if (!resolvedLink || resolvedLink === "/" || resolvedLink === "#") {
         const titleLower = (banner.title || "").toLowerCase();
         if (titleLower.includes("رحلات") || titleLower.includes("trips") || titleLower.includes("مغامرات")) {
           resolvedLink = "/trips";
@@ -93,7 +94,7 @@ export default function HomeClient({
         } else if (titleLower.includes("برنامج") || titleLower.includes("برامج") || titleLower.includes("programs")) {
           resolvedLink = "/programs";
         } else {
-          // If still "/" after keyword checks, force undefined to use the defaultLink in normalizeLink
+          // Force undefined to use the defaultLink in normalizeLink
           resolvedLink = undefined;
         }
       }
@@ -164,23 +165,23 @@ export default function HomeClient({
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 justify-start w-full sm:w-auto">
-              <MotionLink 
-                href={heroSlide.link || "/"} 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full sm:w-auto px-8 py-3.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-sm font-bold shadow-lg hover:shadow-yellow-900/30 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                {heroSlide.btnText}
-                <ArrowLeft className="w-4 h-4" />
-              </MotionLink>
-              <MotionLink 
-                href="/register" 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full sm:w-auto px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl text-sm font-bold backdrop-blur-sm transition-all duration-300 flex items-center justify-center cursor-pointer"
-              >
-                سجل معنا الآن
-              </MotionLink>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
+                <Link 
+                  href={heroSlide.link || "/programs"} 
+                  className="w-full sm:w-auto px-8 py-3.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-sm font-bold shadow-lg hover:shadow-yellow-900/30 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  {heroSlide.btnText}
+                  <ArrowLeft className="w-4 h-4" />
+                </Link>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
+                <Link 
+                  href="/register" 
+                  className="w-full sm:w-auto px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl text-sm font-bold backdrop-blur-sm transition-all duration-300 flex items-center justify-center cursor-pointer"
+                >
+                  سجل معنا الآن
+                </Link>
+              </motion.div>
             </div>
           </motion.div>
         </div>
