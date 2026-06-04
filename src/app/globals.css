@@ -1,0 +1,93 @@
+
+
+@import "tailwindcss";
+
+:root {
+  --background: #f8fafc;
+  --foreground: #16325b;
+  
+  --primary-deep: #16325b;
+  --primary-light: #78b7d0;
+  --accent-teal: #227b94;
+  --accent-cyan: #78b7d0;
+  --accent-gold: #ffdc7f;
+  
+  --primary-dark: #0f2240;
+  --primary-navy: #16325b;
+  --primary-teal: #196176;
+}
+
+@theme {
+  --color-primary-deep: var(--primary-deep);
+  --color-primary-light: var(--primary-light);
+  --color-accent-teal: var(--accent-teal);
+  --color-accent-cyan: var(--accent-cyan);
+  --color-accent-gold: var(--accent-gold);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-navy: var(--primary-navy);
+  --color-primary-teal: var(--primary-teal);
+  --color-accent-yellow: var(--accent-gold);
+  --color-primary-yellow: #eab308;
+  
+  --font-cairo: var(--font-cairo, 'Cairo', sans-serif);
+  --font-tajawal: var(--font-tajawal, 'Tajawal', sans-serif);
+}
+
+/* Base custom styles */
+body {
+  background-color: #f8fafc;
+  color: #16325b;
+  font-family: var(--font-cairo, sans-serif);
+  direction: rtl;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #227b94 #f1f5f9;
+}
+
+/* Custom Scrollbar for Webkit */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #227b94;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #196176;
+}
+
+/* Smooth glassmorphism utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(22, 50, 91, 0.85); /* Using #16325b RGB equivalent */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Custom glow animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(34, 123, 148, 0.4); /* Using #227b94 RGB equivalent */
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(34, 123, 148, 0.7);
+  }
+}
+
+.glow-btn {
+  animation: pulse-glow 3s infinite;
+}

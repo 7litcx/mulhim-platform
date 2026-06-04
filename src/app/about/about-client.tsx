@@ -1,0 +1,500 @@
+"use client";
+
+import React, { useState, useEffect, useRef } from "react";
+import { Sparkles, Heart, Compass, Target, Users, BookOpen, Trophy, ShieldCheck, Star, Award } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { urlFor } from "@/sanity/lib/image";
+import { normalizeLink } from "@/utils/link";
+import { motion } from "framer-motion";
+
+const MotionLink = motion.create(Link);
+
+interface CounterProps {
+  target: number;
+  duration?: number;
+}
+
+function AnimatedCounter({ target, duration = 2000 }: CounterProps) {
+  const [count, setCount] = useState(0);
+  const [hasStarted, setHasStarted] = useState(false);
+  const elementRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setHasStarted(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (elementRef.current) {
+      observer.observe(elementRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasStarted) return;
+
+    let startTimestamp: number | null = null;
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const easeProgress = 1 - (1 - progress) * (1 - progress);
+      setCount(Math.floor(easeProgress * target));
+
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+
+    window.requestAnimationFrame(step);
+  }, [hasStarted, target, duration]);
+
+  return <span ref={elementRef}>{count.toLocaleString()}</span>;
+}
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15
+    }
+  }
+} as const;
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 25 },
+  show: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { 
+      type: "spring", 
+      stiffness: 90, 
+      damping: 14 
+    } 
+  }
+} as const;
+
+// Helper to resolve images
+const resolveImage = (img: any, width = 1600, height = 800) => {
+  if (!img) return null;
+  if (typeof img === "string") return img;
+  if (typeof img === "object") {
+    try {
+      return urlFor(img).width(width).height(height).url();
+    } catch (e) {
+      return null;
+    }
+  }
+  return null;
+};
+
+interface AboutClientProps {
+  sanityHeroBanners?: any[];
+}
+
+export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps) {
+  // Resolve dynamic About page banner from Sanity
+  const aboutBanner = sanityHeroBanners.find(b => b.page === "about");
+  
+  const aboutHero = aboutBanner ? {
+    title: aboutBanner.title,
+    subtitle: aboutBanner.description,
+    image: resolveImage(aboutBanner.images?.[0] || aboutBanner.image, 1600, 800),
+    btnText: aboutBanner.btnText || "قصتنا وقيمنا",
+    link: aboutBanner.link
+  } : {
+    title: "عن مُلهم: قصة طموح وأثر",
+    subtitle: "نحن أكثر من مجرد منصة؛ نحن مجتمع متكامل يسعى لتحويل الشغف إلى واقع ملموس، وتمكين الشباب من قيادة المستقبل بروح الابتكار والعطاء.",
+    image: null,
+    btnText: "قصتنا وقيمنا",
+    link: ""
+  };
+
+  return (
+    <div className="space-y-20 pb-20">
+      
+      {/* 1. Page Hero Banner */}
+      <section className="relative min-h-[380px] sm:min-h-[450px] md:min-h-[500px] flex items-center py-12 sm:py-20 md:py-24 bg-slate-900 overflow-hidden text-white shadow-inner">
+        {/* Background Image with Overlay */}
+        {aboutHero.image ? (
+          <div className="absolute inset-0 z-0 transition-all duration-1000 ease-in-out">
+            <div className="absolute inset-0 w-full h-full opacity-65">
+              <Image
+                src={aboutHero.image || "/images/about-founding.png"}
+                alt={aboutHero.title || "About Us"}
+                fill
+                priority
+                fetchPriority="high"
+                className="object-cover object-center"
+              />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent md:bg-gradient-to-l md:from-slate-950/95 md:via-slate-950/30 md:to-transparent" />
+          </div>
+        ) : (
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(13,148,136,0.25),transparent_60%)] z-0" />
+        )}
+        
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+          <motion.span 
+            initial={{ opacity: 0, y: -15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            className="inline-flex items-center gap-1.5 px-3 py-1 bg-accent-yellow/20 text-accent-yellow rounded-full text-xs font-bold border border-accent-yellow/30"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            قصتنا وقيمنا
+          </motion.span>
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 80, damping: 14, delay: 0.1 }}
+            className="text-2xl sm:text-4xl md:text-5xl font-black font-tajawal leading-tight max-w-4xl mx-auto"
+          >
+            {aboutHero.title}
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 80, damping: 14, delay: 0.2 }}
+            className="text-xs sm:text-sm md:text-lg text-slate-300 max-w-2xl mx-auto font-light leading-relaxed"
+          >
+            {aboutHero.subtitle}
+          </motion.p>
+          
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.3 }}
+            className="flex justify-center pt-2 w-full"
+          >
+            {aboutHero.link && normalizeLink(aboutHero.link) !== "/about" && !aboutHero.link.startsWith("#") ? (
+              <MotionLink
+                href={normalizeLink(aboutHero.link)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full sm:w-auto px-6 py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer"
+              >
+                {aboutHero.btnText}
+              </MotionLink>
+            ) : (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  const el = document.getElementById("our-story");
+                  el?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="w-full sm:w-auto px-6 py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer"
+              >
+                {aboutHero.btnText}
+              </motion.button>
+            )}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 2. Our Story Section */}
+      <section id="our-story" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Image Block */}
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", stiffness: 60, damping: 15 }}
+            className="relative rounded-3xl overflow-hidden shadow-xl aspect-video lg:aspect-square"
+          >
+            <Image
+              src="/images/about-founding.png"
+              alt="قصتنا"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+            />
+          </motion.div>
+
+          {/* Text Block */}
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", stiffness: 60, damping: 15 }}
+            className="space-y-6 text-right"
+          >
+            <span className="text-xs font-bold text-accent-yellow uppercase tracking-wider block">البداية والتطور</span>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">حكايتنا.. كيف بدأ الإلهام؟</h2>
+            <div className="text-slate-600 text-sm leading-relaxed space-y-4 font-tajawal">
+              <p>
+                بدأت منصة "مُلهم" كفكرة بسيطة في أروقة التجمعات الشبابية، حيث لاحظنا فجوة بين تطلعات الشباب الواعد والمعرفة العملية والأنشطة الإثرائية التي تبني وتصقل شخصياتهم في بيئة ملهمة وصحية.
+              </p>
+              <p>
+                اليوم، تطورت المنصة لتصبح وجهة متكاملة تقدم برامج تدريبية، أكاديميات تخصصية، ورحلات استكشافية ومخيمات موسمية، بالإضافة إلى متجر ملهم الذي يمثل فخراً واعتزازاً بهوية المنصة وأهدافها.
+              </p>
+              <p>
+                نحن نؤمن بأن كل شاب وفتاة يملكون قوة إلهام كامنة، وبأن دورنا هو تهيئة البيئة الحاضنة وتوفير الأدوات اللازمة لاستكشاف هذه القوى وتوجيهها بالشكل الصحيح لصنع التميز المستدام.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 3. Vision, Mission & Values Grid */}
+      <section className="bg-slate-50 py-16 border-y border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-100px" }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          >
+            {/* Vision */}
+            <motion.div 
+              variants={itemVariants}
+              whileHover={{ y: -6, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)" }}
+              className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm transition-all duration-300 text-center flex flex-col items-center space-y-4 group"
+            >
+              <div className="w-14 h-14 bg-yellow-50 text-accent-yellow rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300">
+                <Compass className="w-7 h-7" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800">رؤيتنا</h3>
+              <p className="text-xs text-slate-500 leading-relaxed max-w-xs">
+                أن نكون المنصة الشبابية الرائدة في تمكين المهارات، صناعة الأثر، وتخريج أجيال متمكنة من القادة والمبدعين.
+              </p>
+            </motion.div>
+
+            {/* Mission */}
+            <motion.div 
+              variants={itemVariants}
+              whileHover={{ y: -6, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)" }}
+              className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm transition-all duration-300 text-center flex flex-col items-center space-y-4 group"
+            >
+              <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300">
+                <Target className="w-7 h-7" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800">رسالتنا</h3>
+              <p className="text-xs text-slate-500 leading-relaxed max-w-xs">
+                توفير بيئة تفاعلية تجمع بين التعلم العملي، المتعة، والمغامرة لبناء الشخصية المتكاملة وتعزيز التميز للشباب.
+              </p>
+            </motion.div>
+
+            {/* Values */}
+            <motion.div 
+              variants={itemVariants}
+              whileHover={{ y: -6, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)" }}
+              className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm transition-all duration-300 text-center flex flex-col items-center space-y-4 group"
+            >
+              <div className="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300">
+                <Heart className="w-7 h-7" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800">قيمنا</h3>
+              <p className="text-xs text-slate-500 leading-relaxed max-w-xs">
+                الإبداع، التمكين، الشفافية، والعمل الجماعي، وهي الركائز الأساسية التي تنطلق منها كافة برامجنا ومبادراتنا.
+              </p>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 4. Strategic Goals */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-2xl mx-auto space-y-4 mb-16"
+        >
+          <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">أهدافنا الاستراتيجية</h2>
+          <p className="text-slate-500 text-sm">
+            نسير وفق خطط استراتيجية مرسومة تضمن التطوير المستمر للخدمات وتعظيم الأثر الاجتماعي للشباب.
+          </p>
+        </motion.div>
+
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-100px" }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
+          <motion.div 
+            variants={itemVariants}
+            whileHover={{ scale: 1.03 }}
+            className="flex gap-4 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 text-right"
+          >
+            <div className="w-12 h-12 bg-slate-100 text-primary-navy rounded-xl flex items-center justify-center flex-shrink-0">
+              <BookOpen className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h4 className="font-bold text-slate-800 text-sm">تطوير المهارات</h4>
+              <p className="text-xs text-slate-400 leading-relaxed">تزويد الشباب بأحدث الأدوات والخبرات العملية اللازمة لسوق العمل وريادة الأعمال.</p>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            variants={itemVariants}
+            whileHover={{ scale: 1.03 }}
+            className="flex gap-4 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 text-right"
+          >
+            <div className="w-12 h-12 bg-slate-100 text-primary-navy rounded-xl flex items-center justify-center flex-shrink-0">
+              <Users className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h4 className="font-bold text-slate-800 text-sm">بناء المجتمع</h4>
+              <p className="text-xs text-slate-400 leading-relaxed">خلق شبكة علاقات قوية وتفاعلية بين المبدعين من الشباب والفتيات لتبادل الخبرات.</p>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            variants={itemVariants}
+            whileHover={{ scale: 1.03 }}
+            className="flex gap-4 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 text-right"
+          >
+            <div className="w-12 h-12 bg-slate-100 text-primary-navy rounded-xl flex items-center justify-center flex-shrink-0">
+              <Trophy className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h4 className="font-bold text-slate-800 text-sm">شراكات استراتيجية</h4>
+              <p className="text-xs text-slate-400 leading-relaxed">التعاون مع المؤسسات والشركات المتميزة لتقديم فرص حصرية وبرامج توظيف وتأهيل للشباب.</p>
+            </div>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* 5. Success Marquee */}
+      <section className="bg-gradient-to-b from-primary-navy to-slate-950 py-20 text-white relative overflow-hidden border-y border-white/5">
+        {/* Background glow effects */}
+        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-72 h-72 bg-accent-yellow/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-72 h-72 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8" 
+            dir="rtl"
+          >
+            {/* Stat 1 */}
+            <motion.div 
+              variants={itemVariants}
+              whileHover={{ y: -8, transition: { duration: 0.2 } }}
+              className="relative group p-6 sm:p-8 bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-accent-yellow/30 rounded-3xl backdrop-blur-md transition-all duration-300 flex flex-col items-center text-center shadow-lg"
+            >
+              {/* Card Glow Highlight */}
+              <div className="absolute inset-0 bg-gradient-to-br from-accent-yellow/0 via-accent-yellow/0 to-accent-yellow/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-yellow-500/10 border border-yellow-500/20 text-accent-yellow rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_15px_rgba(13,148,136,0.1)]">
+                <Users className="w-6 h-6 sm:w-7 sm:h-7" />
+              </div>
+              <h3 className="text-3xl sm:text-4xl md:text-5xl font-black font-sans bg-clip-text text-transparent bg-gradient-to-r from-accent-yellow to-emerald-400">
+                +<AnimatedCounter target={5000} />
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 font-tajawal font-medium mt-3 leading-relaxed">
+                عضو مشارك ونشط
+              </p>
+            </motion.div>
+
+            {/* Stat 2 */}
+            <motion.div 
+              variants={itemVariants}
+              whileHover={{ y: -8, transition: { duration: 0.2 } }}
+              className="relative group p-6 sm:p-8 bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-accent-yellow/30 rounded-3xl backdrop-blur-md transition-all duration-300 flex flex-col items-center text-center shadow-lg"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-accent-yellow/0 via-accent-yellow/0 to-accent-yellow/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+                <Award className="w-6 h-6 sm:w-7 sm:h-7" />
+              </div>
+              <h3 className="text-3xl sm:text-4xl md:text-5xl font-black font-sans bg-clip-text text-transparent bg-gradient-to-r from-blue-455 to-accent-yellow">
+                +<AnimatedCounter target={100} />
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 font-tajawal font-medium mt-3 leading-relaxed">
+                برنامج وأكاديمية تدريبية
+              </p>
+            </motion.div>
+
+            {/* Stat 3 */}
+            <motion.div 
+              variants={itemVariants}
+              whileHover={{ y: -8, transition: { duration: 0.2 } }}
+              className="relative group p-6 sm:p-8 bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-accent-yellow/30 rounded-3xl backdrop-blur-md transition-all duration-300 flex flex-col items-center text-center shadow-lg"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-accent-yellow/0 via-accent-yellow/0 to-accent-yellow/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+                <Compass className="w-6 h-6 sm:w-7 sm:h-7 animate-[spin_8s_linear_infinite] group-hover:animate-[spin_3s_linear_infinite]" />
+              </div>
+              <h3 className="text-3xl sm:text-4xl md:text-5xl font-black font-sans bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-accent-yellow">
+                +<AnimatedCounter target={50} />
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 font-tajawal font-medium mt-3 leading-relaxed">
+                رحلة استكشافية ومغامرة
+              </p>
+            </motion.div>
+
+            {/* Stat 4 */}
+            <motion.div 
+              variants={itemVariants}
+              whileHover={{ y: -8, transition: { duration: 0.2 } }}
+              className="relative group p-6 sm:p-8 bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-accent-yellow/30 rounded-3xl backdrop-blur-md transition-all duration-300 flex flex-col items-center text-center shadow-lg"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-accent-yellow/0 via-accent-yellow/0 to-accent-yellow/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+                <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
+              </div>
+              <h3 className="text-3xl sm:text-4xl md:text-5xl font-black font-sans bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
+                +<AnimatedCounter target={25} />
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 font-tajawal font-medium mt-3 leading-relaxed">
+                شريك نجاح متميز
+              </p>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 6. Success Partners logos */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
+        <h3 className="text-slate-400 font-bold text-xs uppercase tracking-widest">شركاء التميز والنجاح</h3>
+        <motion.div 
+          initial={{ opacity: 0.3 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="flex flex-wrap justify-center items-center gap-12 opacity-40 grayscale hover:opacity-75 hover:grayscale-0 transition-all duration-300"
+        >
+          <div className="flex items-center gap-2 font-black text-slate-500 text-lg">
+            <ShieldCheck className="w-5 h-5 text-accent-yellow" />
+            <span>مؤسسة العطاء</span>
+          </div>
+          <div className="flex items-center gap-2 font-black text-slate-500 text-lg">
+            <ShieldCheck className="w-5 h-5 text-accent-yellow" />
+            <span>أكاديمية الريادة</span>
+          </div>
+          <div className="flex items-center gap-2 font-black text-slate-500 text-lg">
+            <ShieldCheck className="w-5 h-5 text-accent-yellow" />
+            <span>جمعية التمكين</span>
+          </div>
+          <div className="flex items-center gap-2 font-black text-slate-500 text-lg">
+            <ShieldCheck className="w-5 h-5 text-accent-yellow" />
+            <span>شركة آفاق</span>
+          </div>
+        </motion.div>
+      </section>
+
+    </div>
+  );
+}
