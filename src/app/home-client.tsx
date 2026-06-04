@@ -103,7 +103,7 @@ export default function HomeClient({
         title: banner.title,
         subtitle: banner.description,
         image: resolveImage(banner.images?.[0] || banner.image, 1600, 800),
-        link: normalizeLink(resolvedLink, banner.slug?.current ? `/programs/${banner.slug.current}` : "/programs"),
+        link: normalizeLink(resolvedLink, "/programs"),
         btnText: banner.btnText || banner.buttonText || "عرض المزيد"
       };
     })()
