@@ -10,7 +10,7 @@
   --primary-light: #78b7d0;
   --accent-teal: #227b94;
   --accent-cyan: #78b7d0;
-  --accent-gold: #ffdc7f;
+  --accent-gold: #f59e0b;
   
   --primary-dark: #0f2240;
   --primary-navy: #16325b;
@@ -27,7 +27,7 @@
   --color-primary-navy: var(--primary-navy);
   --color-primary-teal: var(--primary-teal);
   --color-accent-yellow: var(--accent-gold);
-  --color-primary-yellow: #eab308;
+  --color-primary-yellow: #d97706;
   
   --font-cairo: var(--font-cairo, 'Cairo', sans-serif);
   --font-tajawal: var(--font-tajawal, 'Tajawal', sans-serif);
