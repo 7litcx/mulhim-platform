@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Sparkles, Heart, Compass, Target, Users, BookOpen, Trophy, ShieldCheck, Star, Award } from "lucide-react";
+import { Sparkles, Heart, Compass, Target, Users, User, BookOpen, Trophy, ShieldCheck, Star, Award } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
@@ -371,7 +371,79 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
         </motion.div>
       </section>
 
-      {/* 5. Success Marquee */}
+      {/* 5. Mulhim Supervisors Section */}
+      <section className="bg-slate-50 py-16 border-y border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-2xl mx-auto space-y-4 mb-16"
+          >
+            <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">مشرفو مُلهِم</h2>
+            <p className="text-slate-500 text-sm">
+              نخبة من الكفاءات المتميزة التي تقود مبادرات وبرامج منصة مُلهم نحو التميز والإبداع.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" dir="rtl">
+            {/* Placeholder Supervisor 1 */}
+            <motion.div 
+               whileHover={{ y: -5 }}
+               className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
+            >
+              <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
+                <User className="w-12 h-12 text-slate-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                {/* <Image src="/path-to-image.jpg" alt="Supervisor" fill className="object-cover" /> */}
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-slate-800 font-tajawal">اسم المشرف الأول</h3>
+                <p className="text-accent-yellow font-bold text-xs">الدور / المسمى الوظيفي</p>
+              </div>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                هنا يتم كتابة نبذة مختصرة عن المشرف وإنجازاته، بالإضافة إلى خبراته وأهم البصمات التي قدمها في مسيرته مع مُلهِم.
+              </p>
+            </motion.div>
+
+            {/* Placeholder Supervisor 2 */}
+            <motion.div 
+               whileHover={{ y: -5 }}
+               className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
+            >
+              <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
+                <User className="w-12 h-12 text-slate-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-slate-800 font-tajawal">اسم المشرف الثاني</h3>
+                <p className="text-blue-500 font-bold text-xs">الدور / المسمى الوظيفي</p>
+              </div>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                هنا يتم كتابة نبذة مختصرة عن المشرف وإنجازاته، بالإضافة إلى خبراته وأهم البصمات التي قدمها في مسيرته مع مُلهِم.
+              </p>
+            </motion.div>
+
+            {/* Placeholder Supervisor 3 */}
+            <motion.div 
+               whileHover={{ y: -5 }}
+               className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
+            >
+              <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
+                <User className="w-12 h-12 text-slate-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-slate-800 font-tajawal">اسم المشرف الثالث</h3>
+                <p className="text-emerald-500 font-bold text-xs">الدور / المسمى الوظيفي</p>
+              </div>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                هنا يتم كتابة نبذة مختصرة عن المشرف وإنجازاته، بالإضافة إلى خبراته وأهم البصمات التي قدمها في مسيرته مع مُلهِم.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Success Marquee */}
       <section className="bg-gradient-to-b from-primary-navy to-slate-950 py-20 text-white relative overflow-hidden border-y border-white/5">
         {/* Background glow effects */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-72 h-72 bg-accent-yellow/10 rounded-full blur-[100px] pointer-events-none" />
