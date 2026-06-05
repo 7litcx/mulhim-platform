@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mulhim.com' // استبدل الرابط برابط الموقع الفعلي إذا لم يكن موجوداً في .env
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mulhim180.com'
 
   return [
     {
