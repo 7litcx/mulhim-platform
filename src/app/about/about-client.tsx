@@ -388,25 +388,39 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" dir="rtl">
-            {/* Placeholder Supervisor 1 */}
+            {/* Supervisor 1 */}
             <motion.div 
                whileHover={{ y: -5 }}
                className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
             >
               <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
                 <User className="w-12 h-12 text-slate-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-                {/* <Image src="/path-to-image.jpg" alt="Supervisor" fill className="object-cover" /> */}
               </div>
               <div className="space-y-1">
-                <h3 className="text-lg font-bold text-slate-800 font-tajawal">اسم المشرف الأول</h3>
-                <p className="text-accent-yellow font-bold text-xs">الدور / المسمى الوظيفي</p>
+                <h3 className="text-lg font-bold text-slate-800 font-tajawal">الشيخ باسم عبدالهادي</h3>
+                <p className="text-accent-yellow font-bold text-xs">مشرف البرامج</p>
               </div>
-              <p className="text-sm text-slate-500 leading-relaxed">
-                هنا يتم كتابة نبذة مختصرة عن المشرف وإنجازاته، بالإضافة إلى خبراته وأهم البصمات التي قدمها في مسيرته مع مُلهِم.
-              </p>
+              <div className="text-sm text-slate-500 leading-relaxed text-right space-y-3 w-full">
+                <p>
+                  يتمتع الشيخ باسم بخبرة تزيد على 25 عامًا في الإشراف وإدارة البرامج التربوية والشبابية، ساهم خلالها في قيادة وتطوير المبادرات الهادفة لبناء الشخصية.
+                </p>
+                <div>
+                  <span className="font-bold text-slate-700 text-xs">أبرز المناصب القيادية:</span>
+                  <ul className="list-disc list-inside mt-1 space-y-1 text-xs">
+                    <li>مدير مجمع الحمودي لتحفيظ القرآن الكريم سابقًا.</li>
+                    <li>مشرف البرامج في جمعية خيركم لتحفيظ القرآن الكريم.</li>
+                    <li>مدير البرامج بمكتب حي الفيحاء سابقًا.</li>
+                    <li>مدير برنامج ملتقى بصمة إبداع سابقًا.</li>
+                    <li>مدير برنامج لون صيفك سابقًا.</li>
+                  </ul>
+                </div>
+                <p className="text-xs">
+                  يمتلك خبرة واسعة في التخطيط والتنظيم، مما أسهم في تحقيق أثر إيجابي ومستدام لدى المشاركين.
+                </p>
+              </div>
             </motion.div>
 
-            {/* Placeholder Supervisor 2 */}
+            {/* Supervisor 2 */}
             <motion.div 
                whileHover={{ y: -5 }}
                className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
@@ -415,15 +429,23 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
                 <User className="w-12 h-12 text-slate-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-lg font-bold text-slate-800 font-tajawal">اسم المشرف الثاني</h3>
-                <p className="text-blue-500 font-bold text-xs">الدور / المسمى الوظيفي</p>
+                <h3 className="text-lg font-bold text-slate-800 font-tajawal">الاستاذ نواف السيد</h3>
+                <p className="text-blue-500 font-bold text-xs">مشرف إداري</p>
               </div>
-              <p className="text-sm text-slate-500 leading-relaxed">
-                هنا يتم كتابة نبذة مختصرة عن المشرف وإنجازاته، بالإضافة إلى خبراته وأهم البصمات التي قدمها في مسيرته مع مُلهِم.
-              </p>
+              <div className="text-sm text-slate-500 leading-relaxed text-right space-y-3 w-full">
+                <p>
+                  يتميز الأستاذ نواف بخبرة في العمل الإداري والتنظيمي، مع اهتمام بتطوير البرامج والمبادرات ذات الأثر التربوي والتعليمي.
+                </p>
+                <p>
+                  يشغل منصب مدير حلقات مشكاة القرآنية بجامع الشيخ رافع الغامدي في جدة، حيث يسهم في الإشراف على البرامج القرآنية وتنظيم أعمال الحلقات بما يحقق أهدافها التعليمية والتربوية.
+                </p>
+                <p>
+                  وهو خريج جامعة الملك عبدالعزيز من كلية الآداب والعلوم الإنسانية، مما عزز من خبراته المعرفية والإدارية وأسهم في مسيرته المهنية.
+                </p>
+              </div>
             </motion.div>
 
-            {/* Placeholder Supervisor 3 */}
+            {/* Supervisor 3 */}
             <motion.div 
                whileHover={{ y: -5 }}
                className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
@@ -432,12 +454,20 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
                 <User className="w-12 h-12 text-slate-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-lg font-bold text-slate-800 font-tajawal">اسم المشرف الثالث</h3>
-                <p className="text-emerald-500 font-bold text-xs">الدور / المسمى الوظيفي</p>
+                <h3 className="text-lg font-bold text-slate-800 font-tajawal">د. إبراهيم طارق محمود</h3>
+                <p className="text-emerald-500 font-bold text-xs">مشرف التطوير والتدريب</p>
               </div>
-              <p className="text-sm text-slate-500 leading-relaxed">
-                هنا يتم كتابة نبذة مختصرة عن المشرف وإنجازاته، بالإضافة إلى خبراته وأهم البصمات التي قدمها في مسيرته مع مُلهِم.
-              </p>
+              <div className="text-sm text-slate-500 leading-relaxed text-right space-y-3 w-full">
+                <p>
+                  يُعرف د. إبراهيم باهتمامه بالعمل الشبابي والتطوير المؤسسي، مع تركيزه على بناء المبادرات التي تسهم في تنمية قدرات الشباب وتمكينهم من تحقيق أثر مستدام.
+                </p>
+                <p>
+                  يعمل عضو هيئة تدريس في جامعة الملك عبدالعزيز، حيث يجمع بين الخبرة الأكاديمية والممارسة العملية في مجالات التطوير والتأهيل.
+                </p>
+                <p>
+                  يهتم بتصميم وتنفيذ البرامج النوعية، ويولي عناية خاصة بمجالات التدريب والابتكار والتقنيات الحديثة في تطوير الأفراد والمؤسسات.
+                </p>
+              </div>
             </motion.div>
           </div>
         </div>
