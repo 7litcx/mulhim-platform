@@ -394,7 +394,7 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
                className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
             >
               <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
-                <Image src="/images/supervisor-basem.png" alt="الشيخ باسم عبدالهادي" fill className="object-cover" />
+                <Image src="/images/supervaisor1.jpeg" alt="الشيخ باسم عبدالهادي" fill className="object-cover" />
               </div>
               <div className="space-y-1">
                 <h3 className="text-lg font-bold text-slate-800 font-tajawal">الشيخ باسم عبدالهادي</h3>
@@ -426,7 +426,7 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
                className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
             >
               <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
-                <Image src="/images/supervisor-nawaf.png" alt="الاستاذ نواف السيد" fill className="object-cover" />
+                <Image src="/images/supervaisor2.jpeg" alt="الاستاذ نواف السيد" fill className="object-cover" />
               </div>
               <div className="space-y-1">
                 <h3 className="text-lg font-bold text-slate-800 font-tajawal">الاستاذ نواف السيد</h3>
@@ -451,7 +451,7 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
                className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
             >
               <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
-                <Image src="/images/supervisor-ibrahim.png" alt="د. إبراهيم طارق محمود" fill className="object-cover" />
+                <Image src="/images/supervaisor3.jpeg" alt="د. إبراهيم طارق محمود" fill className="object-cover" />
               </div>
               <div className="space-y-1">
                 <h3 className="text-lg font-bold text-slate-800 font-tajawal">د. إبراهيم طارق محمود</h3>
