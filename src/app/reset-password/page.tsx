@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase";
-import { Lock, CheckCircle, KeyRound } from "lucide-react";
+import { Lock, CheckCircle, KeyRound, Eye, EyeOff } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 export default function ResetPasswordPage() {
@@ -13,6 +13,8 @@ export default function ResetPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     // Check if the user is logged in (Supabase sets session from recovery link hash automatically)
@@ -112,16 +114,23 @@ export default function ResetPasswordPage() {
                   كلمة المرور الجديدة *
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
+                  <Lock className="absolute right-3.5 top-3.5 w-4 h-4 text-slate-400" />
                   <input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-accent-yellow rounded-xl pl-10 pr-4 py-3 text-xs text-right focus:outline-none"
+                    className="w-full bg-slate-50 border border-slate-200 focus:border-accent-yellow rounded-xl pl-10 pr-10 py-3 text-xs text-right focus:outline-none"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute left-3.5 top-3.5 text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
               </div>
 
@@ -130,16 +139,23 @@ export default function ResetPasswordPage() {
                   تأكيد كلمة المرور الجديدة *
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
+                  <Lock className="absolute right-3.5 top-3.5 w-4 h-4 text-slate-400" />
                   <input
                     id="confirmPassword"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-accent-yellow rounded-xl pl-10 pr-4 py-3 text-xs text-right focus:outline-none"
+                    className="w-full bg-slate-50 border border-slate-200 focus:border-accent-yellow rounded-xl pl-10 pr-10 py-3 text-xs text-right focus:outline-none"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute left-3.5 top-3.5 text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
               </div>
 

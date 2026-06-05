@@ -7,7 +7,7 @@ import { useApp } from "@/context/AppContext";
 import { supabase } from "@/utils/supabase";
 import {
   Sparkles, CheckCircle, GraduationCap, Compass, Heart,
-  ArrowLeft, ArrowRight, ShieldCheck, Mail, Phone, Lock, User, Plus, CreditCard
+  ArrowLeft, ArrowRight, ShieldCheck, Mail, Phone, Lock, User, Plus, CreditCard, Eye, EyeOff
 } from "lucide-react";
 
 function RegisterContent() {
@@ -44,6 +44,8 @@ function RegisterContent() {
     password: ""
   });
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [showRegPassword, setShowRegPassword] = useState(false);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
 
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -1023,16 +1025,25 @@ function RegisterContent() {
                             dir="ltr"
                           />
                         </div>
-                        <div className="space-y-1">
+                        <div className="space-y-1 relative">
                           <label className="text-xs font-bold text-slate-500 block">كلمة المرور *</label>
-                          <input
-                            type="password"
-                            required
-                            value={regForm.password}
-                            onChange={(e) => setRegForm({ ...regForm, password: e.target.value })}
-                            placeholder="أدخل كلمة مرور قوية"
-                            className="w-full bg-slate-50 border border-slate-200 focus:border-accent-yellow rounded-xl px-4 py-3 text-xs text-right focus:outline-none"
-                          />
+                          <div className="relative">
+                            <input
+                              type={showRegPassword ? "text" : "password"}
+                              required
+                              value={regForm.password}
+                              onChange={(e) => setRegForm({ ...regForm, password: e.target.value })}
+                              placeholder="أدخل كلمة مرور قوية"
+                              className="w-full bg-slate-50 border border-slate-200 focus:border-accent-yellow rounded-xl pl-10 pr-4 py-3 text-xs text-right focus:outline-none"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowRegPassword(!showRegPassword)}
+                              className="absolute left-3.5 top-3.5 text-slate-400 hover:text-slate-600 transition-colors"
+                            >
+                              {showRegPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                          </div>
                         </div>
                       </div>
                       <div className="p-4 bg-blue-50 border border-blue-100 rounded-2xl text-[11px] text-blue-700 leading-relaxed font-medium">
@@ -1103,15 +1114,22 @@ function RegisterContent() {
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-500 block">كلمة المرور *</label>
                     <div className="relative">
-                      <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
+                      <Lock className="absolute right-3.5 top-3.5 w-4 h-4 text-slate-400" />
                       <input
-                        type="password"
+                        type={showLoginPassword ? "text" : "password"}
                         required
                         value={loginForm.password}
                         onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                         placeholder="••••••••"
-                        className="w-full bg-slate-50 border border-slate-200 focus:border-accent-yellow rounded-xl pl-10 pr-4 py-3 text-xs text-right focus:outline-none"
+                        className="w-full bg-slate-50 border border-slate-200 focus:border-accent-yellow rounded-xl pl-10 pr-10 py-3 text-xs text-right focus:outline-none"
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowLoginPassword(!showLoginPassword)}
+                        className="absolute left-3.5 top-3.5 text-slate-400 hover:text-slate-600 transition-colors"
+                      >
+                        {showLoginPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
                     </div>
                     <div className="text-left pt-1">
                       <button
