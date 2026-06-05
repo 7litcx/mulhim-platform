@@ -27,6 +27,9 @@ export const metadata: Metadata = {
   description: "منصة ملهم تهدف لتمكين الشباب وتوفير فرص استثنائية للنمو والتعلم في بيئة مجتمعية محفزة عبر برامج، أكاديميات، رحلات استكشافية ومتجر متكامل.",
   keywords: ["ملهم", "منصة ملهم", "أكاديمية ملهم", "رحلات ملهم", "تمكين الشباب", "برامج شبابية", "متجر ملهم"],
   authors: [{ name: "فريق ملهم" }],
+  verification: {
+    google: "mPkFLAXU_wKxF7gdKsKSPe3lKJ1TDwt6o_f7zOPeTCY",
+  },
 };
 
 export default function RootLayout({
