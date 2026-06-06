@@ -408,10 +408,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentUser, setCurrentUser] = useState<{ id?: string; fullName: string; email: string; phone: string; guardian2Name?: string; guardian2Phone?: string; role?: "user" | "admin"; } | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const showToast = (message: string, type: Toast["type"] = "info") => {
+  const showToast = React.useCallback((message: string, type: Toast["type"] = "info") => {
     const id = "toast_" + Date.now() + "_" + Math.random().toString(36).substring(2, 9);
     setToasts((prev) => [...prev, { id, message, type }]);
-  };
+  }, []);
 
   const removeToast = (id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));

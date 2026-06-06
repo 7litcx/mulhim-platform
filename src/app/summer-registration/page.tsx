@@ -31,12 +31,6 @@ export default function SummerRegistrationPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (!user) {
-      showToast("يجب تسجيل الدخول أولاً للوصول إلى استمارة التسجيل", "error");
-      router.push("/login?redirect=/summer-registration");
-    }
-  }, [user, router, showToast]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -100,7 +94,31 @@ export default function SummerRegistrationPage() {
     }
   };
 
-  if (!user) return null; // Wait for redirect
+  if (!user) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 py-16 bg-slate-50 text-right pt-32">
+        <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-150 shadow-xl max-w-md w-full text-center space-y-6 animate-in zoom-in-95 duration-200">
+          <div className="w-20 h-20 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
+             <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+               <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+             </svg>
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold text-slate-800 font-tajawal">يجب تسجيل الدخول</h2>
+            <p className="text-xs text-slate-500 leading-relaxed font-tajawal">
+              للوصول إلى استمارة التسجيل في برنامج لون صيفك، يرجى تسجيل الدخول لحسابك في منصة ملهم.
+            </p>
+          </div>
+          <button
+            onClick={() => router.push("/register?redirect=/summer-registration")}
+            className="w-full py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-sm font-bold transition-all shadow-md"
+          >
+            تسجيل الدخول / إنشاء حساب
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const inputClassName = "w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-accent-teal focus:bg-white focus:ring-2 focus:ring-accent-teal/20 transition-all";
   const labelClassName = "text-sm font-bold text-slate-700 mb-2 block";
