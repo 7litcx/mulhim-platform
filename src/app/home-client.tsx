@@ -267,14 +267,14 @@ export default function HomeClient({
             whileHover={{ y: -8, scale: 1.02 }}
             className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 text-center flex flex-col items-center"
           >
-            <div className="w-14 h-14 bg-yellow-50 text-accent-yellow rounded-2xl flex items-center justify-center mb-6">
+            <div className="w-14 h-14 bg-teal-50 text-accent-teal rounded-2xl flex items-center justify-center mb-6">
               <GraduationCap className="w-7 h-7" />
             </div>
             <h3 className="text-base font-bold text-slate-800 mb-2">أكاديميات متخصصة</h3>
             <p className="text-xs text-slate-400 leading-relaxed">
               برامج تدريبية مكثفة بقيادة خبراء الصناعة في القيادة والرياضة والفنون.
             </p>
-            <Link href="/academies" className="mt-4 text-xs font-bold text-accent-yellow hover:underline flex items-center gap-1">
+            <Link href="/academies" className="mt-4 text-xs font-bold text-accent-teal hover:underline flex items-center gap-1">
               تعرف عليها <ArrowLeft className="w-3 h-3" />
             </Link>
           </motion.div>
@@ -285,14 +285,14 @@ export default function HomeClient({
             whileHover={{ y: -8, scale: 1.02 }}
             className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 text-center flex flex-col items-center"
           >
-            <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
+            <div className="w-14 h-14 bg-teal-50 text-accent-teal rounded-2xl flex items-center justify-center mb-6">
               <Compass className="w-7 h-7" />
             </div>
             <h3 className="text-base font-bold text-slate-800 mb-2">رحلات مُلهمة</h3>
             <p className="text-xs text-slate-400 leading-relaxed">
               استكشاف وتجارب واقعية تبني الشخصية وتعزز روح الفريق والاعتماد على النفس.
             </p>
-            <Link href="/trips" className="mt-4 text-xs font-bold text-blue-600 hover:underline flex items-center gap-1">
+            <Link href="/trips" className="mt-4 text-xs font-bold text-accent-teal hover:underline flex items-center gap-1">
               استكشف الرحلات <ArrowLeft className="w-3 h-3" />
             </Link>
           </motion.div>
@@ -303,14 +303,14 @@ export default function HomeClient({
             whileHover={{ y: -8, scale: 1.02 }}
             className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 text-center flex flex-col items-center"
           >
-            <div className="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mb-6">
+            <div className="w-14 h-14 bg-teal-50 text-accent-teal rounded-2xl flex items-center justify-center mb-6">
               <ShoppingBag className="w-7 h-7" />
             </div>
             <h3 className="text-base font-bold text-slate-800 mb-2">إصدارات ومعدات ملهم</h3>
             <p className="text-xs text-slate-400 leading-relaxed">
               متجر متكامل بمنتجات مميزة وتصاميم شبابية بجودة عالية لتكون فخوراً بهويتك.
             </p>
-            <Link href="/store" className="mt-4 text-xs font-bold text-rose-600 hover:underline flex items-center gap-1">
+            <Link href="/store" className="mt-4 text-xs font-bold text-accent-teal hover:underline flex items-center gap-1">
               تسوق الآن <ArrowLeft className="w-3 h-3" />
             </Link>
           </motion.div>
