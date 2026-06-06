@@ -30,10 +30,10 @@ export async function fetchAllAdminData(token: string) {
   await verifyAdmin(token);
 
   const [profilesRes, regsRes, ordersRes, messagesRes] = await Promise.all([
-    supabaseAdmin.from("profiles").select("*").order("created_at", { ascending: false }),
-    supabaseAdmin.from("registrations").select("*").order("created_at", { ascending: false }),
-    supabaseAdmin.from("orders").select("*, order_items(*)").order("created_at", { ascending: false }),
-    supabaseAdmin.from("contact_messages").select("*").order("created_at", { ascending: false }),
+    supabaseAdmin.from("profiles").select("*").order("created_at", { ascending: false }).limit(300),
+    supabaseAdmin.from("registrations").select("*").order("created_at", { ascending: false }).limit(300),
+    supabaseAdmin.from("orders").select("*, order_items(*)").order("created_at", { ascending: false }).limit(300),
+    supabaseAdmin.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(300),
   ]);
 
   if (profilesRes.error) throw new Error("Profiles error: " + profilesRes.error.message);
