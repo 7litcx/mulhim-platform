@@ -164,7 +164,7 @@ export default async function ProgramDetailsPage({ params }: PageProps) {
               <div className="space-y-1">
                 <span className="text-sm text-slate-500 font-bold">رسوم التسجيل</span>
                 <div className="text-3xl font-black text-accent-teal font-sans">
-                  {program.price > 0 ? `${program.price} ر.س` : "مجاناً بالكامل"}
+                  {typeof program.price === 'number' && program.price > 0 ? `${program.price} ر.س` : (program.price === 0 ? "مجاناً بالكامل" : "غير محدد")}
                 </div>
               </div>
 
