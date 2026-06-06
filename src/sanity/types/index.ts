@@ -55,7 +55,7 @@ export interface Program {
   description: string;
   content?: any[]; // Portable Text blocks
   images: SanityImage[];
-  price: number;
+  price?: number;
   startDate: string;
   endDate: string;
   registrationDeadline?: string;
@@ -80,6 +80,7 @@ export interface Trip {
   endDate: string;
   maxParticipants?: number;
   featured: boolean;
+  registrationOpen?: boolean;
   seo?: SeoFields;
 }
 
@@ -106,6 +107,7 @@ export interface Academy {
     avatar?: SanityImage;
   }>;
   featured: boolean;
+  registrationOpen?: boolean;
   seo?: SeoFields;
 }
 
@@ -123,7 +125,7 @@ export interface Product {
   description: string;
   content?: any[];
   images: SanityImage[];
-  price: number;
+  price?: number;
   compareAtPrice?: number;
   isNew: boolean;
   stock: number;
@@ -141,6 +143,7 @@ export interface HeroBanner {
   slug: Slug;
   description: string;
   images: SanityImage[];
+  videoUrl?: string;
   price?: number;
   startDate?: string;
   endDate?: string;

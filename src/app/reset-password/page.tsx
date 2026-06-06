@@ -162,7 +162,7 @@ export default function ResetPasswordPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full px-6 py-3 bg-accent-yellow hover:bg-primary-yellow disabled:bg-slate-300 text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 cursor-pointer"
+                className="w-full px-6 py-3 bg-accent-yellow hover:bg-primary-yellow disabled:bg-slate-300 text-primary-navy rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 {isLoading ? "جاري الحفظ..." : "حفظ كلمة المرور الجديدة"}
               </button>

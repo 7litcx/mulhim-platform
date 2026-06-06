@@ -25,7 +25,7 @@ export const heroBanner = defineType({
       name: "description",
       title: "الوصف / العنوان الفرعي",
       type: "text",
-      validation: (rule) => rule.required(),
+      description: "اختياري، إذا تم تركه فارغاً فلن يظهر الوصف",
     }),
     defineField({
       name: "images",
@@ -33,6 +33,15 @@ export const heroBanner = defineType({
       type: "array",
       of: [{ type: "image", options: { hotspot: true } }],
       validation: (rule) => rule.required().min(1),
+    }),
+    defineField({
+      name: "video",
+      title: "فيديو الخلفية (اختياري - يستبدل الصور إذا وجد)",
+      type: "file",
+      options: {
+        accept: "video/*"
+      },
+      description: "يمكنك رفع فيديو قصير للعمل كخلفية بدلاً من الصور.",
     }),
     defineField({
       name: "price",
@@ -54,8 +63,7 @@ export const heroBanner = defineType({
       name: "btnText",
       title: "نص الزر",
       type: "string",
-      initialValue: "عرض المزيد",
-      validation: (rule) => rule.required(),
+      description: "اختياري، إذا تم تركه فارغاً فلن يظهر الزر",
     }),
     defineField({
       name: "page",

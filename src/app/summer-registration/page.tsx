@@ -5,11 +5,17 @@ import { useRouter } from "next/navigation";
 import { useApp } from "@/context/AppContext";
 import SignatureCanvas from "react-signature-canvas";
 import { supabase } from "@/utils/supabase";
+import { Sparkles, CreditCard, CheckCircle } from "lucide-react";
 
 export default function SummerRegistrationPage() {
   const router = useRouter();
   const { currentUser: user, showToast, registerUser } = useApp();
   const signatureRef = useRef<SignatureCanvas>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -19,6 +25,7 @@ export default function SummerRegistrationPage() {
     gender: "",
     age: "",
     neighborhood: "",
+    parentName: "",
     parentPhone: "",
     otherPhone: "",
     hasDiseases: "لا",
@@ -30,6 +37,7 @@ export default function SummerRegistrationPage() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentOption, setPaymentOption] = useState<"cash" | "card">("cash");
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -72,27 +80,54 @@ export default function SummerRegistrationPage() {
         formType: "summer_program"
       };
 
-      await registerUser({
-        fullName: formData.fullName,
-        age: parseInt(formData.age) || 0,
-        phone: formData.parentPhone,
-        email: user.email,
-        interests: [],
-        type: "program",
-        targetName: "برنامج لون صيفك 3",
-        paymentMethod: "دفع نقدي",
-        extraData: extraData
+      // Create an AbortController or a proper timeout mechanism
+      let timeoutId: NodeJS.Timeout;
+      const timeoutPromise = new Promise((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error("طال الاتصال بالخادم (ربما بسبب التحديث). الرجاء المحاولة مرة أخرى.")), 60000);
       });
 
-      showToast("تم إرسال استمارة التسجيل بنجاح! سيتم التواصل معكم قريباً", "success");
-      router.push("/dashboard"); // Redirect to user dashboard after success
+      try {
+        // Race the registration against the timeout
+        await Promise.race([
+          registerUser({
+            fullName: formData.fullName,
+            age: parseInt(formData.age) || 0,
+            phone: formData.parentPhone,
+            email: user.email,
+            interests: [],
+            type: "program",
+            targetName: "برنامج لون صيفك 3",
+            paymentMethod: paymentOption === "cash" ? "دفع نقدي" : "دفع اونلاين",
+            extraData: extraData
+          }),
+          timeoutPromise
+        ]);
+      } finally {
+        clearTimeout(timeoutId!);
+      }
+
+      showToast(paymentOption === "card" ? "تم الإرسال! سيتم تحويلك لصفحة الدفع الآن..." : "تم إرسال استمارة التسجيل بنجاح! سيتم التواصل معكم قريباً", "success");
+      setIsSubmitting(false);
+      setTimeout(() => {
+        if (paymentOption === "card") {
+          const paymentUrl = formData.gender === "أنثى" 
+            ? "https://salla.sa/sorog/payment/p1579466864"
+            : "https://salla.sa/sorog/payment/p1113970107";
+          window.location.href = paymentUrl;
+        } else {
+          router.push("/dashboard");
+        }
+      }, 1500);
     } catch (error: any) {
       console.error("Error submitting form:", error);
       showToast("حدث خطأ أثناء الإرسال: " + (error.message || "حاول مرة أخرى"), "error");
-    } finally {
       setIsSubmitting(false);
     }
   };
+
+  if (!mounted) {
+    return null; // Or a loading spinner
+  }
 
   if (!user) {
     return (
@@ -111,7 +146,7 @@ export default function SummerRegistrationPage() {
           </div>
           <button
             onClick={() => router.push("/register?redirect=/summer-registration")}
-            className="w-full py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-sm font-bold transition-all shadow-md"
+            className="w-full py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-sm font-bold transition-all shadow-md"
           >
             تسجيل الدخول / إنشاء حساب
           </button>
@@ -164,11 +199,23 @@ export default function SummerRegistrationPage() {
             
             <div>
               <label className={labelClassName}>الصف الدراسي العام الماضي ١٤٤٧ هـ :</label>
-              <input required name="grade" value={formData.grade} onChange={handleChange} className={inputClassName} placeholder="مثال: الأول المتوسط" />
+              <select required name="grade" value={formData.grade} onChange={handleChange} className={inputClassName}>
+                <option value="" disabled>اختر الصف الدراسي</option>
+                <option value="الأول الابتدائي">الأول الابتدائي</option>
+                <option value="الثاني الابتدائي">الثاني الابتدائي</option>
+                <option value="الثالث الابتدائي">الثالث الابتدائي</option>
+                <option value="الرابع الابتدائي">الرابع الابتدائي</option>
+                <option value="الخامس الابتدائي">الخامس الابتدائي</option>
+                <option value="السادس الابتدائي">السادس الابتدائي</option>
+                <option value="الأول المتوسط">الأول المتوسط</option>
+                <option value="الثاني المتوسط">الثاني المتوسط</option>
+                <option value="الثالث المتوسط">الثالث المتوسط</option>
+                <option value="الأول الثانوي">الأول الثانوي</option>
+              </select>
             </div>
             <div>
               <label className={labelClassName}>تاريخ الميلاد (بالميلادي) :</label>
-              <input type="date" required name="birthDate" value={formData.birthDate} onChange={handleChange} className={inputClassName} />
+              <input type="date" required name="birthDate" value={formData.birthDate} max="2020-12-31" onChange={handleChange} className={inputClassName} />
             </div>
 
             <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center gap-6">
@@ -192,6 +239,10 @@ export default function SummerRegistrationPage() {
               <input required name="neighborhood" value={formData.neighborhood} onChange={handleChange} className={inputClassName} placeholder="أدخل اسم الحي" />
             </div>
 
+            <div>
+              <label className={labelClassName}>اسم ولي الأمر :</label>
+              <input required name="parentName" value={formData.parentName} onChange={handleChange} className={inputClassName} placeholder="أدخل اسم ولي الأمر" />
+            </div>
             <div>
               <label className={labelClassName}>جوال ولي الأمر (سيضاف لواتس البرنامج):</label>
               <input required name="parentPhone" value={formData.parentPhone} onChange={handleChange} className={inputClassName} placeholder="05XXXXXXXX" />
@@ -332,7 +383,7 @@ export default function SummerRegistrationPage() {
                 <div className="flex flex-col sm:flex-row sm:gap-4 items-start sm:items-end">
                    <label className="text-sm font-bold text-slate-500 whitespace-nowrap mb-1 sm:mb-0">الاسم :</label>
                    <div className="border-b-2 border-slate-200 w-full text-center pb-1 sm:pb-2 text-primary-teal font-bold text-base sm:text-lg overflow-hidden text-ellipsis whitespace-nowrap">
-                     {formData.fullName || "ــــــــــــــــــــــــــــــــ"}
+                     {formData.parentName || "ــــــــــــــــــــــــــــــــ"}
                    </div>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:gap-4 items-start sm:items-end">
@@ -344,7 +395,56 @@ export default function SummerRegistrationPage() {
              </div>
           </div>
 
-          <div className="pt-8">
+          <div className="pt-8 space-y-6">
+            
+            {/* Payment Options */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+              <h3 className="text-sm font-bold text-slate-700 block">اختر طريقة الدفع المفضلة:</h3>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Option 1: Cash */}
+                <button
+                  type="button"
+                  onClick={() => setPaymentOption("cash")}
+                  className={`p-4 rounded-2xl border text-right transition-all text-xs font-bold flex justify-between items-center cursor-pointer w-full ${paymentOption === "cash"
+                      ? "border-accent-yellow bg-yellow-50/50 text-accent-yellow shadow-inner"
+                      : "border-slate-100 bg-slate-50 text-slate-700 hover:bg-slate-100"
+                    }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "cash" ? "bg-accent-yellow text-primary-navy shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <div className="text-right">
+                      <span className="block font-bold text-xs text-slate-800">الدفع النقدي (خصم ١٠٠ ريال لأول ١٠٠ مشترك)</span>
+                      <span className="text-[10px] text-emerald-600 font-extrabold block mt-0.5">احصل على الخصم فوراً عند تأكيد الحجز</span>
+                    </div>
+                  </div>
+                  <CheckCircle className={`w-4 h-4 shrink-0 mr-2 ${paymentOption === "cash" ? "text-accent-yellow" : "text-slate-200"}`} />
+                </button>
+
+                {/* Option 2: Card */}
+                <button
+                  type="button"
+                  onClick={() => setPaymentOption("card")}
+                  className={`p-4 rounded-2xl border text-right transition-all text-xs font-bold flex justify-between items-center cursor-pointer w-full ${paymentOption === "card"
+                      ? "border-accent-yellow bg-yellow-50/50 text-accent-yellow shadow-inner animate-pulse-subtle"
+                      : "border-slate-100 bg-slate-50 text-slate-700 hover:bg-slate-100"
+                    }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "card" ? "bg-accent-yellow text-primary-navy shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
+                      <CreditCard className="w-4 h-4" />
+                    </div>
+                    <div className="text-right">
+                      <span className="block font-bold text-xs text-slate-800">بطاقة ائتمانية (سداد كامل المبلغ عبر المتجر)</span>
+                      <span className="text-[10px] text-slate-400 font-normal block mt-0.5">الدفع الآمن عبر Stc pay , Apple pay, مدى </span>
+                    </div>
+                  </div>
+                  <CheckCircle className={`w-4 h-4 shrink-0 mr-2 ${paymentOption === "card" ? "text-accent-yellow" : "text-slate-200"}`} />
+                </button>
+              </div>
+            </div>
+
             <button
               type="submit"
               disabled={isSubmitting}

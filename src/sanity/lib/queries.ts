@@ -7,6 +7,7 @@ export const heroBannersQuery = groq`
     slug,
     description,
     images,
+    "videoUrl": video.asset->url,
     price,
     startDate,
     endDate,
@@ -182,7 +183,8 @@ export const allTripsQuery = groq`
     price,
     startDate,
     endDate,
-    featured
+    featured,
+    registrationOpen
   }
 `;
 
@@ -202,7 +204,8 @@ export const featuredTripsQuery = groq`
     price,
     startDate,
     endDate,
-    featured
+    featured,
+    registrationOpen
   }
 `;
 
@@ -224,7 +227,8 @@ export const tripBySlugQuery = groq`
     startDate,
     endDate,
     maxParticipants,
-    featured
+    featured,
+    registrationOpen
   }
 `;
 
@@ -248,7 +252,8 @@ export const allAcademiesQuery = groq`
       role,
       avatar
     },
-    featured
+    featured,
+    registrationOpen
   }
 `;
 
@@ -272,7 +277,8 @@ export const academyBySlugQuery = groq`
       role,
       avatar
     },
-    featured
+    featured,
+    registrationOpen
   }
 `;
 

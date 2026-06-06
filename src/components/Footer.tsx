@@ -13,19 +13,19 @@ export const Footer: React.FC = () => {
   }
 
   return (
-    <footer className="bg-primary-navy text-slate-300 pt-16 pb-8 border-t border-slate-800">
+    <footer className="bg-primary-teal text-slate-200 pt-16 pb-8 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Column 1: Brand Info */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <img src="/mulihmlogo.svg" alt="Mulhim Logo" className="h-10 w-auto" />
+              <img src="/mulihmlogo.svg" alt="Mulhim Logo" className="h-10 w-auto brightness-0 invert" />
               <div className="flex flex-col items-start leading-tight">
                 <span className="text-white font-bold text-lg tracking-wider font-tajawal">مُلهم</span>
                 <span className="text-[10px] text-accent-yellow font-medium">MULHIM PLATFORM</span>
               </div>
             </div>
-            <p className="text-sm text-slate-400 leading-relaxed pt-2">
+            <p className="text-sm text-slate-300 leading-relaxed pt-2">
               منصة ملهم تهدف لتمكين الشباب وتوفير فرص استثنائية للنمو والتعلم في بيئة مجتمعية محفزة لبناء جيل يقود المستقبل بأثر مستدام وعطاء متواصل.
             </p>
             {/* Social Icons */}
@@ -155,7 +155,7 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-accent-yellow" />
-                <a href="tel:+966500000000" className="hover:text-white transition-all font-sans" dir="ltr">+966 5X XXX XXXX</a>
+                <a href="tel:+966564605055" className="hover:text-white transition-all font-sans" dir="ltr">+966 56 460 5055</a>
               </div>
               <div className="flex items-center gap-2.5">
                 <MapPin className="w-4 h-4 text-accent-yellow" />
@@ -165,9 +165,9 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="mt-16 pt-8 border-t border-slate-300 text-center text-xs text-slate-300 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p>© {new Date().getFullYear()} منصة مُلهم (Mulhim Platform). جميع الحقوق محفوظة.</p>
-          <div className="flex flex-wrap items-center justify-center gap-4 text-slate-500">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-slate-300">
             <span>تطوير وإشراف فريق ملهم التقني</span>
           </div>
         </div>

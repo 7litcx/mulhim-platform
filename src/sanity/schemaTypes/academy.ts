@@ -51,19 +51,18 @@ export const academy = defineType({
       name: "price",
       title: "رسوم الدراسة (ريال سعودي)",
       type: "number",
-      validation: (rule) => rule.required().min(0),
+      validation: (rule) => rule.min(0),
     }),
     defineField({
       name: "startDate",
       title: "تاريخ البدء",
       type: "date",
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "endDate",
       title: "تاريخ الانتهاء",
       type: "date",
-      validation: (rule) => rule.required().custom((endDate, context) => {
+      validation: (rule) => rule.custom((endDate, context) => {
         const startDate = (context.parent as Record<string, unknown>)?.startDate as string | undefined;
         if (!startDate || !endDate) return true;
         return new Date(endDate) > new Date(startDate) ? true : "تاريخ الانتهاء يجب أن يكون بعد تاريخ البدء";
@@ -91,6 +90,13 @@ export const academy = defineType({
       title: "أكاديمية مميزة ونشطة",
       type: "boolean",
       initialValue: false,
+    }),
+    defineField({
+      name: "registrationOpen",
+      title: "التسجيل متاح (مفتوح)",
+      type: "boolean",
+      description: "إذا تم تعطيله، سيتم إخفاء التفاصيل المالية وزر التسجيل عن المستخدمين.",
+      initialValue: true,
     }),
   ],
 

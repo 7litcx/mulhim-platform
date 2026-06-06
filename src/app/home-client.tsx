@@ -155,7 +155,7 @@ export default function HomeClient({
         subtitle: banner.description,
         image: resolveImage(banner.images?.[0] || banner.image, 1600, 800),
         link: normalizeLink(resolvedLink, "/programs"),
-        btnText: banner.btnText || banner.buttonText || "عرض المزيد"
+        btnText: banner.btnText || banner.buttonText
       };
     })()
     : {
@@ -163,7 +163,7 @@ export default function HomeClient({
         subtitle: "استكشف العالم، وابنِ علاقات حقيقية في رحلات ملهم المليئة بالمتعة والتعلم والروح الجماعية.",
         image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=1200",
         link: "/trips",
-        btnText: "عرض الرحلات"
+        btnText: null
       };
 
   const displayProducts = sanityProducts.length > 0 ? sanityProducts : contextProducts;
@@ -189,7 +189,7 @@ export default function HomeClient({
             initial={{ scale: 1.15, opacity: 0 }}
             animate={{ scale: 1.05, opacity: 0.65 }}
             transition={{ duration: 1.5, ease: "easeOut" }}
-            src={heroSlide.image || "/images/about-founding.png"}
+            src={heroSlide.image || "/images/About.png"}
             alt={heroSlide.title || "Hero Banner"}
             className="w-full h-full object-cover object-center"
           />
@@ -211,29 +211,23 @@ export default function HomeClient({
             <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold leading-tight font-tajawal">
               {heroSlide.title}
             </h1>
-            <p className="text-xs sm:text-sm md:text-lg text-slate-300 leading-relaxed font-light">
-              {heroSlide.subtitle}
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 justify-start w-full sm:w-auto">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
-                <Link 
-                  href={heroSlide.link || "/programs"} 
-                  className="w-full sm:w-auto px-8 py-3.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-sm font-bold shadow-lg hover:shadow-yellow-900/30 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+            {heroSlide.subtitle && (
+              <p className="text-xl sm:text-sm md:text-lg text-slate-300 leading-relaxed font-light">
+                {heroSlide.subtitle}
+              </p>
+            )}
+            {heroSlide.btnText && (
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 justify-start w-full sm:w-auto">
+                <MotionLink
+                  href={heroSlide.link}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full sm:w-auto px-6 py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer"
                 >
                   {heroSlide.btnText}
-                  <ArrowLeft className="w-4 h-4" />
-                </Link>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
-                <Link 
-                  href="/register" 
-                  className="w-full sm:w-auto px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl text-sm font-bold backdrop-blur-sm transition-all duration-300 flex items-center justify-center cursor-pointer"
-                >
-                  سجل معنا الآن
-                </Link>
-              </motion.div>
-            </div>
+                </MotionLink>
+              </div>
+            )}
           </motion.div>
         </div>
       </section>
@@ -249,7 +243,7 @@ export default function HomeClient({
           className="text-center max-w-2xl mx-auto space-y-4"
         >
           <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">لماذا تنضم إلى مجتمع مُلهم؟</h2>
-          <p className="text-slate-500 text-sm leading-relaxed">
+          <p className="text-slate-800 text-sl leading-relaxed">
             نسعى لتقديم تجارب متكاملة تجمع بين العلم، المهارة، المغامرة، والعطاء لتمكينك من صنع أثر مستدام وتطوير ذاتك.
           </p>
         </motion.div>
@@ -270,11 +264,11 @@ export default function HomeClient({
             <div className="w-14 h-14 bg-teal-50 text-accent-teal rounded-2xl flex items-center justify-center mb-6">
               <GraduationCap className="w-7 h-7" />
             </div>
-            <h3 className="text-base font-bold text-slate-800 mb-2">أكاديميات متخصصة</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="text-base font-bold text-slate-900 mb-3">أكاديميات متخصصة</h3>
+            <p className="text-sm text-slate-800 leading-relaxed">
               برامج تدريبية مكثفة بقيادة خبراء الصناعة في القيادة والرياضة والفنون.
             </p>
-            <Link href="/academies" className="mt-4 text-xs font-bold text-accent-teal hover:underline flex items-center gap-1">
+            <Link href="/academies" className="mt-4 text-sm font-bold text-accent-teal hover:underline flex items-center gap-1">
               تعرف عليها <ArrowLeft className="w-3 h-3" />
             </Link>
           </motion.div>
@@ -288,11 +282,11 @@ export default function HomeClient({
             <div className="w-14 h-14 bg-teal-50 text-accent-teal rounded-2xl flex items-center justify-center mb-6">
               <Compass className="w-7 h-7" />
             </div>
-            <h3 className="text-base font-bold text-slate-800 mb-2">رحلات مُلهمة</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="text-base font-bold text-slate-900 mb-2">رحلات مُلهمة</h3>
+            <p className="text-sm text-slate-800 leading-relaxed">
               استكشاف وتجارب واقعية تبني الشخصية وتعزز روح الفريق والاعتماد على النفس.
             </p>
-            <Link href="/trips" className="mt-4 text-xs font-bold text-accent-teal hover:underline flex items-center gap-1">
+            <Link href="/trips" className="mt-4 text-sm font-bold text-accent-teal hover:underline flex items-center gap-1">
               استكشف الرحلات <ArrowLeft className="w-3 h-3" />
             </Link>
           </motion.div>
@@ -306,11 +300,11 @@ export default function HomeClient({
             <div className="w-14 h-14 bg-teal-50 text-accent-teal rounded-2xl flex items-center justify-center mb-6">
               <ShoppingBag className="w-7 h-7" />
             </div>
-            <h3 className="text-base font-bold text-slate-800 mb-2">إصدارات ومعدات ملهم</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="text-base font-bold text-slate-900 mb-2">إصدارات ومعدات ملهم</h3>
+            <p className="text-sm text-slate-800 leading-relaxed">
               متجر متكامل بمنتجات مميزة وتصاميم شبابية بجودة عالية لتكون فخوراً بهويتك.
             </p>
-            <Link href="/store" className="mt-4 text-xs font-bold text-accent-teal hover:underline flex items-center gap-1">
+            <Link href="/store" className="mt-4 text-sm font-bold text-accent-teal hover:underline flex items-center gap-1">
               تسوق الآن <ArrowLeft className="w-3 h-3" />
             </Link>
           </motion.div>
@@ -328,12 +322,12 @@ export default function HomeClient({
               transition={{ duration: 0.6 }}
               className="md:w-1/2 space-y-6"
             >
-              <span className="text-xs font-bold text-accent-yellow tracking-widest uppercase block">عن منصة مُلهم</span>
+              <span className="text-xl font-bold text-accent-yellow tracking-widest uppercase block">عن منصة مُلهم</span>
               <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">نصنع القادة ونبني الأثر</h2>
-              <p className="text-slate-600 text-sm leading-relaxed">
+              <p className="text-slate-800 text-sl leading-relaxed">
                 منصة ملهم هي مجتمع شبابي متكامل يهدف إلى تمكين الجيل الجديد وتوفير فرص استثنائية للنمو والتعلم في بيئة محفزة. نحن نؤمن بأن كل شاب وفتاة يمتلك قدرات كامنة تحتاج إلى التوجيه الصحيح والمساحة الآمنة للإبداع.
               </p>
-              <p className="text-slate-600 text-sm leading-relaxed">
+              <p className="text-slate-800 text-sl leading-relaxed">
                 من خلال برامجنا، أكاديمياتنا، ورحلاتنا، نجمع بين الترفيه والفائدة لنبني شخصيات متوازنة قادرة على إحداث تأثير إيجابي ومستدام في المجتمع.
               </p>
               <div className="pt-4 flex justify-end">
@@ -356,10 +350,12 @@ export default function HomeClient({
               className="md:w-1/2 w-full"
             >
               <div className="relative h-80 sm:h-96 w-full rounded-3xl overflow-hidden shadow-lg border border-slate-100">
-                <img
-                  src="/images/about-founding.png"
+                <Image
+                  src="/images/About.png"
                   alt="عن ملهم"
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary-navy/40 to-transparent" />
               </div>
@@ -368,114 +364,25 @@ export default function HomeClient({
         </div>
       </section>
 
-      {/* 3.1. Mulhim Supervisors Section */}
-      <section className="bg-white py-16 border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* 3.2. Success Marquee */}
+      <section className="bg-primary-teal py-16 text-white relative overflow-hidden border-b border-white/5">
+        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-72 h-72 bg-accent-yellow/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-72 h-72 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-2xl mx-auto space-y-4 mb-16"
+            className="text-center max-w-2xl mx-auto space-y-3 mb-12"
           >
-            <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">مشرفو مُلهِم</h2>
-            <p className="text-slate-500 text-sm">
-              نخبة من الكفاءات المتميزة التي تقود مبادرات وبرامج منصة مُلهم نحو التميز والإبداع.
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white font-tajawal">مُلهم في أرقام</h2>
+            <p className="text-slate-400 text-sm md:text-base">
+              مسيرتنا تتوج بالأرقام، وأثرنا يمتد ليصنع التغيير.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" dir="rtl">
-            {/* Supervisor 1 */}
-            <motion.div 
-               whileHover={{ y: -5 }}
-               className="bg-slate-50 rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
-            >
-              <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
-                <img src="/images/supervaisor1.jpeg" alt="الشيخ باسم عبدالهادي" className="w-full h-full object-cover object-top" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-slate-800 font-tajawal">الشيخ باسم عبدالهادي</h3>
-                <p className="text-accent-yellow font-bold text-xs">مشرف البرامج</p>
-              </div>
-              <div className="text-sm text-slate-500 leading-relaxed text-right space-y-3 w-full">
-                <p>
-                  يتمتع الشيخ باسم بخبرة تزيد على 25 عامًا في الإشراف وإدارة البرامج التربوية والشبابية، ساهم خلالها في قيادة وتطوير المبادرات الهادفة لبناء الشخصية.
-                </p>
-                <div>
-                  <span className="font-bold text-slate-700 text-xs">أبرز المناصب القيادية:</span>
-                  <ul className="list-disc list-inside mt-1 space-y-1 text-xs">
-                    <li>مدير مجمع الحمودي لتحفيظ القرآن الكريم سابقًا.</li>
-                    <li>مشرف البرامج في جمعية خيركم لتحفيظ القرآن الكريم.</li>
-                    <li>مدير البرامج بمكتب حي الفيحاء سابقًا.</li>
-                    <li>مدير برنامج ملتقى بصمة إبداع سابقًا.</li>
-                    <li>مدير برنامج لون صيفك سابقًا.</li>
-                  </ul>
-                </div>
-                <p className="text-xs">
-                  يمتلك خبرة واسعة في التخطيط والتنظيم، مما أسهم في تحقيق أثر إيجابي ومستدام لدى المشاركين.
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Supervisor 2 */}
-            <motion.div 
-               whileHover={{ y: -5 }}
-               className="bg-slate-50 rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
-            >
-              <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
-                <img src="/images/supervaisor2.jpeg" alt="الاستاذ نواف السيد" className="w-full h-full object-cover object-top" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-slate-800 font-tajawal">الاستاذ نواف السيد</h3>
-                <p className="text-blue-500 font-bold text-xs">مشرف إداري</p>
-              </div>
-              <div className="text-sm text-slate-500 leading-relaxed text-right space-y-3 w-full">
-                <p>
-                  يتميز الأستاذ نواف بخبرة في العمل الإداري والتنظيمي، مع اهتمام بتطوير البرامج والمبادرات ذات الأثر التربوي والتعليمي.
-                </p>
-                <p>
-                  يشغل منصب مدير حلقات مشكاة القرآنية بجامع الشيخ رافع الغامدي في جدة، حيث يسهم في الإشراف على البرامج القرآنية وتنظيم أعمال الحلقات بما يحقق أهدافها التعليمية والتربوية.
-                </p>
-                <p>
-                  وهو خريج جامعة الملك عبدالعزيز من كلية الآداب والعلوم الإنسانية، مما عزز من خبراته المعرفية والإدارية وأسهم في مسيرته المهنية.
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Supervisor 3 */}
-            <motion.div 
-               whileHover={{ y: -5 }}
-               className="bg-slate-50 rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
-            >
-              <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
-                <img src="/images/supervaisor3.jpeg" alt="د. إبراهيم طارق محمود" className="w-full h-full object-cover object-top" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-slate-800 font-tajawal">د. إبراهيم طارق محمود</h3>
-                <p className="text-emerald-500 font-bold text-xs">مشرف التطوير والتدريب</p>
-              </div>
-              <div className="text-sm text-slate-500 leading-relaxed text-right space-y-3 w-full">
-                <p>
-                  يُعرف د. إبراهيم باهتمامه بالعمل الشبابي والتطوير المؤسسي، مع تركيزه على بناء المبادرات التي تسهم في تنمية قدرات الشباب وتمكينهم من تحقيق أثر مستدام.
-                </p>
-                <p>
-                  يعمل عضو هيئة تدريس في جامعة الملك عبدالعزيز، حيث يجمع بين الخبرة الأكاديمية والممارسة العملية في مجالات التطوير والتأهيل.
-                </p>
-                <p>
-                  يهتم بتصميم وتنفيذ البرامج النوعية، ويولي عناية خاصة بمجالات التدريب والابتكار والتقنيات الحديثة في تطوير الأفراد والمؤسسات.
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3.2. Success Marquee */}
-      <section className="bg-gradient-to-b from-primary-navy to-slate-950 py-12 text-white relative overflow-hidden border-b border-white/5">
-        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-72 h-72 bg-accent-yellow/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-72 h-72 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div 
             variants={containerVariants}
             initial="hidden"
@@ -559,8 +466,154 @@ export default function HomeClient({
         </div>
       </section>
 
+      {/* 3.1. Mulhim Supervisors Section */}
+      <section className="bg-white py-16 border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-2xl mx-auto space-y-4 mb-16"
+          >
+            <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">مشرفو مُلهِم</h2>
+            <p className="text-slate-500 text-sm">
+              نخبة من الكفاءات المتميزة التي تقود مبادرات وبرامج منصة مُلهم نحو التميز والإبداع.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" dir="rtl">
+            {/* Supervisor 1 */}
+            <motion.div 
+               whileHover={{ y: -5 }}
+               className="bg-slate-50 rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
+            >
+              <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
+                <img src="/images/supervaisor1.jpeg" alt="الشيخ باسم عبدالهادي" className="w-full h-full object-cover object-top" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-slate-800 font-tajawal">الأستاذ باسم عبدالهادي</h3>
+                <p className="text-accent-yellow font-bold text-xs">مشرف البرامج</p>
+              </div>
+              <div className="text-sm text-slate-800 leading-relaxed text-right space-y-3 w-full">
+                <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm">
+                  <li>خبرة تتجاوز 25 عامًا في الإشراف وإدارة البرامج التربوية والشبابية.</li>
+                  <li>أسهم في قيادة وتطوير العديد من المبادرات والبرامج ذات الأثر التربوي والتنموي.</li>
+                  <li>شغل منصب مشرف البرامج في جمعية خيركم.</li>
+                  <li>عمل مديرًا للبرامج بمكتب حي الفيحاء.</li>
+                  <li>مؤسس برنامج «لون صيفك».</li>
+                  <li>يمتلك خبرة واسعة في التخطيط والإشراف على البرامج النوعية وإدارة الفرق.</li>
+                </ul>
+              </div>
+            </motion.div>
+
+            {/* Supervisor 2 */}
+            <motion.div 
+               whileHover={{ y: -5 }}
+               className="bg-slate-50 rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
+            >
+              <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
+                <img src="/images/supervaisor2.jpeg" alt="الاستاذ نواف السيد" className="w-full h-full object-cover object-top" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-slate-800 font-tajawal">الأستاذ نواف السيد</h3>
+                <p className="text-blue-500 font-bold text-xs">المشرف الإداري</p>
+              </div>
+              <div className="text-sm text-slate-800 leading-relaxed text-right space-y-3 w-full">
+                <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm">
+                  <li>خريج جامعة الملك عبدالعزيز.</li>
+                  <li>مشرف إداري في برنامج ملهم.</li>
+                  <li>يمتلك خبرة في الإدارة والتنظيم وتطوير المبادرات التربوية والتعليمية.</li>
+                  <li>مدير حلقات مشكاة القرآنية بجامع الشيخ رافع الغامدي بجدة.</li>
+                  <li>مهتم ببناء الأنظمة الإدارية وتحسين بيئات العمل.</li>
+                </ul>
+              </div>
+            </motion.div>
+
+            {/* Supervisor 3 */}
+            <motion.div 
+               whileHover={{ y: -5 }}
+               className="bg-slate-50 rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
+            >
+              <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
+                <img src="/images/supervaisor3.jpeg" alt="د. إبراهيم طارق محمود" className="w-full h-full object-cover object-top" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-slate-800 font-tajawal">د. إبراهيم طارق محمود</h3>
+                <p className="text-emerald-500 font-bold text-xs">مشرف التطوير والتدريب</p>
+              </div>
+              <div className="text-sm text-slate-800 leading-relaxed text-right space-y-3 w-full">
+                <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm">
+                  <li>عضو هيئة تدريس في جامعة الملك عبدالعزيز.</li>
+                  <li>خبرة تزيد على 10 سنوات في التطوير المؤسسي والعمل الشبابي والتدريب.</li>
+                  <li>أسهم في تأسيس وإدارة عدد من الجمعيات والمراكز والمبادرات الشبابية والقرآنية.</li>
+                  <li>مهتم ببناء البرامج النوعية وتنمية القدرات.</li>
+                  <li>يعمل على تطوير الكوادر والفرق العاملة ورفع كفاءتها.</li>
+                </ul>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Promotional Ad Banner */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="relative bg-primary-teal rounded-[2rem] overflow-hidden shadow-2xl border border-white/10 flex flex-col lg:flex-row items-center justify-between"
+        >
+          {/* Text Content */}
+          <div className="p-10 lg:p-14 lg:w-1/2 text-right space-y-6 z-10 relative">
+            <div className="inline-block bg-accent-yellow/10 text-accent-yellow px-4 py-1.5 rounded-full text-xs font-bold mb-2 border border-accent-yellow/20">
+              التسجيل متاح الآن
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black text-white font-tajawal leading-tight">
+              لا تفوت فرصة الصيف! <br/>
+              <span className="text-accent-yellow">برنامج "لون صيفك"</span>
+            </h2>
+            <p className="text-slate-300 text-sm md:text-base leading-relaxed max-w-lg font-cairo">
+              استعد لصيف مليء بالمتعة والتطوير. فعاليات رياضية، وأنشطة متنوعة صُممت خصيصاً لتطوير المهارات واكتشاف المواهب للبنين والفتيات في بيئة آمنة وملهمة.
+            </p>
+            
+            <div className="pt-4">
+              <Link href="/summer-registration" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent-yellow text-slate-900 rounded-xl font-bold hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(255,220,127,0.3)] hover:shadow-[0_0_25px_rgba(255,220,127,0.5)] transform hover:-translate-y-1 text-base">
+                سجل الآن في البرنامج
+                <svg className="w-5 h-5 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+
+          {/* Image Content (Flyer Showcase) */}
+          <div className="w-full lg:w-1/2 p-6 lg:p-12 relative flex justify-center items-center bg-slate-800/30 overflow-hidden">
+             {/* Decorational glow */}
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-accent-yellow/20 blur-[80px] rounded-full pointer-events-none" />
+             
+             <Link href="/summer-registration" className="relative block w-full max-w-md transform transition-transform duration-500 hover:scale-105 hover:-rotate-1 z-10">
+               <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white/10 ring-1 ring-white/5 bg-white">
+                 <img 
+                  src="/images/summer.webp" 
+                  alt="إعلان البرنامج الصيفي" 
+                  className="w-full h-auto object-contain"
+                />
+               </div>
+               
+               {/* Click badge */}
+               <div className="absolute -bottom-4 -left-4 bg-accent-teal text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg border-2 border-white animate-bounce flex items-center gap-2">
+                 <span>اضغط للتفاصيل</span>
+                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
+               </div>
+             </Link>
+          </div>
+        </motion.div>
+      </section>
+
       {/* 4. Showcase Programs & Events with tabs */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -570,7 +623,7 @@ export default function HomeClient({
         >
           <div className="space-y-2 text-right">
             <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">برامج وفعاليات ملهمة</h2>
-            <p className="text-slate-500 text-sm">برامج مخصصة مبنية بدقة للشباب والفتيات تضمن الترفيه وبناء المهارات.</p>
+            <p className="text-slate-800 text-sl">برامج مخصصة مبنية بدقة للشباب والفتيات تضمن الترفيه وبناء المهارات.</p>
           </div>
 
           {/* Tabs */}
@@ -633,7 +686,7 @@ export default function HomeClient({
                   {/* Image */}
                   <div className="h-52 w-full overflow-hidden relative">
                     <Image
-                      src={programImg || "/images/about-founding.png"}
+                      src={programImg || "/images/About.png"}
                       alt={program.title || "Program"}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -713,7 +766,7 @@ export default function HomeClient({
             href="/programs"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white border border-slate-200 hover:border-accent-teal text-slate-700 hover:text-accent-teal rounded-xl text-sm font-bold shadow-sm transition-all duration-300 cursor-pointer"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-accent-yellow hover:bg-primary-yellow text-primary-navy rounded-xl text-sm font-bold shadow-sm transition-all duration-300 cursor-pointer"
           >
             مشاهدة كافة البرامج والأنشطة
             <ArrowLeft className="w-4 h-4" />
@@ -731,9 +784,9 @@ export default function HomeClient({
             transition={{ duration: 0.6 }}
             className="text-center max-w-2xl mx-auto space-y-3 mb-14"
           >
-            <span className="text-xs font-bold text-accent-yellow tracking-widest uppercase block">برامجنا الاحترافية</span>
+            <span className="text-xl font-bold text-accent-yellow tracking-widest uppercase block">برامجنا الاحترافية</span>
             <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">أكاديمياتنا المتخصصة</h2>
-            <p className="text-slate-500 text-sm">
+            <p className="text-slate-800 text-sl">
               انضم إلى الأكاديمية التي تتماشى مع طموحاتك ومواهبك لتبدأ رحلة التعلم والتطور مع مدربينا.
             </p>
           </motion.div>
@@ -759,11 +812,21 @@ export default function HomeClient({
                 >
                   {/* Image Block */}
                   <div className="h-52 w-full overflow-hidden relative">
-                    <img
-                      src={acadImg}
-                      alt={acad.title}
-                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-all duration-500"
-                    />
+                    {acad.registrationOpen !== false ? (
+                      <Link href={acadLink}>
+                        <img
+                          src={acadImg}
+                          alt={acad.title}
+                          className="w-full h-full object-cover object-top group-hover:scale-105 transition-all duration-500"
+                        />
+                      </Link>
+                    ) : (
+                      <img
+                        src={acadImg}
+                        alt={acad.title}
+                        className="w-full h-full object-cover object-top opacity-80"
+                      />
+                    )}
                     <span className="absolute z-20 top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-accent-yellow px-3 py-1 rounded-full text-[10px] font-bold">
                       {acad.ageGroup || acad.targetAge || "جميع الأعمار"}
                     </span>
@@ -772,31 +835,43 @@ export default function HomeClient({
                   {/* Info Block */}
                   <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                     <div className="space-y-2">
-                      <Link href={acadLink}>
-                        <h3 className="font-extrabold text-slate-800 text-base group-hover:text-accent-yellow transition-all duration-200 line-clamp-1">
+                      {acad.registrationOpen !== false ? (
+                        <Link href={acadLink}>
+                          <h3 className="font-extrabold text-slate-800 text-base group-hover:text-accent-yellow transition-all duration-200 line-clamp-1">
+                            {acad.title}
+                          </h3>
+                        </Link>
+                      ) : (
+                        <h3 className="font-extrabold text-slate-800 text-base opacity-80 line-clamp-1">
                           {acad.title}
                         </h3>
-                      </Link>
-                      <p className="text-xs text-slate-405 font-medium leading-relaxed">
-                        {acad.schedule || (acad.startDate ? new Date(acad.startDate).toLocaleDateString("ar-SA") : "")}
-                      </p>
-                      <p className="text-xs text-slate-505 leading-relaxed line-clamp-2 pt-1">
+                      )}
+                      {acad.registrationOpen !== false && (
+                        <p className="text-xs text-slate-405 font-medium leading-relaxed">
+                          {acad.schedule || (acad.startDate ? new Date(acad.startDate).toLocaleDateString("ar-SA") : "")}
+                        </p>
+                      )}
+                      <p className="text-sm text-slate-800 leading-relaxed line-clamp-2 pt-1">
                         {acad.description}
                       </p>
                     </div>
 
                     <div className="flex justify-between items-center pt-4 border-t border-slate-50">
-                      <span className="text-accent-yellow font-extrabold text-base">
-                        {acad.price} ر.س
-                      </span>
-                      <MotionLink
-                        href={acadLink}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="px-4 py-2 bg-primary-navy hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer"
-                      >
-                        التفاصيل والتسجيل
-                      </MotionLink>
+                      {acad.registrationOpen === false ? null : (
+                        <span className="text-accent-yellow font-extrabold text-base">
+                          {acad.price} ر.س
+                        </span>
+                      )}
+                      {acad.registrationOpen !== false && (
+                        <MotionLink
+                          href={acadLink}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-4 py-2  bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer"
+                        >
+                          التفاصيل والتسجيل
+                        </MotionLink>
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -809,7 +884,7 @@ export default function HomeClient({
               href="/academies"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-accent-yellow hover:bg-primary-yellow text-primary-navy rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
             >
               مشاهدة كافة الأكاديميات
               <ArrowLeft className="w-4 h-4" />
@@ -828,9 +903,9 @@ export default function HomeClient({
             transition={{ duration: 0.6 }}
             className="text-center max-w-2xl mx-auto space-y-3 mb-14"
           >
-            <span className="text-xs font-bold text-accent-yellow tracking-widest uppercase block">مغامرات فريدة من نوعها</span>
+            <span className="text-xl font-bold text-accent-yellow tracking-widest uppercase block">مغامرات فريدة من نوعها</span>
             <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">رحلات ملهم: مغامرات تصنع الأثر</h2>
-            <p className="text-slate-500 text-sm">
+            <p className="text-slate-800 text-sl">
               برامج ترفيهية وإيمانية ومغامرات شبابية مصممة لبناء الوعي والروح الجماعية والمهارة في أروع وجهات العالم.
             </p>
           </motion.div>
@@ -858,14 +933,26 @@ export default function HomeClient({
                 >
                   {/* Trip Image */}
                   <div className="h-52 w-full overflow-hidden relative">
-                    <Image
-                      src={tripImg || "/images/about-founding.png"}
-                      alt={trip.title || "Trip"}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover object-top group-hover:scale-105 transition-transform duration-500 z-10"
-                    />
-                    <span className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-bold">
+                    {trip.registrationOpen !== false ? (
+                      <Link href={tripLink}>
+                        <Image
+                          src={tripImg || "/images/About.png"}
+                          alt={trip.title || "Trip"}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-cover object-top group-hover:scale-105 transition-transform duration-500 z-10"
+                        />
+                      </Link>
+                    ) : (
+                      <Image
+                        src={tripImg || "/images/About.png"}
+                        alt={trip.title || "Trip"}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover object-top opacity-80 z-10"
+                      />
+                    )}
+                    <span className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-bold z-20">
                       {trip.typeName}
                     </span>
                   </div>
@@ -873,39 +960,53 @@ export default function HomeClient({
                   {/* Content */}
                   <div className="p-6 flex-1 flex flex-col justify-between space-y-4 text-right">
                     <div className="space-y-2">
-                      <Link href={tripLink}>
-                        <h3 className="font-bold text-slate-800 text-base group-hover:text-accent-yellow transition-all duration-200 line-clamp-1">
+                      {trip.registrationOpen !== false ? (
+                        <Link href={tripLink}>
+                          <h3 className="font-bold text-slate-800 text-base group-hover:text-accent-yellow transition-all duration-200 line-clamp-1">
+                            {trip.title}
+                          </h3>
+                        </Link>
+                      ) : (
+                        <h3 className="font-bold text-slate-800 text-base opacity-80 line-clamp-1">
                           {trip.title}
                         </h3>
-                      </Link>
+                      )}
                       <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-slate-400 font-medium justify-end">
-                        <span className="flex items-center gap-1">
-                          <span>{tripDate}</span>
-                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <span>{trip.location}</span>
-                          <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                        </span>
+                        {trip.registrationOpen !== false && tripDate && (
+                          <span className="flex items-center gap-1">
+                            <span>{tripDate}</span>
+                            <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                          </span>
+                        )}
+                        {trip.registrationOpen !== false && trip.location && (
+                          <span className="flex items-center gap-1">
+                            <span>{trip.location}</span>
+                            <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                          </span>
+                        )}
                       </div>
-                      <p className="text-xs text-slate-550 leading-relaxed line-clamp-2 pt-2">
+                      <p className="text-sm text-slate-800 leading-relaxed line-clamp-2 pt-2">
                         {trip.description}
                       </p>
                     </div>
 
                     <div className="flex justify-between items-center pt-4 border-t border-slate-50">
-                      <div>
-                        <span className="text-[10px] text-slate-400 block font-medium">يبدأ من</span>
-                        <span className="text-accent-yellow font-bold text-base">{trip.price} ر.س</span>
-                      </div>
-                      <MotionLink
-                        href={tripLink}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="px-5 py-2.5 bg-primary-navy hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
-                      >
-                        التفاصيل والتسجيل
-                      </MotionLink>
+                      {trip.registrationOpen === false ? null : (
+                        <div>
+                          <span className="text-[10px] text-slate-400 block font-medium">يبدأ من</span>
+                          <span className="text-accent-yellow font-bold text-base">{trip.price} ر.س</span>
+                        </div>
+                      )}
+                      {trip.registrationOpen !== false && (
+                        <MotionLink
+                          href={tripLink}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-5 py-2.5  bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
+                        >
+                          التفاصيل والتسجيل
+                        </MotionLink>
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -918,7 +1019,7 @@ export default function HomeClient({
               href="/trips"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-accent-yellow hover:bg-primary-yellow text-primary-navy rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
             >
               استكشف كافة وجهاتنا
               <ArrowLeft className="w-4 h-4" />
@@ -937,9 +1038,9 @@ export default function HomeClient({
           className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12"
         >
           <div className="space-y-2 text-right">
-            <span className="text-xs font-bold text-accent-yellow tracking-widest uppercase block">المجموعة الرسمية</span>
+            <span className="text-xl font-bold text-accent-yellow tracking-widest uppercase block">المجموعة الرسمية</span>
             <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">مقتنيات وإصدارات ملهم</h2>
-            <p className="text-slate-500 text-sm">تصاميم فريدة من هوياتنا ملائمة لأنشطتك اليومية ومصممة بجودة عالية.</p>
+            <p className="text-slate-800 text-sl">تصاميم فريدة من هوياتنا ملائمة لأنشطتك اليومية ومصممة بجودة عالية.</p>
           </div>
           <MotionLink
             href="/store"
@@ -981,7 +1082,7 @@ export default function HomeClient({
                 <div className="h-52 w-full overflow-hidden relative">
                   <Link href={productLink} className="absolute inset-0 z-10">
                     <Image
-                      src={productImg || "/images/about-founding.png"}
+                      src={productImg || "/images/About.png"}
                       alt={product.name || product.title || "Product"}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
@@ -1019,7 +1120,7 @@ export default function HomeClient({
                           description: product.description,
                         });
                       }}
-                      className="p-2.5 bg-slate-100 hover:bg-accent-yellow text-slate-700 hover:text-white rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 text-xs font-bold"
+                      className="p-2.5 bg-slate-100 hover:bg-accent-yellow text-slate-700 hover:text-primary-navy rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 text-xs font-bold"
                       aria-label="إضافة للسلة"
                     >
                       <ShoppingCart className="w-4 h-4" />
@@ -1037,7 +1138,7 @@ export default function HomeClient({
       <section className="bg-slate-50/50 py-16 border-t border-slate-100 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h3 className="text-slate-400 font-bold text-xs tracking-widest uppercase">شركاء النجاح المتميزين</h3>
+            <h3 className="text-slate-400 font-bold text-xl tracking-widest uppercase">شركاء النجاح المتميزين</h3>
           </div>
 
           <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16 opacity-75 transition-all duration-500">

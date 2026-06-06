@@ -116,7 +116,7 @@ export default function StoreClient({
     title: storeBanner.title,
     subtitle: storeBanner.description,
     image: resolveImage(storeBanner.images?.[0] || storeBanner.image, 1600, 800),
-    btnText: storeBanner.btnText || "تسوق المجموعة",
+    btnText: storeBanner.btnText,
     link: storeBanner.link
   } : {
     title: "إصدار محدود من معدات ملهم",
@@ -278,31 +278,35 @@ export default function StoreClient({
                 <h1 className="text-xl sm:text-3xl md:text-4xl font-black font-tajawal leading-tight">
                   {storeHero.title}
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-300 font-light leading-relaxed">
-                  {storeHero.subtitle}
-                </p>
+                {storeHero.subtitle && (
+                  <p className="text-xs sm:text-sm text-slate-300 font-light leading-relaxed">
+                    {storeHero.subtitle}
+                  </p>
+                )}
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 justify-start w-full sm:w-auto">
-                  {storeHero.link && normalizeLink(storeHero.link) !== "/store" && !storeHero.link.startsWith("#") ? (
-                    <MotionLink
-                      href={normalizeLink(storeHero.link)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer"
-                    >
-                      {storeHero.btnText}
-                    </MotionLink>
-                  ) : (
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        const el = document.getElementById("store-products");
-                        el?.scrollIntoView({ behavior: "smooth" });
-                      }}
-                      className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center"
-                    >
-                      {storeHero.btnText}
-                    </motion.button>
+                  {storeHero.btnText && (
+                    storeHero.link && normalizeLink(storeHero.link) !== "/store" && !storeHero.link.startsWith("#") ? (
+                      <MotionLink
+                        href={normalizeLink(storeHero.link)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer"
+                      >
+                        {storeHero.btnText}
+                      </MotionLink>
+                    ) : (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                          const el = document.getElementById("store-products");
+                          el?.scrollIntoView({ behavior: "smooth" });
+                        }}
+                        className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center"
+                      >
+                        {storeHero.btnText}
+                      </motion.button>
+                    )
                   )}
                 </div>
               </motion.div>
@@ -322,7 +326,7 @@ export default function StoreClient({
                     whileTap={{ scale: 0.97 }}
                     onClick={() => setActiveCategory(cat.id)}
                     className={`px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeCategory === cat.id
-                        ? "bg-accent-yellow text-white shadow-md shadow-yellow-500/25"
+                        ? "bg-accent-yellow text-primary-navy shadow-md shadow-yellow-500/25"
                         : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                       }`}
                   >
@@ -425,7 +429,7 @@ export default function StoreClient({
                               image: productImg,
                               description: product.description,
                             })}
-                            className="p-2.5 bg-slate-100 hover:bg-accent-yellow text-slate-700 hover:text-white rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 text-xs font-bold cursor-pointer"
+                            className="p-2.5 bg-slate-100 hover:bg-accent-yellow text-slate-700 hover:text-primary-navy rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 text-xs font-bold cursor-pointer"
                             aria-label="أضف للسلة"
                           >
                             <ShoppingCart className="w-4 h-4" />
@@ -460,7 +464,7 @@ export default function StoreClient({
                       key={pNum}
                       onClick={() => handlePageChange(pNum)}
                       className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${currentPage === pNum
-                          ? "bg-accent-yellow text-white shadow-md shadow-yellow-500/20"
+                          ? "bg-accent-yellow text-primary-navy shadow-md shadow-yellow-500/20"
                           : "border border-slate-200 text-slate-600 hover:bg-slate-50"
                         }`}
                     >
@@ -623,7 +627,7 @@ export default function StoreClient({
                             }`}
                         >
                           <div className="flex items-center gap-3">
-                            <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "cash" ? "bg-accent-yellow text-white shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
+                            <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "cash" ? "bg-accent-yellow text-primary-navy shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
                               <Sparkles className="w-4 h-4" />
                             </div>
                             <div className="text-right">
@@ -646,7 +650,7 @@ export default function StoreClient({
                             }`}
                         >
                           <div className="flex items-center gap-3">
-                            <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "card" ? "bg-accent-yellow text-white shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
+                            <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "card" ? "bg-accent-yellow text-primary-navy shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
                               <CreditCard className="w-4 h-4" />
                             </div>
                             <div className="text-right">
@@ -751,7 +755,7 @@ export default function StoreClient({
                       whileTap={{ scale: 0.98 }}
                       type="button"
                       onClick={handleCheckoutSubmit}
-                      className="w-full py-3.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition-all duration-300 font-tajawal cursor-pointer"
+                      className="w-full py-3.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition-all duration-300 font-tajawal cursor-pointer"
                     >
                       {submitBtnText}
                     </motion.button>

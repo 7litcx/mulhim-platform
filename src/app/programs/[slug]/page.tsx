@@ -115,8 +115,8 @@ export default async function ProgramDetailsPage({ params }: PageProps) {
           {/* Right Side: Description and Details */}
           <div className="lg:col-span-2 space-y-8 text-right bg-white p-6 md:p-8 rounded-2xl border border-slate-100 shadow-sm">
             <div className="space-y-4">
-              <h2 className="text-xl font-bold text-slate-800 font-tajawal">عن البرنامج</h2>
-              <p className="text-slate-600 leading-relaxed text-sm">
+              <h2 className="text-2xl font-bold text-primary-navy font-tajawal border-b-2 border-slate-100 pb-3 inline-block">عن البرنامج</h2>
+              <p className="text-slate-700 leading-relaxed text-base md:text-lg font-medium">
                 {program.description}
               </p>
             </div>
@@ -162,35 +162,35 @@ export default async function ProgramDetailsPage({ params }: PageProps) {
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6 text-right">
               <div className="space-y-1">
-                <span className="text-xs text-slate-400 font-medium">رسوم التسجيل</span>
-                <div className="text-2xl font-black text-accent-yellow font-sans">
+                <span className="text-sm text-slate-500 font-bold">رسوم التسجيل</span>
+                <div className="text-3xl font-black text-accent-teal font-sans">
                   {program.price > 0 ? `${program.price} ر.س` : "مجاناً بالكامل"}
                 </div>
               </div>
 
-              <div className="space-y-4 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-600">
+              <div className="space-y-5 border-t border-slate-100 pt-5 text-slate-600">
                 <div className="flex items-center gap-3">
-                  <Calendar className="w-5 h-5 text-accent-yellow flex-shrink-0" />
+                  <Calendar className="w-5 h-5 text-accent-teal flex-shrink-0" />
                   <div>
-                    <span className="block text-[10px] text-slate-450">تاريخ البدء</span>
-                    <span>{startDateFormatted}</span>
+                    <span className="block text-xs font-bold text-slate-500 mb-0.5">تاريخ البدء</span>
+                    <span className="text-sm font-semibold">{startDateFormatted}</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <MapPin className="w-5 h-5 text-accent-yellow flex-shrink-0" />
+                  <MapPin className="w-5 h-5 text-accent-teal flex-shrink-0" />
                   <div>
-                    <span className="block text-[10px] text-slate-450">المكان</span>
-                    <span>{program.location || "حضوري - مقر ملهم الرئيسي"}</span>
+                    <span className="block text-xs font-bold text-slate-500 mb-0.5">المكان</span>
+                    <span className="text-sm font-semibold">{program.location || "حضوري - مقر ملهم الرئيسي"}</span>
                   </div>
                 </div>
 
                 {program.endDate && (
                   <div className="flex items-center gap-3">
-                    <Clock className="w-5 h-5 text-amber-500 flex-shrink-0" />
+                    <Clock className="w-5 h-5 text-accent-teal flex-shrink-0" />
                     <div>
-                      <span className="block text-[10px] text-slate-450">تاريخ الانتهاء</span>
-                      <span className="text-amber-600">
+                      <span className="block text-xs font-bold text-slate-500 mb-0.5">تاريخ الانتهاء</span>
+                      <span className="text-sm font-semibold text-slate-800">
                         {new Date(program.endDate).toLocaleDateString("ar-SA", {
                           weekday: "long",
                           year: "numeric",
@@ -205,7 +205,7 @@ export default async function ProgramDetailsPage({ params }: PageProps) {
 
               <Link
                 href={program.title?.includes("صيف") ? "/summer-registration" : `/register?type=program&name=${encodeURIComponent(program.title)}`}
-                className="w-full block text-center py-4 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300"
+                className="w-full block text-center py-4 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-base font-bold shadow-md hover:shadow-lg transition-all duration-300"
               >
                 احجز مقعدك الآن
               </Link>
@@ -216,8 +216,8 @@ export default async function ProgramDetailsPage({ params }: PageProps) {
             </div>
             
             {/* Safety Assurance */}
-            <div className="bg-yellow-50 border border-yellow-100 p-4 rounded-2xl flex items-start gap-3 text-right">
-              <ShieldCheck className="w-5 h-5 text-accent-yellow mt-0.5 flex-shrink-0" />
+            <div className="bg-teal-50 border border-teal-100 p-4 rounded-2xl flex items-start gap-3 text-right">
+              <ShieldCheck className="w-5 h-5 text-accent-teal mt-0.5 flex-shrink-0" />
               <div className="space-y-1">
                 <h4 className="text-xs font-bold text-slate-800">بيئة آمنة وتفاعلية</h4>
                 <p className="text-[10px] text-slate-500 leading-normal">

@@ -40,7 +40,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" className={`h-full scroll-smooth ${cairo.variable} ${tajawal.variable}`} data-scroll-behavior="smooth">
-      <body className="min-h-full flex flex-col bg-slate-50/50 text-slate-900 font-tajawal font-medium antialiased">
+      <body className="min-h-full flex flex-col bg-slate-50/50 text-slate-900 font-tajawal font-medium antialiased text-lg">
         <AppProvider>
           <React.Suspense fallback={null}>
             <Header />

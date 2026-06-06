@@ -14,76 +14,96 @@ export const SummerProgramPDF = React.forwardRef<HTMLDivElement, Props>(({ regis
       ref={ref} 
       style={{
         width: '800px', // A4 width proportion
-        padding: '40px',
+        minHeight: '1130px', // A4 height proportion
         backgroundColor: 'white',
-        color: '#333',
+        color: '#1e293b',
         direction: 'rtl',
         fontFamily: 'Arial, sans-serif',
         position: 'absolute',
         top: '-10000px', // hidden offscreen
         left: '-10000px',
         zIndex: -1,
+        overflow: 'hidden'
       }}
     >
-      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-        <h1 style={{ fontSize: '28px', color: '#1e293b', marginBottom: '5px' }}>استمارة مشاركة</h1>
-        <h2 style={{ fontSize: '18px', color: '#64748b' }}>برنامج لون صيفك 3</h2>
+      {/* Custom Background Image */}
+      <img 
+        src="/images/pdf-bg.jpeg" 
+        alt="Background" 
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          zIndex: 0
+        }} 
+      />
+
+      {/* Content Container */}
+      <div style={{ position: 'relative', zIndex: 1, padding: '160px 60px 20px 60px' }}>
+      <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+        <h1 style={{ fontSize: '28px', fontWeight: 'bold', color: '#009088', marginBottom: '0' }}>استمارة تسجيل ومشاركة</h1>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px', fontSize: '14px' }}>
         <div>
-          <strong>اسم المتقدم / ة رباعيًا:</strong> {data.fullName}
+          <strong style={{ color: '#009088' }}>اسم المتقدم / ة رباعيًا:</strong> {data.fullName}
         </div>
         <div>
-          <strong>رقم الهوية:</strong> {data.idNumber}
+          <strong style={{ color: '#009088' }}>رقم الهوية:</strong> {data.idNumber}
         </div>
         <div>
-          <strong>الصف الدراسي العام الماضي:</strong> {data.grade}
+          <strong style={{ color: '#009088' }}>اسم ولي الأمر:</strong> {data.parentName || 'غير متوفر'}
         </div>
         <div>
-          <strong>تاريخ الميلاد:</strong> {data.birthDate}
+          <strong style={{ color: '#009088' }}>الصف الدراسي العام الماضي:</strong> {data.grade}
         </div>
         <div>
-          <strong>الجنس:</strong> {data.gender}
+          <strong style={{ color: '#009088' }}>تاريخ الميلاد:</strong> {data.birthDate}
         </div>
         <div>
-          <strong>العمر:</strong> {data.age}
+          <strong style={{ color: '#009088' }}>الجنس:</strong> {data.gender}
+        </div>
+        <div>
+          <strong style={{ color: '#009088' }}>العمر:</strong> {data.age}
         </div>
         <div style={{ gridColumn: 'span 2' }}>
-          <strong>عنوان الحي الذي تسكن به:</strong> {data.neighborhood}
+          <strong style={{ color: '#009088' }}>عنوان الحي الذي تسكن به:</strong> {data.neighborhood}
         </div>
         <div>
-          <strong>جوال ولي الأمر:</strong> {data.parentPhone}
+          <strong style={{ color: '#009088' }}>جوال ولي الأمر:</strong> {data.parentPhone}
         </div>
         <div>
-          <strong>جوال آخر:</strong> {data.otherPhone || '---'}
+          <strong style={{ color: '#009088' }}>جوال آخر:</strong> {data.otherPhone || '---'}
         </div>
       </div>
 
-      <hr style={{ borderColor: '#e2e8f0', margin: '20px 0' }} />
+      <hr style={{ borderColor: '#e2e8f0', margin: '10px 0' }} />
 
-      <div style={{ marginBottom: '20px', lineHeight: '1.8' }}>
+      <div style={{ marginBottom: '10px', lineHeight: '1.6', fontSize: '14px' }}>
         <div>
-          <strong>هل يعاني المتقدم/ة من أي أمراض:</strong> {data.hasDiseases} {data.hasDiseases === 'نعم' ? `(${data.diseasesDetails})` : ''}
+          <strong style={{ color: '#009088' }}>هل يعاني المتقدم/ة من أي أمراض:</strong> {data.hasDiseases} {data.hasDiseases === 'نعم' ? `(${data.diseasesDetails})` : ''}
         </div>
         <div>
-          <strong>هل يعاني المتقدم/ة من حساسية أطعمة:</strong> {data.hasAllergies} {data.hasAllergies === 'نعم' ? `(${data.allergiesDetails})` : ''}
+          <strong style={{ color: '#009088' }}>هل يعاني المتقدم/ة من حساسية أطعمة:</strong> {data.hasAllergies} {data.hasAllergies === 'نعم' ? `(${data.allergiesDetails})` : ''}
         </div>
         <div>
-          <strong>كيف عرفت عن البرنامج:</strong> {data.howDidYouHear}
+          <strong style={{ color: '#009088' }}>كيف عرفت عن البرنامج:</strong> {data.howDidYouHear}
         </div>
       </div>
 
-      <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
-        <h3 style={{ textAlign: 'center', marginBottom: '10px' }}>تعهد</h3>
-        <p style={{ fontSize: '12px', textAlign: 'justify', lineHeight: '1.6' }}>
+      <div style={{ backgroundColor: '#f8fafc', padding: '10px', borderRadius: '8px', marginBottom: '10px', border: '1px solid #e2e8f0' }}>
+        <h3 style={{ textAlign: 'center', marginBottom: '5px', color: '#1e293b', fontSize: '16px' }}>تعهد</h3>
+        <p style={{ fontSize: '12px', textAlign: 'justify', lineHeight: '1.5', color: '#334155', margin: 0 }}>
           أتعهد أنا الموقع أدناه (ولي أمر المشارك/ة) بأن أتقيد بجميع الأنظمة والتعليمات الخاصة بالبرنامج وأن أتحلى بالآداب الإسلامية والأخلاق الرياضية الحميدة في تعاملي مع المعلمين والمشاركين وللإدارة كامل الحق في إلغاء اشتراكي واتخاذ القرار الذي تراه مناسباً في حالة مخالفتي لذلك. كما أقر بأني قرأت جميع الأنظمة والتعليمات أدناه.
         </p>
       </div>
 
-      <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginBottom: '30px' }}>
-        <h3 style={{ textAlign: 'center', marginBottom: '10px' }}>أنظمة وتعليمات</h3>
-        <p style={{ fontSize: '10px', lineHeight: '1.6', columnCount: 2, columnGap: '20px' }}>
+      <div style={{ backgroundColor: '#f8fafc', padding: '10px', borderRadius: '8px', marginBottom: '15px', border: '1px solid #e2e8f0' }}>
+        <h3 style={{ textAlign: 'center', marginBottom: '5px', color: '#1e293b', fontSize: '16px' }}>أنظمة وتعليمات</h3>
+        <p style={{ fontSize: '10px', lineHeight: '1.4', columnCount: 2, columnGap: '20px', color: '#334155', margin: 0 }}>
           ١- سوف يتم فتح ملف لكل منتسب بالبرنامج الصيفي، يحوي عدة نماذج تشمل معلوماته الشخصية مع صورة هويته أو هوية والده إذا كان مضافًا في بطاقة العائلة.<br/>
           ٢- التقيد بالنظافة الشخصية وارتداء الملابس المحتشمة التي تستر العورة وتجنب ارتداء الملابس الضيقة أو التي تحمل عبارات غير لائقة والالتزام بالآداب الإسلامية العامة وعدم التلفظ بكلمات بذيئة أو جارحة.<br/>
           ٣- على المشاركين إخلاء الملاعب وجميع الفصول وحمام السباحة قبل الصلاة بمدة لا تزيد عن ٥ دقائق استعدادًا للصلاة أو الانصراف من البرنامج.<br/>
@@ -101,27 +121,28 @@ export const SummerProgramPDF = React.forwardRef<HTMLDivElement, Props>(({ regis
         </p>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '40px' }}>
-        <div>
-          <strong>التوقيع:</strong>
-          <div style={{ marginTop: '10px', height: '100px', width: '200px', borderBottom: '1px solid #ccc' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '10px', fontSize: '14px' }}>
+        <div style={{ textAlign: 'center' }}>
+          <strong style={{ color: '#009088' }}>التوقيع:</strong>
+          <div style={{ marginTop: '5px', height: '80px', width: '200px', borderBottom: '2px dashed #009088', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {data.signature ? (
-              <img src={data.signature} alt="Signature" style={{ maxHeight: '100px', maxWidth: '200px' }} />
+              <img src={data.signature} alt="Signature" style={{ maxHeight: '80px', maxWidth: '180px', objectFit: 'contain' }} />
             ) : null}
           </div>
         </div>
         <div style={{ textAlign: 'center' }}>
-          <strong>التاريخ:</strong>
-          <div style={{ marginTop: '10px', width: '150px', borderBottom: '1px solid #ccc', paddingBottom: '5px' }}>
+          <strong style={{ color: '#009088' }}>التاريخ:</strong>
+          <div style={{ marginTop: '5px', width: '150px', borderBottom: '1px solid #94a3b8', paddingBottom: '2px' }}>
             {new Date(registration.created_at).toLocaleDateString('ar-SA')}
           </div>
         </div>
         <div style={{ textAlign: 'center' }}>
-          <strong>الاسم:</strong>
-          <div style={{ marginTop: '10px', width: '200px', borderBottom: '1px solid #ccc', paddingBottom: '5px' }}>
-            {data.fullName}
+          <strong style={{ color: '#009088' }}>اسم ولي الأمر:</strong>
+          <div style={{ marginTop: '5px', width: '200px', borderBottom: '1px solid #94a3b8', paddingBottom: '2px' }}>
+            {data.parentName || data.fullName}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

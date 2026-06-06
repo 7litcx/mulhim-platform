@@ -90,7 +90,7 @@ export default function TripsClient({
     title: tripsBanner.title,
     subtitle: tripsBanner.description,
     image: resolveImage(tripsBanner.images?.[0] || tripsBanner.image, 1600, 800),
-    btnText: tripsBanner.btnText || "استكشف الرحلات",
+    btnText: tripsBanner.btnText,
     link: tripsBanner.link
   } : {
     title: "رحلات مُلهم: مغامرات تصنع الأثر",
@@ -251,31 +251,35 @@ export default function TripsClient({
             <h1 className="text-xl sm:text-3xl md:text-5xl font-black font-tajawal leading-tight">
               {tripsHero.title}
             </h1>
-            <p className="text-xs sm:text-sm md:text-base text-slate-300 font-light leading-relaxed">
-              {tripsHero.subtitle}
-            </p>
+            {tripsHero.subtitle && (
+              <p className="text-xs sm:text-sm md:text-base text-slate-300 font-light leading-relaxed">
+                {tripsHero.subtitle}
+              </p>
+            )}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 justify-start w-full sm:w-auto">
-              {tripsHero.link && normalizeLink(tripsHero.link) !== "/trips" && !tripsHero.link.startsWith("#") ? (
-                <MotionLink
-                  href={normalizeLink(tripsHero.link)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer"
-                >
-                  {tripsHero.btnText}
-                </MotionLink>
-              ) : (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    const el = document.getElementById("trips-list");
-                    el?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center"
-                >
-                  {tripsHero.btnText}
-                </motion.button>
+              {tripsHero.btnText && (
+                tripsHero.link && normalizeLink(tripsHero.link) !== "/trips" && !tripsHero.link.startsWith("#") ? (
+                  <MotionLink
+                    href={normalizeLink(tripsHero.link)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer"
+                  >
+                    {tripsHero.btnText}
+                  </MotionLink>
+                ) : (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      const el = document.getElementById("trips-list");
+                      el?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                    className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center"
+                  >
+                    {tripsHero.btnText}
+                  </motion.button>
+                )
               )}
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -303,7 +307,7 @@ export default function TripsClient({
           className="text-center max-w-2xl mx-auto space-y-3 mb-12"
         >
           <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">أنواع رحلاتنا</h2>
-          <p className="text-slate-500 text-sm">نصنف رحلاتنا لتلبي تطلعاتك وتساعدك على صياغة اهتماماتك المفضلة.</p>
+          <p className="text-slate-800 text-sl">نصنف رحلاتنا لتلبي تطلعاتك وتساعدك على صياغة اهتماماتك المفضلة.</p>
         </motion.div>
 
         <motion.div
@@ -319,11 +323,11 @@ export default function TripsClient({
             whileHover={{ y: -6 }}
             className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm text-center flex flex-col items-center space-y-3 group hover:shadow-md transition-all duration-300"
           >
-            <div className="w-14 h-14 bg-yellow-50 text-accent-yellow rounded-2xl flex items-center justify-center mb-2 group-hover:scale-110 transition-all duration-300">
+            <div className="w-14 h-14 bg-teal-50 text-primary-teal rounded-2xl flex items-center justify-center mb-2 group-hover:scale-110 transition-all duration-300">
               <Compass className="w-7 h-7" />
             </div>
             <h3 className="font-bold text-slate-800 text-base">رحلات مغامرة</h3>
-            <p className="text-xs text-slate-405 leading-relaxed max-w-xs text-center">
+            <p className="text-sm text-slate-800 leading-relaxed max-w-xs text-center">
               تحديات، هايكنج، واستكشاف في الطبيعة الجبلية والصحراوية لبناء الصلابة والاعتماد على الذات.
             </p>
           </motion.div>
@@ -333,11 +337,11 @@ export default function TripsClient({
             whileHover={{ y: -6 }}
             className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm text-center flex flex-col items-center space-y-3 group hover:shadow-md transition-all duration-300"
           >
-            <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-2 group-hover:scale-110 transition-all duration-300">
+            <div className="w-14 h-14 bg-teal-50 text-primary-teal rounded-2xl flex items-center justify-center mb-2 group-hover:scale-110 transition-all duration-300">
               <ShieldCheck className="w-7 h-7" />
             </div>
             <h3 className="font-bold text-slate-800 text-base">رحلات إيمانية</h3>
-            <p className="text-xs text-slate-405 leading-relaxed max-w-xs text-center">
+            <p className="text-sm text-slate-800 leading-relaxed max-w-xs text-center">
               تجربة روحانية وزيارة الحرمين الشريفين تشمل دروس التوعية وتعزيز الجوانب الإيمانية للشباب.
             </p>
           </motion.div>
@@ -347,11 +351,11 @@ export default function TripsClient({
             whileHover={{ y: -6 }}
             className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm text-center flex flex-col items-center space-y-3 group hover:shadow-md transition-all duration-300"
           >
-            <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mb-2 group-hover:scale-110 transition-all duration-300">
+            <div className="w-14 h-14 bg-teal-50 text-primary-teal rounded-2xl flex items-center justify-center mb-2 group-hover:scale-110 transition-all duration-300">
               <Heart className="w-7 h-7" />
             </div>
             <h3 className="font-bold text-slate-800 text-base">رحلات ترفيهية</h3>
-            <p className="text-xs text-slate-405 leading-relaxed max-w-xs text-center">
+            <p className="text-sm text-slate-800 leading-relaxed max-w-xs text-center">
               أنشطة رياضية بحرية، ألعاب شاطئية وفعاليات جماعية ترفيهية ممتعة تعزز الصداقات والألفة.
             </p>
           </motion.div>
@@ -368,7 +372,7 @@ export default function TripsClient({
             className="space-y-2 text-right"
           >
             <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">الرحلات الحالية</h2>
-            <p className="text-slate-500 text-sm">اختر رحلتك المفضلة وسجل فوراً لتضمن مقعدك في دفعتنا القادمة.</p>
+            <p className="text-slate-800 text-sl">اختر رحلتك المفضلة وسجل فوراً لتضمن مقعدك في دفعتنا القادمة.</p>
           </motion.div>
 
           {/* Filter Bar */}
@@ -412,15 +416,22 @@ export default function TripsClient({
                 whileHover={{ y: -8, scale: 1.01 }}
                 className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col group text-right"
               >
-                {/* Trip Image */}
                 <div className="h-56 w-full overflow-hidden relative">
-                  <Link href={tripLink}>
+                  {trip.registrationOpen !== false ? (
+                    <Link href={tripLink}>
+                      <img
+                        src={tripImg}
+                        alt={trip.title}
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-all duration-500"
+                      />
+                    </Link>
+                  ) : (
                     <img
                       src={tripImg}
                       alt={trip.title}
-                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-all duration-500"
+                      className="w-full h-full object-cover object-top opacity-80"
                     />
-                  </Link>
+                  )}
                   <span className="absolute z-20 top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-bold">
                     {trip.typeName || trip.type}
                   </span>
@@ -429,57 +440,73 @@ export default function TripsClient({
                 {/* Content */}
                 <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div className="space-y-2">
-                    <Link href={tripLink}>
-                      <h3 className="font-bold text-slate-800 text-base group-hover:text-accent-yellow transition-all duration-200 line-clamp-1">
+                    {trip.registrationOpen !== false ? (
+                      <Link href={tripLink}>
+                        <h3 className="font-bold text-slate-800 text-base group-hover:text-accent-yellow transition-all duration-200 line-clamp-1">
+                          {trip.title}
+                        </h3>
+                      </Link>
+                    ) : (
+                      <h3 className="font-bold text-slate-800 text-base opacity-80 line-clamp-1">
                         {trip.title}
                       </h3>
-                    </Link>
+                    )}
 
                     <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-slate-400 font-medium justify-end">
-                      <span className="flex items-center gap-1">
-                        <span>{trip.location}</span>
-                        <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <span>{tripDate}</span>
-                        <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                      </span>
+                      {trip.location && trip.registrationOpen !== false && (
+                        <span className="flex items-center gap-1">
+                          <span>{trip.location}</span>
+                          <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                        </span>
+                      )}
+                      {tripDate && trip.registrationOpen !== false && (
+                        <span className="flex items-center gap-1">
+                          <span>{tripDate}</span>
+                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                        </span>
+                      )}
                     </div>
 
-                    <p className="text-xs text-slate-550 leading-relaxed line-clamp-2 pt-2">
+                    <p className="text-sm text-slate-800 leading-relaxed line-clamp-2 pt-2">
                       {trip.description}
                     </p>
                   </div>
 
                   <div className="flex justify-between items-center pt-4 border-t border-slate-50">
-                    <div>
-                      <span className="text-[10px] text-slate-400 block font-medium">الرسوم المطلوبة</span>
-                      <span className="text-accent-yellow font-extrabold text-base">{trip.price} ر.س</span>
-                    </div>
+                    {trip.registrationOpen === false ? null : typeof trip.price !== "undefined" && trip.price !== null ? (
+                      <div>
+                        <span className="text-[10px] text-slate-400 block font-medium">الرسوم المطلوبة</span>
+                        <span className="text-accent-yellow font-extrabold text-base">{trip.price === 0 ? "مجاناً" : `${trip.price} ر.س`}</span>
+                      </div>
+                    ) : <div />}
                     <div className="flex gap-2">
-                      <MotionLink
-                        href={tripLink}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer"
-                      >
-                        التفاصيل
-                      </MotionLink>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => {
-                          if (!currentUser) {
-                            router.push('/register?type=trip&name=' + encodeURIComponent(trip.title));
-                            return;
-                          }
-                          setSelectedTrip(trip);
-                          setShowRegModal(true);
-                        }}
-                        className="px-4 py-2.5 bg-primary-navy hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg"
-                      >
-                        حجز سريع
-                      </motion.button>
+                      {trip.registrationOpen !== false && (
+                        <MotionLink
+                          href={tripLink}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer"
+                        >
+                          التفاصيل
+                        </MotionLink>
+                      )}
+                      {trip.registrationOpen !== false && (
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            if (!currentUser) {
+                              router.push('/register?type=trip&name=' + encodeURIComponent(trip.title));
+                              return;
+                            }
+                            setSelectedTrip(trip);
+                            setShowRegModal(true);
+                          }}
+                          className="px-4 py-2.5  bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg"
+                        >
+                          حجز سريع
+                        </motion.button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -496,16 +523,16 @@ export default function TripsClient({
 
             {/* Story/Visual info */}
             <div className="space-y-6 text-right">
-              <span className="text-xs font-bold text-accent-yellow uppercase tracking-widest block">أفكار ومقترحات</span>
+              <span className="text-xl font-bold text-accent-yellow uppercase tracking-widest block">أفكار ومقترحات</span>
               <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">اقترح رحلتك القادمة!</h2>
-              <p className="text-slate-500 text-sm leading-relaxed">
+              <p className="text-slate-800 text-sl leading-relaxed">
                 هل هناك مكان تحلم باستكشافه معنا؟ هل لديك فكرة لمغامرة جديدة أو وجهة إيمانية تود زيارتها مع مجتمع شباب ملهم؟
               </p>
-              <p className="text-slate-500 text-sm leading-relaxed">
+              <p className="text-slate-800 text-sl leading-relaxed">
                 نحن نهتم بأفكاركم وندرس كافة المقترحات بعناية لنبني رحلاتنا القادمة وفقاً لرغبات وااحتياجات أعضاء مجتمعنا. شاركنا فكرتك وسنحققها معاً!
               </p>
 
-              <div className="flex items-center gap-3 pt-2 text-xs text-slate-400 font-medium justify-end">
+              <div className="flex items-center gap-3 pt-2 text-sm text-slate-800 font-medium justify-end">
                 <span>أكثر من ٢٠ وجهة تم تنظيمها بناءً على اقتراحاتكم السابقة!</span>
                 <MessageSquare className="w-5 h-5 text-accent-yellow" />
               </div>
@@ -555,7 +582,7 @@ export default function TripsClient({
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg"
+                    className="w-full py-3.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg"
                   >
                     إرسال الاقتراح
                   </button>
@@ -587,13 +614,13 @@ export default function TripsClient({
 
           {/* Checklist details */}
           <div className="space-y-6 text-right font-tajawal">
-            <span className="text-xs font-bold text-accent-yellow uppercase tracking-widest block">دليل المغامر</span>
+            <span className="text-xl font-bold text-accent-yellow uppercase tracking-widest block">دليل المغامر</span>
             <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy">ماذا تأخذ معك في حقيبتك؟</h2>
-            <p className="text-slate-500 text-sm leading-relaxed">
+            <p className="text-slate-800 text-sl leading-relaxed">
               التخطيط والتجهيز المناسب هو سر نجاح أي مغامرة. للتسهيل عليك، قمنا بإعداد هذه القائمة للأشياء الأساسية التي يجب أن تضمها حقيبتك:
             </p>
 
-            <ul className="space-y-3.5 text-xs text-slate-605 font-medium flex flex-col items-end">
+            <ul className="space-y-3.5 text-sm text-slate-800 font-medium flex flex-col items-end">
               {gearList.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-2.5 justify-end">
                   <span>{item}</span>
@@ -610,7 +637,7 @@ export default function TripsClient({
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto space-y-4 mb-14">
           <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">آراء مُلهمينا</h2>
-          <p className="text-slate-505 text-sm">
+          <p className="text-slate-800 text-sl leading-relaxed">
             تجارب حقيقية عاشها شباب وفتيات من مجتمعنا في رحلاتنا الاستكشافية والمغامرات السابقة.
           </p>
         </div>
@@ -635,7 +662,7 @@ export default function TripsClient({
                     <Star key={i} className="w-4.5 h-4.5 fill-current" />
                   ))}
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed font-medium italic">
+                <p className="text-xs text-slate-800 leading-relaxed font-medium italic">
                   "{test.content}"
                 </p>
               </div>
@@ -701,7 +728,7 @@ export default function TripsClient({
                     <Plus className="w-5 h-5 rotate-45" />
                   </motion.button>
                   <div className="absolute bottom-6 right-6 text-white space-y-1">
-                    <span className="bg-accent-yellow text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
+                    <span className="bg-accent-yellow text-primary-navy text-[10px] font-bold px-2.5 py-1 rounded-full">
                       {selectedTrip.typeName || selectedTrip.type}
                     </span>
                     <h3 className="font-bold text-lg font-tajawal">{selectedTrip.title}</h3>
@@ -711,22 +738,28 @@ export default function TripsClient({
                 {/* Details Info */}
                 <div className="flex-grow overflow-y-auto p-6 space-y-6">
 
-                  <div className="grid grid-cols-2 gap-4 border border-slate-100 p-4 rounded-xl bg-slate-50 text-xs">
-                    <div className="space-y-1">
-                      <span className="text-slate-400 block font-semibold">الموقع والوجهة</span>
-                      <span className="font-bold text-slate-700 flex items-center gap-1 justify-end">
-                        {selectedTrip.location}
-                        <MapPin className="w-3.5 h-3.5 text-accent-yellow" />
-                      </span>
+                  {(selectedTrip.location || selectedTrip.date || selectedTrip.startDate) && (
+                    <div className={`grid ${selectedTrip.location && (selectedTrip.date || selectedTrip.startDate) ? 'grid-cols-2' : 'grid-cols-1'} gap-4 border border-slate-100 p-4 rounded-xl bg-slate-50 text-xs`}>
+                      {selectedTrip.location && (
+                        <div className="space-y-1">
+                          <span className="text-slate-400 block font-semibold">الموقع والوجهة</span>
+                          <span className="font-bold text-slate-700 flex items-center gap-1 justify-end">
+                            {selectedTrip.location}
+                            <MapPin className="w-3.5 h-3.5 text-accent-yellow" />
+                          </span>
+                        </div>
+                      )}
+                      {(selectedTrip.date || selectedTrip.startDate) && (
+                        <div className="space-y-1">
+                          <span className="text-slate-400 block font-semibold">التاريخ والموعد</span>
+                          <span className="font-bold text-slate-700 flex items-center gap-1 justify-end">
+                            {selectedTrip.date || (selectedTrip.startDate ? new Date(selectedTrip.startDate).toLocaleDateString("ar-SA") : "")}
+                            <Calendar className="w-3.5 h-3.5 text-accent-yellow" />
+                          </span>
+                        </div>
+                      )}
                     </div>
-                    <div className="space-y-1">
-                      <span className="text-slate-400 block font-semibold">التاريخ والموعد</span>
-                      <span className="font-bold text-slate-700 flex items-center gap-1 justify-end">
-                        {selectedTrip.date || (selectedTrip.startDate ? new Date(selectedTrip.startDate).toLocaleDateString("ar-SA") : "")}
-                        <Calendar className="w-3.5 h-3.5 text-accent-yellow" />
-                      </span>
-                    </div>
-                  </div>
+                  )}
 
                   <div className="space-y-2">
                     <h4 className="font-bold text-slate-800 text-sm">وصف وتفاصيل الرحلة</h4>
@@ -763,17 +796,19 @@ export default function TripsClient({
 
                 {/* Checkout / Registration trigger */}
                 <div className="border-t border-slate-100 p-6 bg-slate-50 flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] text-slate-400 block font-bold">التكلفة الإجمالية</span>
-                    <span className="text-lg font-extrabold text-accent-yellow">{selectedTrip.price} ر.س</span>
-                  </div>
+                  {typeof selectedTrip.price !== "undefined" && selectedTrip.price !== null ? (
+                    <div>
+                      <span className="text-[10px] text-slate-400 block font-bold">التكلفة الإجمالية</span>
+                      <span className="text-lg font-extrabold text-accent-yellow">{selectedTrip.price === 0 ? "مجاناً" : `${selectedTrip.price} ر.س`}</span>
+                    </div>
+                  ) : <div />}
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => {
                       setShowRegModal(true);
                     }}
-                    className="px-8 py-3.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
+                    className="px-8 py-3.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
                   >
                     سجل في الرحلة الآن
                   </motion.button>

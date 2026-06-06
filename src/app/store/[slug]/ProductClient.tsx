@@ -380,7 +380,7 @@ export default function ProductClient({ product }: ProductClientProps) {
                       onClick={() => setSelectedSize(size)}
                       className={`min-w-[42px] h-[42px] rounded-xl text-xs font-bold border transition-all duration-300 flex items-center justify-center ${
                         isSelected
-                          ? "bg-accent-yellow border-accent-yellow text-white shadow-sm shadow-yellow-100"
+                          ? "bg-accent-teal border-accent-teal text-white shadow-sm shadow-yellow-100"
                           : "bg-white border-slate-200 text-slate-700 hover:border-slate-350 hover:bg-slate-50"
                       }`}
                     >
@@ -518,7 +518,7 @@ export default function ProductClient({ product }: ProductClientProps) {
             className={`w-full py-4 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-all duration-350 active:scale-[0.98] ${
               addedToCart
                 ? "bg-emerald-600 text-white shadow-emerald-100 hover:bg-emerald-700"
-                : "bg-accent-yellow text-white hover:bg-primary-yellow shadow-yellow-50/50 glow-btn"
+                : "bg-accent-teal text-white hover:bg-primary-teal shadow-yellow-50/50 glow-btn"
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             {addedToCart ? (

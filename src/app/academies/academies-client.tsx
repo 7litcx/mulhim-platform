@@ -86,7 +86,7 @@ export default function AcademiesClient({
     title: academiesBanner.title,
     subtitle: academiesBanner.description,
     image: resolveImage(academiesBanner.images?.[0] || academiesBanner.image, 1600, 800),
-    btnText: academiesBanner.btnText || "عرض الأكاديميات",
+    btnText: academiesBanner.btnText,
     link: academiesBanner.link
   } : {
     title: "أكاديميات مُلهم: حيث تُصقل المواهب",
@@ -199,31 +199,35 @@ export default function AcademiesClient({
             <h1 className="text-3xl md:text-5xl font-black font-tajawal leading-tight">
               {academiesHero.title}
             </h1>
-            <p className="text-sm md:text-base text-slate-300 font-light leading-relaxed">
-              {academiesHero.subtitle}
-            </p>
+            {academiesHero.subtitle && (
+              <p className="text-sm md:text-base text-slate-300 font-light leading-relaxed">
+                {academiesHero.subtitle}
+              </p>
+            )}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 justify-start w-full sm:w-auto">
-              {academiesHero.link && normalizeLink(academiesHero.link) !== "/academies" && !academiesHero.link.startsWith("#") ? (
-                <MotionLink
-                  href={normalizeLink(academiesHero.link)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full sm:w-auto px-6 py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs font-bold shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer"
-                >
-                  {academiesHero.btnText}
-                </MotionLink>
-              ) : (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    const el = document.getElementById("academies-list");
-                    el?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="w-full sm:w-auto px-6 py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs font-bold shadow-lg transition-all duration-300 flex items-center justify-center"
-                >
-                  {academiesHero.btnText}
-                </motion.button>
+              {academiesHero.btnText && (
+                academiesHero.link && normalizeLink(academiesHero.link) !== "/academies" && !academiesHero.link.startsWith("#") ? (
+                  <MotionLink
+                    href={normalizeLink(academiesHero.link)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full sm:w-auto px-6 py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer"
+                  >
+                    {academiesHero.btnText}
+                  </MotionLink>
+                ) : (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      const el = document.getElementById("academies-list");
+                      el?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                    className="w-full sm:w-auto px-6 py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold shadow-lg transition-all duration-300 flex items-center justify-center"
+                  >
+                    {academiesHero.btnText}
+                  </motion.button>
+                )
               )}
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -250,9 +254,9 @@ export default function AcademiesClient({
           transition={{ duration: 0.6 }}
           className="text-center max-w-2xl mx-auto space-y-3 mb-16"
         >
-          <span className="text-xs font-bold text-accent-yellow tracking-widest uppercase block">برامجنا الاحترافية</span>
+          <span className="text-xl font-bold text-accent-yellow tracking-widest uppercase block">برامجنا الاحترافية</span>
           <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">أكاديمياتنا المتخصصة</h2>
-          <p className="text-slate-500 text-sm">
+          <p className="text-slate-800 text-sl">
             انضم إلى الأكاديمية التي تتماشى مع طموحاتك ومواهبك لتبدأ رحلة التعلم والتطور مع مدربينا.
           </p>
         </motion.div>
@@ -275,15 +279,22 @@ export default function AcademiesClient({
                 whileHover={{ y: -8, scale: 1.01 }}
                 className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col md:flex-row group text-right"
               >
-                {/* Image Block */}
                 <div className="md:w-2/5 h-64 md:h-auto overflow-hidden relative">
-                  <Link href={acadLink}>
+                  {acad.registrationOpen !== false ? (
+                    <Link href={acadLink}>
+                      <img
+                        src={acadImg}
+                        alt={acad.title}
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-all duration-500"
+                      />
+                    </Link>
+                  ) : (
                     <img
                       src={acadImg}
                       alt={acad.title}
-                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-all duration-500"
+                      className="w-full h-full object-cover object-top opacity-80"
                     />
-                  </Link>
+                  )}
                   <span className="absolute z-20 top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-accent-yellow px-3 py-1 rounded-full text-[10px] font-bold">
                     {acad.ageGroup || acad.targetAge || "جميع الأعمار"}
                   </span>
@@ -292,15 +303,23 @@ export default function AcademiesClient({
                 {/* Info Block */}
                 <div className="md:w-3/5 p-6 flex flex-col justify-between space-y-4">
                   <div className="space-y-2">
-                    <Link href={acadLink}>
-                      <h3 className="font-extrabold text-slate-800 text-lg group-hover:text-accent-yellow transition-all duration-200">
+                    {acad.registrationOpen !== false ? (
+                      <Link href={acadLink}>
+                        <h3 className="font-extrabold text-slate-800 text-lg group-hover:text-accent-yellow transition-all duration-200">
+                          {acad.title}
+                        </h3>
+                      </Link>
+                    ) : (
+                      <h3 className="font-extrabold text-slate-800 text-lg opacity-80">
                         {acad.title}
                       </h3>
-                    </Link>
-                    <p className="text-xs text-slate-405 font-medium leading-relaxed">
-                      {acad.schedule || (acad.startDate ? new Date(acad.startDate).toLocaleDateString("ar-SA") : "")}
-                    </p>
-                    <p className="text-xs text-slate-505 leading-relaxed line-clamp-3 pt-1">
+                    )}
+                    {(acad.schedule || acad.startDate) && acad.registrationOpen !== false && (
+                      <p className="text-xs text-slate-405 font-medium leading-relaxed">
+                        {acad.schedule || (acad.startDate ? new Date(acad.startDate).toLocaleDateString("ar-SA") : "")}
+                      </p>
+                    )}
+                    <p className="text-sm text-slate-800 leading-relaxed line-clamp-3 pt-1">
                       {acad.description}
                     </p>
                     {acad.tutor && (
@@ -314,33 +333,43 @@ export default function AcademiesClient({
                   </div>
 
                   <div className="flex justify-between items-center pt-4 border-t border-slate-50">
-                    <span className="text-accent-yellow font-extrabold text-base">
-                      {acad.price} ر.س <span className="text-[10px] text-slate-400 font-medium">/ شهرين</span>
-                    </span>
+                    {acad.registrationOpen === false ? null : typeof acad.price !== "undefined" && acad.price !== null ? (
+                      <span className="text-accent-yellow font-extrabold text-base">
+                        {acad.price === 0 ? "مجاناً" : (
+                          <>
+                            {acad.price} ر.س <span className="text-[10px] text-slate-400 font-medium">/ شهرين</span>
+                          </>
+                        )}
+                      </span>
+                    ) : <span />}
                     <div className="flex gap-2">
-                      <MotionLink
-                        href={acadLink}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer"
-                      >
-                        التفاصيل
-                      </MotionLink>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => {
-                          if (!currentUser) {
-                            router.push('/register?type=academy&name=' + encodeURIComponent(acad.title));
-                            return;
-                          }
-                          setSelectedAcademy(acad);
-                          setShowRegModal(true);
-                        }}
-                        className="px-4 py-2.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs font-bold transition-all duration-300"
-                      >
-                        سجل الآن
-                      </motion.button>
+                      {acad.registrationOpen !== false && (
+                        <MotionLink
+                          href={acadLink}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer"
+                        >
+                          التفاصيل
+                        </MotionLink>
+                      )}
+                      {acad.registrationOpen !== false && (
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            if (!currentUser) {
+                              router.push('/register?type=academy&name=' + encodeURIComponent(acad.title));
+                              return;
+                            }
+                            setSelectedAcademy(acad);
+                            setShowRegModal(true);
+                          }}
+                          className="px-4 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300"
+                        >
+                          سجل الآن
+                        </motion.button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -355,7 +384,7 @@ export default function AcademiesClient({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
             <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">تعرف على مدربينا</h2>
-            <p className="text-slate-500 text-sm">
+            <p className="text-slate-800 text-sl">
               نخبة من المدربين والخبراء المعتمدين محلياً ودولياً لتوجيهك ودعمك في كل مرحلة من رحلة تمكينك.
             </p>
           </div>
@@ -410,7 +439,7 @@ export default function AcademiesClient({
           className="text-center space-y-4 mb-12"
         >
           <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">الأسئلة الشائعة في الأكاديميات</h2>
-          <p className="text-slate-500 text-sm">كل ما تود معرفته عن نظام الاشتراكات والمواعيد وطرق الدفع والتدريب.</p>
+          <p className="text-slate-800 text-sl">كل ما تود معرفته عن نظام الاشتراكات والمواعيد وطرق الدفع والتدريب.</p>
         </motion.div>
 
         <div className="space-y-4 text-right">

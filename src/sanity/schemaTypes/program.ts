@@ -71,8 +71,8 @@ export const program = defineType({
       name: "price",
       title: "السعر (ريال سعودي)",
       type: "number",
-      description: "ضع 0 إذا كان البرنامج مجانياً.",
-      validation: (rule) => rule.required().min(0),
+      description: "ضع 0 إذا كان البرنامج مجانياً أو اتركه فارغاً.",
+      validation: (rule) => rule.min(0),
     }),
     defineField({
       name: "startDate",

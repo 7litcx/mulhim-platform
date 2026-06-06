@@ -58,6 +58,20 @@ export default async function AcademyDetailsPage({ params }: PageProps) {
     notFound();
   }
 
+  if (academy.registrationOpen === false) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-6 text-center">
+        <h1 className="text-3xl md:text-4xl font-black text-rose-500 mb-4 font-tajawal">التسجيل مغلق</h1>
+        <p className="text-slate-600 mb-8 max-w-md leading-relaxed">
+          نعتذر، التسجيل في هذه الأكاديمية غير متاح حالياً، ولا يمكن عرض التفاصيل. يرجى متابعة برامجنا القادمة.
+        </p>
+        <Link href="/academies" className="px-6 py-3 bg-primary-navy text-white rounded-xl font-bold hover:bg-slate-800 transition-colors">
+          العودة للأكاديميات
+        </Link>
+      </div>
+    );
+  }
+
   const startDateFormatted = academy.startDate 
     ? new Date(academy.startDate).toLocaleDateString("ar-SA", {
         weekday: "long",
@@ -65,7 +79,7 @@ export default async function AcademyDetailsPage({ params }: PageProps) {
         month: "long",
         day: "numeric",
       })
-    : "يُحدد قريباً";
+    : null;
 
   return (
     <div className="min-h-screen pb-20 bg-slate-50/50">
@@ -188,19 +202,23 @@ export default async function AcademyDetailsPage({ params }: PageProps) {
           {/* Left column: Sidebar actions */}
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6 text-right">
-              <div className="space-y-1">
-                <span className="text-xs text-slate-400 font-medium">قيمة الاشتراك</span>
-                <div className="text-2xl font-black text-accent-yellow font-sans">
-                  {academy.price > 0 ? `${academy.price} ر.س` : "مجاني"}
-                  {academy.price > 0 && <span className="text-xs text-slate-400 font-medium"> / شهرين</span>}
+              {typeof academy.price !== "undefined" && academy.price !== null && (
+                <div className="space-y-1">
+                  <span className="text-xs text-slate-400 font-medium">قيمة الاشتراك</span>
+                  <div className="text-2xl font-black text-accent-yellow font-sans">
+                    {academy.price > 0 ? `${academy.price} ر.س` : "مجاني"}
+                    {academy.price > 0 && <span className="text-xs text-slate-400 font-medium"> / شهرين</span>}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="space-y-4 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-600">
-                <div className="flex items-center gap-3 justify-end">
-                  <span>{startDateFormatted}</span>
-                  <Calendar className="w-5 h-5 text-accent-yellow flex-shrink-0" />
-                </div>
+                {startDateFormatted && (
+                  <div className="flex items-center gap-3 justify-end">
+                    <span>{startDateFormatted}</span>
+                    <Calendar className="w-5 h-5 text-accent-yellow flex-shrink-0" />
+                  </div>
+                )}
 
                 <div className="flex items-center gap-3 justify-end">
                   <span>مقر ملهم أو الملاعب الشريكة</span>
@@ -215,7 +233,7 @@ export default async function AcademyDetailsPage({ params }: PageProps) {
 
               <Link
                 href={`/register?type=academy&name=${encodeURIComponent(academy.title)}`}
-                className="w-full block text-center py-4 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300"
+                className="w-full block text-center py-4 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300"
               >
                 انضم الآن وسجل اهتمامك
               </Link>

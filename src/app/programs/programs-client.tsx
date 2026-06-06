@@ -86,7 +86,7 @@ export default function ProgramsClient({
     title: programsBanner.title,
     subtitle: programsBanner.description,
     image: resolveImage(programsBanner.images?.[0] || programsBanner.image),
-    btnText: programsBanner.btnText || "تعرف على البرامج",
+    btnText: programsBanner.btnText,
     link: programsBanner.link
   } : {
     title: "برامج الفتيات والبنين والأنشطة الشبابية",
@@ -191,31 +191,35 @@ export default function ProgramsClient({
             <h1 className="text-xl sm:text-3xl md:text-4xl font-black font-tajawal leading-tight">
               {programsHero.title}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-300 font-light leading-relaxed">
-              {programsHero.subtitle}
-            </p>
+            {programsHero.subtitle && (
+              <p className="text-xs sm:text-sm text-slate-300 font-light leading-relaxed">
+                {programsHero.subtitle}
+              </p>
+            )}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 justify-start w-full sm:w-auto">
-              {programsHero.link && normalizeLink(programsHero.link) !== "/programs" && !programsHero.link.startsWith("#") ? (
-                <MotionLink
-                  href={normalizeLink(programsHero.link)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer"
-                >
-                  {programsHero.btnText}
-                </MotionLink>
-              ) : (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    const el = document.getElementById("programs-tabs");
-                    el?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center"
-                >
-                  {programsHero.btnText}
-                </motion.button>
+              {programsHero.btnText && (
+                programsHero.link && normalizeLink(programsHero.link) !== "/programs" && !programsHero.link.startsWith("#") ? (
+                  <MotionLink
+                    href={normalizeLink(programsHero.link)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer"
+                  >
+                    {programsHero.btnText}
+                  </MotionLink>
+                ) : (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      const el = document.getElementById("programs-tabs");
+                      el?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                    className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center"
+                  >
+                    {programsHero.btnText}
+                  </motion.button>
+                )
               )}
             </div>
           </motion.div>

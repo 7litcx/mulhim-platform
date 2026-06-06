@@ -260,7 +260,7 @@ export default function QuickRegistrationModal({
                         }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "cash" ? "bg-accent-yellow text-white shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
+                        <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "cash" ? "bg-accent-yellow text-primary-navy shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
                           <Sparkles className="w-4 h-4" />
                         </div>
                         <div className="text-right">
@@ -281,7 +281,7 @@ export default function QuickRegistrationModal({
                         }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "card" ? "bg-accent-yellow text-white shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
+                        <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "card" ? "bg-accent-yellow text-primary-navy shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
                           <CreditCard className="w-4 h-4" />
                         </div>
                         <div className="text-right">
@@ -298,7 +298,7 @@ export default function QuickRegistrationModal({
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
-                  className="w-full py-3.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg mt-4 cursor-pointer"
+                  className="w-full py-3.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg mt-4 cursor-pointer"
                 >
                   إرسال طلب الانضمام
                 </motion.button>

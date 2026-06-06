@@ -36,7 +36,7 @@ export default function DashboardPage() {
           <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <Link
               href="/register"
-              className="w-full py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5"
+              className="w-full py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5"
             >
               تسجيل الدخول / إنشاء حساب
             </Link>
@@ -253,8 +253,8 @@ export default function DashboardPage() {
                 onClick={() => setActiveSection("family")}
                 className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 shadow-md ${
                   activeSection === "family"
-                    ? "bg-accent-yellow text-white shadow-yellow-500/20"
-                    : "bg-white/10 text-white hover:bg-white/20"
+                    ? "bg-accent-yellow text-primary-navy shadow-yellow-500/20"
+                    : "bg-white/10 text-primary-navy hover:bg-white/20"
                 }`}
               >
                 أبنائي ومتابعة الأنشطة ({childrenNames.length})
@@ -263,8 +263,8 @@ export default function DashboardPage() {
                 onClick={() => setActiveSection("orders")}
                 className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 shadow-md ${
                   activeSection === "orders"
-                    ? "bg-accent-yellow text-white shadow-yellow-500/20"
-                    : "bg-white/10 text-white hover:bg-white/20"
+                    ? "bg-accent-yellow text-primary-navy shadow-yellow-500/20"
+                    : "bg-white/10 text-primary-navy hover:bg-white/20"
                 }`}
               >
                 مشترياتي وطلباتي ({myOrders.length})
@@ -304,7 +304,7 @@ export default function DashboardPage() {
                     <div className="flex flex-wrap justify-center gap-3 pt-2">
                       <Link
                         href="/programs"
-                        className="px-5 py-2.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs font-bold transition-all shadow-sm"
+                        className="px-5 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all shadow-sm"
                       >
                         استكشف البرامج والفعاليات
                       </Link>
@@ -403,7 +403,7 @@ export default function DashboardPage() {
                     </div>
                     <Link
                       href="/store"
-                      className="inline-block px-6 py-2.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs font-bold transition-all shadow-sm"
+                      className="inline-block px-6 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all shadow-sm"
                     >
                       تصفح المتجر الآن
                     </Link>
@@ -476,7 +476,7 @@ export default function DashboardPage() {
               </div>
               <Link
                 href="/trips"
-                className="px-5 py-2.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-1.5 whitespace-nowrap self-stretch sm:self-center justify-center"
+                className="px-5 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-1.5 whitespace-nowrap self-stretch sm:self-center justify-center"
               >
                 <span>تصفح الرحلات والبرامج</span>
                 <ArrowLeft className="w-3.5 h-3.5" />

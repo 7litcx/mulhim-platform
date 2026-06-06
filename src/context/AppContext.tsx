@@ -528,7 +528,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   function saveToLocalStorage(key: string, data: any) {
-    localStorage.setItem(key, JSON.stringify(data));
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(key, JSON.stringify(data));
+      } catch (e) {
+        console.error("Error saving to local storage:", e);
+      }
+    }
   }
 
   // E-commerce Cart Logic
@@ -636,8 +642,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     // Sync with Supabase
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const userId = session?.user?.id || currentUser?.id;
+      // Use the currentUser state from Context directly to avoid getSession hanging
+      const userId = currentUser?.id;
       
       if (userId) {
         let childId: string | null = null;
@@ -645,12 +651,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         // If it's a child registration (program/academy/trip), insert/select child
         if (reg.type !== "volunteer") {
           // Check if child already exists
+          console.log('2. Checking existing child...');
           const { data: existingChild } = await supabase
             .from("children")
             .select("id")
             .eq("parent_id", userId)
             .eq("full_name", reg.fullName)
             .maybeSingle();
+          console.log('2. Existing child check done. Found:', !!existingChild);
 
           if (existingChild) {
             childId = existingChild.id;
@@ -665,6 +673,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               }
             }
 
+        console.log('3. Inserting child...');
         const { data: newChild, error: childErr } = await supabase
           .from("children")
           .insert({
@@ -675,6 +684,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           })
           .select()
           .single();
+        console.log('3. Child insert done.');
 
         if (childErr) {
           console.error("Error inserting child to Supabase:", childErr);
@@ -689,6 +699,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // Insert registration record
     const targetId = reg.targetName.includes(":") ? reg.targetName.split(":")[1]?.trim() : reg.targetName.replace(/\s+/g, "-");
 
+    console.log('4. Inserting registration...');
     const { error: regErr } = await supabase.from("registrations").insert({
       id: tempId,
       user_id: userId,
@@ -702,9 +713,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       target_id: targetId,
       target_name: reg.targetName,
       status: "pending",
-      payment_method: reg.paymentMethod,
-      extra_data: reg.extraData
+      extra_data: {
+        ...(reg.extraData || {}),
+        paymentMethod: reg.paymentMethod
+      }
     });
+    console.log('4. Registration insert done.');
 
     if (regErr) {
       console.error("Error inserting registration to Supabase:", regErr);
@@ -852,26 +866,8 @@ try {
           showToast("تم إنشاء الحساب بنجاح!", "success");
         }
       } else {
-        // 2. Sign in using Supabase auth (with 10s timeout to prevent infinite loading)
-        let timeoutId: NodeJS.Timeout;
-        const signInPromise = supabase.auth.signInWithPassword({ email, password });
-        const timeoutPromise = new Promise<never>((_, reject) => {
-          timeoutId = setTimeout(() => reject(new Error("timeout")), 10000);
-        });
-
-        let data: any, error: any;
-        try {
-          const result = await Promise.race([signInPromise, timeoutPromise]) as any;
-          clearTimeout(timeoutId!);
-          data = result.data;
-          error = result.error;
-        } catch (e: any) {
-          clearTimeout(timeoutId!);
-          if (e.message === "timeout") {
-            showToast("انتهت مهلة الاتصال. تحقق من اتصالك بالإنترنت وأعد المحاولة.", "error");
-          }
-          throw e;
-        }
+        // 2. Sign in using Supabase auth
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
         if (error) {
           // Translate common Supabase auth errors to Arabic

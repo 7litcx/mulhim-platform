@@ -109,7 +109,7 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
     title: aboutBanner.title,
     subtitle: aboutBanner.description,
     image: resolveImage(aboutBanner.images?.[0] || aboutBanner.image, 1600, 800),
-    btnText: aboutBanner.btnText || "قصتنا وقيمنا",
+    btnText: aboutBanner.btnText,
     link: aboutBanner.link
   } : {
     title: "عن مُلهم: قصة طموح وأثر",
@@ -129,7 +129,7 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
           <div className="absolute inset-0 z-0 transition-all duration-1000 ease-in-out">
             <div className="absolute inset-0 w-full h-full opacity-65">
               <Image
-                src={aboutHero.image || "/images/about-founding.png"}
+                src={aboutHero.image || "/images/About.png"}
                 alt={aboutHero.title || "About Us"}
                 fill
                 priority
@@ -161,14 +161,16 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
           >
             {aboutHero.title}
           </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: "spring", stiffness: 80, damping: 14, delay: 0.2 }}
-            className="text-xs sm:text-sm md:text-lg text-slate-300 max-w-2xl mx-auto font-light leading-relaxed"
-          >
-            {aboutHero.subtitle}
-          </motion.p>
+          {aboutHero.subtitle && (
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 80, damping: 14, delay: 0.2 }}
+              className="text-xs sm:text-sm md:text-lg text-slate-300 max-w-2xl mx-auto font-light leading-relaxed"
+            >
+              {aboutHero.subtitle}
+            </motion.p>
+          )}
           
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
@@ -176,27 +178,29 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
             transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.3 }}
             className="flex justify-center pt-2 w-full"
           >
-            {aboutHero.link && normalizeLink(aboutHero.link) !== "/about" && !aboutHero.link.startsWith("#") ? (
-              <MotionLink
-                href={normalizeLink(aboutHero.link)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-full sm:w-auto px-6 py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer"
-              >
-                {aboutHero.btnText}
-              </MotionLink>
-            ) : (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  const el = document.getElementById("our-story");
-                  el?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="w-full sm:w-auto px-6 py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer"
-              >
-                {aboutHero.btnText}
-              </motion.button>
+            {aboutHero.btnText && (
+              aboutHero.link && normalizeLink(aboutHero.link) !== "/about" && !aboutHero.link.startsWith("#") ? (
+                <MotionLink
+                  href={normalizeLink(aboutHero.link)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-full sm:w-auto px-6 py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer"
+                >
+                  {aboutHero.btnText}
+                </MotionLink>
+              ) : (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    const el = document.getElementById("our-story");
+                    el?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="w-full sm:w-auto px-6 py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer"
+                >
+                  {aboutHero.btnText}
+                </motion.button>
+              )
             )}
           </motion.div>
         </div>
@@ -205,7 +209,6 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
       {/* 2. Our Story Section */}
       <section id="our-story" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Image Block */}
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -214,7 +217,7 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
             className="relative rounded-3xl overflow-hidden shadow-xl aspect-video lg:aspect-square"
           >
             <Image
-              src="/images/about-founding.png"
+              src="/images/About.png"
               alt="قصتنا"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
@@ -230,9 +233,9 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
             transition={{ type: "spring", stiffness: 60, damping: 15 }}
             className="space-y-6 text-right"
           >
-            <span className="text-xs font-bold text-accent-yellow uppercase tracking-wider block">البداية والتطور</span>
+            <span className="text-xl font-bold text-accent-yellow uppercase tracking-wider block">البداية والتطور</span>
             <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">حكايتنا.. كيف بدأ الإلهام؟</h2>
-            <div className="text-slate-600 text-sm leading-relaxed space-y-4 font-tajawal">
+            <div className="text-slate-800 text-sl leading-relaxed space-y-4 font-tajawal">
               <p>
                 بدأت منصة "مُلهم" كفكرة بسيطة في أروقة التجمعات الشبابية، حيث لاحظنا فجوة بين تطلعات الشباب الواعد والمعرفة العملية والأنشطة الإثرائية التي تبني وتصقل شخصياتهم في بيئة ملهمة وصحية.
               </p>
@@ -267,7 +270,7 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
                 <Compass className="w-7 h-7" />
               </div>
               <h3 className="text-lg font-bold text-slate-800">رؤيتنا</h3>
-              <p className="text-xs text-slate-500 leading-relaxed max-w-xs">
+              <p className="text-sm text-slate-800 leading-relaxed max-w-xs">
                 أن نكون المنصة الشبابية الرائدة في تمكين المهارات، صناعة الأثر، وتخريج أجيال متمكنة من القادة والمبدعين.
               </p>
             </motion.div>
@@ -282,7 +285,7 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
                 <Target className="w-7 h-7" />
               </div>
               <h3 className="text-lg font-bold text-slate-800">رسالتنا</h3>
-              <p className="text-xs text-slate-500 leading-relaxed max-w-xs">
+              <p className="text-sm text-slate-800 leading-relaxed max-w-xs">
                 توفير بيئة تفاعلية تجمع بين التعلم العملي، المتعة، والمغامرة لبناء الشخصية المتكاملة وتعزيز التميز للشباب.
               </p>
             </motion.div>
@@ -297,7 +300,7 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
                 <Heart className="w-7 h-7" />
               </div>
               <h3 className="text-lg font-bold text-slate-800">قيمنا</h3>
-              <p className="text-xs text-slate-500 leading-relaxed max-w-xs">
+              <p className="text-sm text-slate-800 leading-relaxed max-w-xs">
                 الإبداع، التمكين، الشفافية، والعمل الجماعي، وهي الركائز الأساسية التي تنطلق منها كافة برامجنا ومبادراتنا.
               </p>
             </motion.div>
@@ -315,7 +318,7 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
           className="text-center max-w-2xl mx-auto space-y-4 mb-16"
         >
           <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">أهدافنا الاستراتيجية</h2>
-          <p className="text-slate-500 text-sm">
+          <p className="text-slate-800 text-sl">
             نسير وفق خطط استراتيجية مرسومة تضمن التطوير المستمر للخدمات وتعظيم الأثر الاجتماعي للشباب.
           </p>
         </motion.div>
@@ -336,8 +339,8 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
               <BookOpen className="w-6 h-6" />
             </div>
             <div className="space-y-1">
-              <h4 className="font-bold text-slate-800 text-sm">تطوير المهارات</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">تزويد الشباب بأحدث الأدوات والخبرات العملية اللازمة لسوق العمل وريادة الأعمال.</p>
+              <h4 className="font-bold text-slate-800 text-sl">تطوير المهارات</h4>
+              <p className="text-sm text-slate-800 leading-relaxed">تزويد الشباب بأحدث الأدوات والخبرات العملية اللازمة لسوق العمل وريادة الأعمال.</p>
             </div>
           </motion.div>
 
@@ -350,8 +353,8 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
               <Users className="w-6 h-6" />
             </div>
             <div className="space-y-1">
-              <h4 className="font-bold text-slate-800 text-sm">بناء المجتمع</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">خلق شبكة علاقات قوية وتفاعلية بين المبدعين من الشباب والفتيات لتبادل الخبرات.</p>
+              <h4 className="font-bold text-slate-800 text-sl">بناء المجتمع</h4>
+              <p className="text-sm text-slate-800 leading-relaxed">خلق شبكة علاقات قوية وتفاعلية بين المبدعين من الشباب والفتيات لتبادل الخبرات.</p>
             </div>
           </motion.div>
 
@@ -364,122 +367,33 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
               <Trophy className="w-6 h-6" />
             </div>
             <div className="space-y-1">
-              <h4 className="font-bold text-slate-800 text-sm">شراكات استراتيجية</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">التعاون مع المؤسسات والشركات المتميزة لتقديم فرص حصرية وبرامج توظيف وتأهيل للشباب.</p>
+              <h4 className="font-bold text-slate-800 text-sl">شراكات استراتيجية</h4>
+              <p className="text-sm text-slate-800 leading-relaxed">التعاون مع المؤسسات والشركات المتميزة لتقديم فرص حصرية وبرامج توظيف وتأهيل للشباب.</p>
             </div>
           </motion.div>
         </motion.div>
       </section>
 
-      {/* 5. Mulhim Supervisors Section */}
-      <section className="bg-slate-50 py-16 border-y border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-2xl mx-auto space-y-4 mb-16"
-          >
-            <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">مشرفو مُلهِم</h2>
-            <p className="text-slate-500 text-sm">
-              نخبة من الكفاءات المتميزة التي تقود مبادرات وبرامج منصة مُلهم نحو التميز والإبداع.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" dir="rtl">
-            {/* Supervisor 1 */}
-            <motion.div 
-               whileHover={{ y: -5 }}
-               className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
-            >
-              <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
-                <Image src="/images/supervaisor1.jpeg" alt="الشيخ باسم عبدالهادي" fill className="object-cover object-top" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-slate-800 font-tajawal">الشيخ باسم عبدالهادي</h3>
-                <p className="text-accent-yellow font-bold text-xs">مشرف البرامج</p>
-              </div>
-              <div className="text-sm text-slate-500 leading-relaxed text-right space-y-3 w-full">
-                <p>
-                  يتمتع الشيخ باسم بخبرة تزيد على 25 عامًا في الإشراف وإدارة البرامج التربوية والشبابية، ساهم خلالها في قيادة وتطوير المبادرات الهادفة لبناء الشخصية.
-                </p>
-                <div>
-                  <span className="font-bold text-slate-700 text-xs">أبرز المناصب القيادية:</span>
-                  <ul className="list-disc list-inside mt-1 space-y-1 text-xs">
-                    <li>مدير مجمع الحمودي لتحفيظ القرآن الكريم سابقًا.</li>
-                    <li>مشرف البرامج في جمعية خيركم لتحفيظ القرآن الكريم.</li>
-                    <li>مدير البرامج بمكتب حي الفيحاء سابقًا.</li>
-                    <li>مدير برنامج ملتقى بصمة إبداع سابقًا.</li>
-                    <li>مدير برنامج لون صيفك سابقًا.</li>
-                  </ul>
-                </div>
-                <p className="text-xs">
-                  يمتلك خبرة واسعة في التخطيط والتنظيم، مما أسهم في تحقيق أثر إيجابي ومستدام لدى المشاركين.
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Supervisor 2 */}
-            <motion.div 
-               whileHover={{ y: -5 }}
-               className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
-            >
-              <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
-                <Image src="/images/supervaisor2.jpeg" alt="الاستاذ نواف السيد" fill className="object-cover object-top" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-slate-800 font-tajawal">الاستاذ نواف السيد</h3>
-                <p className="text-blue-500 font-bold text-xs">مشرف إداري</p>
-              </div>
-              <div className="text-sm text-slate-500 leading-relaxed text-right space-y-3 w-full">
-                <p>
-                  يتميز الأستاذ نواف بخبرة في العمل الإداري والتنظيمي، مع اهتمام بتطوير البرامج والمبادرات ذات الأثر التربوي والتعليمي.
-                </p>
-                <p>
-                  يشغل منصب مدير حلقات مشكاة القرآنية بجامع الشيخ رافع الغامدي في جدة، حيث يسهم في الإشراف على البرامج القرآنية وتنظيم أعمال الحلقات بما يحقق أهدافها التعليمية والتربوية.
-                </p>
-                <p>
-                  وهو خريج جامعة الملك عبدالعزيز من كلية الآداب والعلوم الإنسانية، مما عزز من خبراته المعرفية والإدارية وأسهم في مسيرته المهنية.
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Supervisor 3 */}
-            <motion.div 
-               whileHover={{ y: -5 }}
-               className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
-            >
-              <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
-                <Image src="/images/supervaisor3.jpeg" alt="د. إبراهيم طارق محمود" fill className="object-cover object-top" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-slate-800 font-tajawal">د. إبراهيم طارق محمود</h3>
-                <p className="text-emerald-500 font-bold text-xs">مشرف التطوير والتدريب</p>
-              </div>
-              <div className="text-sm text-slate-500 leading-relaxed text-right space-y-3 w-full">
-                <p>
-                  يُعرف د. إبراهيم باهتمامه بالعمل الشبابي والتطوير المؤسسي، مع تركيزه على بناء المبادرات التي تسهم في تنمية قدرات الشباب وتمكينهم من تحقيق أثر مستدام.
-                </p>
-                <p>
-                  يعمل عضو هيئة تدريس في جامعة الملك عبدالعزيز، حيث يجمع بين الخبرة الأكاديمية والممارسة العملية في مجالات التطوير والتأهيل.
-                </p>
-                <p>
-                  يهتم بتصميم وتنفيذ البرامج النوعية، ويولي عناية خاصة بمجالات التدريب والابتكار والتقنيات الحديثة في تطوير الأفراد والمؤسسات.
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
       {/* 6. Success Marquee */}
-      <section className="bg-gradient-to-b from-primary-navy to-slate-950 py-12 text-white relative overflow-hidden border-y border-white/5">
+      <section className="bg-primary-teal py-16 text-white relative overflow-hidden border-y border-white/5">
         {/* Background glow effects */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-72 h-72 bg-accent-yellow/10 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-72 h-72 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-2xl mx-auto space-y-3 mb-12"
+          >
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white font-tajawal">مُلهم في أرقام</h2>
+            <p className="text-slate-400 text-sm md:text-base">
+              مسيرتنا تتوج بالأرقام، وأثرنا يمتد ليصنع التغيير.
+            </p>
+          </motion.div>
+
           <motion.div 
             variants={containerVariants}
             initial="hidden"
@@ -568,34 +482,96 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
         </div>
       </section>
 
-      {/* 6. Success Partners logos */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
-        <h3 className="text-slate-400 font-bold text-xs uppercase tracking-widest">شركاء التميز والنجاح</h3>
-        <motion.div 
-          initial={{ opacity: 0.3 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="flex flex-wrap justify-center items-center gap-12 opacity-40 grayscale hover:opacity-75 hover:grayscale-0 transition-all duration-300"
-        >
-          <div className="flex items-center gap-2 font-black text-slate-500 text-lg">
-            <ShieldCheck className="w-5 h-5 text-accent-yellow" />
-            <span>مؤسسة العطاء</span>
+      {/* 5. Mulhim Supervisors Section */}
+      <section className="bg-slate-50 py-16 border-y border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-2xl mx-auto space-y-4 mb-16"
+          >
+            <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">مشرفو مُلهِم</h2>
+            <p className="text-slate-800 text-sl">
+              نخبة من الكفاءات المتميزة التي تقود مبادرات وبرامج منصة مُلهم نحو التميز والإبداع.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" dir="rtl">
+            {/* Supervisor 1 */}
+            <motion.div 
+               whileHover={{ y: -5 }}
+               className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
+            >
+              <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
+                <Image src="/images/supervaisor1.jpeg" alt="الشيخ باسم عبدالهادي" fill className="object-cover object-top" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-slate-800 font-tajawal">الأستاذ باسم عبدالهادي</h3>
+                <p className="text-accent-yellow font-bold text-xs">مشرف البرامج</p>
+              </div>
+              <div className="text-sm text-slate-800 leading-relaxed text-right space-y-3 w-full">
+                <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm">
+                  <li>خبرة تتجاوز 25 عامًا في الإشراف وإدارة البرامج التربوية والشبابية.</li>
+                  <li>أسهم في قيادة وتطوير العديد من المبادرات والبرامج ذات الأثر التربوي والتنموي.</li>
+                  <li>شغل منصب مشرف البرامج في جمعية خيركم.</li>
+                  <li>عمل مديرًا للبرامج بمكتب حي الفيحاء.</li>
+                  <li>مؤسس برنامج «لون صيفك».</li>
+                  <li>يمتلك خبرة واسعة في التخطيط والإشراف على البرامج النوعية وإدارة الفرق.</li>
+                </ul>
+              </div>
+            </motion.div>
+
+            {/* Supervisor 2 */}
+            <motion.div 
+               whileHover={{ y: -5 }}
+               className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
+            >
+              <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
+                <Image src="/images/supervaisor2.jpeg" alt="الاستاذ نواف السيد" fill className="object-cover object-top" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-slate-800 font-tajawal">الأستاذ نواف السيد</h3>
+                <p className="text-blue-500 font-bold text-xs">المشرف الإداري</p>
+              </div>
+              <div className="text-sm text-slate-800 leading-relaxed text-right space-y-3 w-full">
+                <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm">
+                  <li>خريج جامعة الملك عبدالعزيز.</li>
+                  <li>مشرف إداري في برنامج ملهم.</li>
+                  <li>يمتلك خبرة في الإدارة والتنظيم وتطوير المبادرات التربوية والتعليمية.</li>
+                  <li>مدير حلقات مشكاة القرآنية بجامع الشيخ رافع الغامدي بجدة.</li>
+                  <li>مهتم ببناء الأنظمة الإدارية وتحسين بيئات العمل.</li>
+                </ul>
+              </div>
+            </motion.div>
+
+            {/* Supervisor 3 */}
+            <motion.div 
+               whileHover={{ y: -5 }}
+               className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center flex flex-col items-center gap-4 transition-all duration-300 hover:shadow-md group"
+            >
+              <div className="w-28 h-28 rounded-full bg-slate-100 overflow-hidden relative border-4 border-white shadow-lg mb-2">
+                <Image src="/images/supervaisor3.jpeg" alt="د. إبراهيم طارق محمود" fill className="object-cover object-top" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-slate-800 font-tajawal">د. إبراهيم طارق محمود</h3>
+                <p className="text-emerald-500 font-bold text-xs">مشرف التطوير والتدريب</p>
+              </div>
+              <div className="text-sm text-slate-800 leading-relaxed text-right space-y-3 w-full">
+                <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm">
+                  <li>عضو هيئة تدريس في جامعة الملك عبدالعزيز.</li>
+                  <li>خبرة تزيد على 10 سنوات في التطوير المؤسسي والعمل الشبابي والتدريب.</li>
+                  <li>أسهم في تأسيس وإدارة عدد من الجمعيات والمراكز والمبادرات الشبابية والقرآنية.</li>
+                  <li>مهتم ببناء البرامج النوعية وتنمية القدرات.</li>
+                  <li>يعمل على تطوير الكوادر والفرق العاملة ورفع كفاءتها.</li>
+                </ul>
+              </div>
+            </motion.div>
           </div>
-          <div className="flex items-center gap-2 font-black text-slate-500 text-lg">
-            <ShieldCheck className="w-5 h-5 text-accent-yellow" />
-            <span>أكاديمية الريادة</span>
-          </div>
-          <div className="flex items-center gap-2 font-black text-slate-500 text-lg">
-            <ShieldCheck className="w-5 h-5 text-accent-yellow" />
-            <span>جمعية التمكين</span>
-          </div>
-          <div className="flex items-center gap-2 font-black text-slate-500 text-lg">
-            <ShieldCheck className="w-5 h-5 text-accent-yellow" />
-            <span>شركة آفاق</span>
-          </div>
-        </motion.div>
+        </div>
       </section>
+
 
     </div>
   );

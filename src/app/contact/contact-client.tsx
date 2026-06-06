@@ -161,8 +161,8 @@ export default function ContactClient() {
                 </div>
                 <div className="space-y-1 pt-1">
                   <h4 className="text-xs font-bold text-slate-400">رقم الهاتف</h4>
-                  <a href="tel:+966500000000" className="text-sm font-semibold text-slate-800 hover:text-blue-600 transition-all font-sans" dir="ltr">
-                    +966 5X XXX XXXX
+                  <a href="tel:+966564605055" className="text-sm font-semibold text-slate-800 hover:text-blue-600 transition-all font-sans" dir="ltr">
+                    +966 56 460 5055
                   </a>
                 </div>
               </motion.div>
@@ -299,7 +299,7 @@ export default function ContactClient() {
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full sm:w-auto px-8 py-3.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-sm font-bold shadow-lg hover:shadow-yellow-900/20 disabled:bg-slate-350 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full sm:w-auto px-8 py-3.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-sm font-bold shadow-lg hover:shadow-yellow-900/20 disabled:bg-slate-350 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>

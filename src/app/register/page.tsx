@@ -412,7 +412,7 @@ function RegisterContent() {
                           onClick={() => handleSelectChild(name)}
                           className={`px-3 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
                             selectedChildName === name
-                              ? "bg-accent-yellow text-white border-accent-yellow shadow-md animate-in fade-in duration-200"
+                              ? "bg-accent-yellow text-primary-navy border-accent-yellow shadow-md animate-in fade-in duration-200"
                               : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
                           }`}
                         >
@@ -424,7 +424,7 @@ function RegisterContent() {
                         onClick={() => handleSelectChild("new")}
                         className={`px-3 py-2 rounded-xl text-xs font-bold transition-all border flex items-center gap-1 cursor-pointer ${
                           selectedChildName === "new"
-                            ? "bg-accent-yellow text-white border-accent-yellow shadow-md animate-in fade-in duration-200"
+                            ? "bg-accent-yellow text-primary-navy border-accent-yellow shadow-md animate-in fade-in duration-200"
                             : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
                         }`}
                       >
@@ -536,7 +536,7 @@ function RegisterContent() {
                           }`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "cash" ? "bg-accent-yellow text-white shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
+                          <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "cash" ? "bg-accent-yellow text-primary-navy shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
                             <Sparkles className="w-4 h-4" />
                           </div>
                           <div className="text-right">
@@ -557,7 +557,7 @@ function RegisterContent() {
                           }`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "card" ? "bg-accent-yellow text-white shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
+                          <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "card" ? "bg-accent-yellow text-primary-navy shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
                             <CreditCard className="w-4 h-4" />
                           </div>
                           <div className="text-right">
@@ -582,7 +582,7 @@ function RegisterContent() {
                   <button
                     type="button"
                     onClick={handleActivityRegisterSubmit}
-                    className="px-6 py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 cursor-pointer"
+                    className="px-6 py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 cursor-pointer"
                   >
                     تأكيد حجز مقعد النشاط
                     <CheckCircle className="w-3.5 h-3.5" />
@@ -644,7 +644,7 @@ function RegisterContent() {
                 </p>
                 <Link
                   href="/"
-                  className="px-6 py-2.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs font-bold transition-all duration-300"
+                  className="px-6 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300"
                 >
                   العودة للرئيسية
                 </Link>
@@ -666,7 +666,7 @@ function RegisterContent() {
 
                   {/* Step 1 */}
                   <div className="flex flex-col items-center gap-1 z-10">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold font-sans transition-all duration-300 ${step >= 1 ? "bg-accent-yellow text-white shadow-sm ring-4 ring-white" : "bg-slate-100 text-slate-400"
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold font-sans transition-all duration-300 ${step >= 1 ? "bg-accent-yellow text-primary-navy shadow-sm ring-4 ring-white" : "bg-slate-100 text-slate-400"
                       }`}>
                       1
                     </div>
@@ -675,7 +675,7 @@ function RegisterContent() {
 
                   {/* Step 2 */}
                   <div className="flex flex-col items-center gap-1 z-10">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold font-sans transition-all duration-300 ${step >= 2 ? "bg-accent-yellow text-white shadow-sm ring-4 ring-white" : "bg-slate-100 text-slate-400"
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold font-sans transition-all duration-300 ${step >= 2 ? "bg-accent-yellow text-primary-navy shadow-sm ring-4 ring-white" : "bg-slate-100 text-slate-400"
                       }`}>
                       2
                     </div>
@@ -684,7 +684,7 @@ function RegisterContent() {
 
                   {/* Step 3 */}
                   <div className="flex flex-col items-center gap-1 z-10">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold font-sans transition-all duration-300 ${step >= 3 ? "bg-accent-yellow text-white shadow-sm ring-4 ring-white" : "bg-slate-100 text-slate-400"
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold font-sans transition-all duration-300 ${step >= 3 ? "bg-accent-yellow text-primary-navy shadow-sm ring-4 ring-white" : "bg-slate-100 text-slate-400"
                       }`}>
                       3
                     </div>
@@ -693,7 +693,7 @@ function RegisterContent() {
 
                   {/* Step 4 */}
                   <div className="flex flex-col items-center gap-1 z-10">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold font-sans transition-all duration-300 ${step >= 4 ? "bg-accent-yellow text-white shadow-sm ring-4 ring-white" : "bg-slate-100 text-slate-400"
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold font-sans transition-all duration-300 ${step >= 4 ? "bg-accent-yellow text-primary-navy shadow-sm ring-4 ring-white" : "bg-slate-100 text-slate-400"
                       }`}>
                       4
                     </div>
@@ -928,7 +928,7 @@ function RegisterContent() {
                               }`}
                           >
                             <div className="flex items-center gap-3">
-                              <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "card" ? "bg-accent-yellow text-white shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
+                              <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "card" ? "bg-accent-yellow text-primary-navy shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
                                 <CreditCard className="w-4 h-4" />
                               </div>
                               <div className="text-right">
@@ -949,7 +949,7 @@ function RegisterContent() {
                               }`}
                           >
                             <div className="flex items-center gap-3">
-                              <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "cash" ? "bg-accent-yellow text-white shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
+                              <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "cash" ? "bg-accent-yellow text-primary-navy shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
                                 <Sparkles className="w-4 h-4" />
                               </div>
                               <div className="text-right">
@@ -1031,7 +1031,7 @@ function RegisterContent() {
                     <button
                       type="button"
                       onClick={handleNextStep}
-                      className="px-5 py-2.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 cursor-pointer"
+                      className="px-5 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 cursor-pointer"
                     >
                       التالي
                       <ArrowLeft className="w-3.5 h-3.5" />
@@ -1040,7 +1040,7 @@ function RegisterContent() {
                     <button
                       type="button"
                       onClick={handleRegisterSubmit}
-                      className="px-6 py-2.5 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 cursor-pointer"
+                      className="px-6 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 cursor-pointer"
                     >
                       تأكيد التسجيل النهائي
                       <CheckCircle className="w-3.5 h-3.5" />
@@ -1113,7 +1113,7 @@ function RegisterContent() {
                   <button
                     type="submit"
                     disabled={isLoggingIn}
-                    className="px-6 py-2.5 bg-accent-yellow hover:bg-primary-yellow disabled:bg-slate-300 text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg cursor-pointer flex items-center gap-1.5"
+                    className="px-6 py-2.5 bg-accent-yellow hover:bg-primary-yellow disabled:bg-slate-300 text-primary-navy rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg cursor-pointer flex items-center gap-1.5"
                   >
                     {isLoggingIn ? "جاري الدخول..." : "تسجيل الدخول"}
                   </button>
@@ -1157,7 +1157,7 @@ function RegisterContent() {
                   <button
                     type="submit"
                     disabled={isSendingReset}
-                    className="px-6 py-2.5 bg-accent-yellow hover:bg-primary-yellow disabled:bg-slate-300 text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 cursor-pointer"
+                    className="px-6 py-2.5 bg-accent-yellow hover:bg-primary-yellow disabled:bg-slate-300 text-primary-navy rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 cursor-pointer"
                   >
                     {isSendingReset ? "جاري الإرسال..." : "إرسال رابط الاستعادة"}
                   </button>

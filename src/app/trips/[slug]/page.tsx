@@ -56,17 +56,31 @@ export default async function TripDetailsPage({ params }: PageProps) {
     notFound();
   }
 
-  const startDateFormatted = new Date(trip.startDate).toLocaleDateString("ar-SA", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  if (trip.registrationOpen === false) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-6 text-center">
+        <h1 className="text-3xl md:text-4xl font-black text-rose-500 mb-4 font-tajawal">التسجيل مغلق</h1>
+        <p className="text-slate-600 mb-8 max-w-md leading-relaxed">
+          نعتذر، التسجيل في هذه الرحلة غير متاح حالياً، ولا يمكن عرض التفاصيل. يرجى متابعة رحلاتنا القادمة.
+        </p>
+        <Link href="/trips" className="px-6 py-3 bg-primary-navy text-white rounded-xl font-bold hover:bg-slate-800 transition-colors">
+          العودة للرحلات
+        </Link>
+      </div>
+    );
+  }
 
-  const endDateFormatted = new Date(trip.endDate).toLocaleDateString("ar-SA", {
+  const startDateFormatted = trip.startDate ? new Date(trip.startDate).toLocaleDateString("ar-SA", {
     year: "numeric",
     month: "long",
     day: "numeric",
-  });
+  }) : null;
+
+  const endDateFormatted = trip.endDate ? new Date(trip.endDate).toLocaleDateString("ar-SA", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }) : null;
 
   return (
     <div className="min-h-screen pb-20 bg-slate-50/50">
@@ -92,13 +106,15 @@ export default async function TripDetailsPage({ params }: PageProps) {
             </Link>
             
             <div className="flex flex-wrap gap-2">
-              <span className="px-3 py-1 bg-accent-yellow text-white rounded-full text-xs font-bold">
+              <span className="px-3 py-1 bg-accent-yellow text-primary-navy rounded-full text-xs font-bold">
                 {trip.typeName}
               </span>
-              <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
-                <MapPin className="w-3 h-3 text-accent-yellow" />
-                {trip.location}
-              </span>
+              {trip.location && (
+                <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+                  <MapPin className="w-3 h-3 text-accent-yellow" />
+                  {trip.location}
+                </span>
+              )}
             </div>
             
             <h1 className="text-2xl md:text-4xl font-extrabold leading-tight font-tajawal">
@@ -161,40 +177,48 @@ export default async function TripDetailsPage({ params }: PageProps) {
           {/* Sidebar */}
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6 text-right">
-              <div className="space-y-1">
-                <span className="text-xs text-slate-400 font-medium">تكلفة الاشتراك</span>
-                <div className="text-2xl font-black text-accent-yellow font-sans">
-                  {trip.price} ر.س
-                </div>
-              </div>
-
-              <div className="space-y-4 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-600">
-                <div className="flex items-center gap-3">
-                  <Calendar className="w-5 h-5 text-accent-yellow flex-shrink-0" />
-                  <div>
-                    <span className="block text-[10px] text-slate-450">تاريخ الذهاب</span>
-                    <span>{startDateFormatted}</span>
+              {typeof trip.price !== "undefined" && trip.price !== null && (
+                <div className="space-y-1">
+                  <span className="text-xs text-slate-400 font-medium">تكلفة الاشتراك</span>
+                  <div className="text-2xl font-black text-accent-yellow font-sans">
+                    {trip.price === 0 ? "مجاناً" : `${trip.price} ر.س`}
                   </div>
                 </div>
+              )}
 
-                <div className="flex items-center gap-3">
-                  <Clock className="w-5 h-5 text-accent-yellow flex-shrink-0" />
-                  <div>
-                    <span className="block text-[10px] text-slate-450">تاريخ الإياب</span>
-                    <span>{endDateFormatted}</span>
-                  </div>
-                </div>
-
-                {trip.maxParticipants && (
-                  <div className="flex items-center gap-3">
-                    <Users className="w-5 h-5 text-accent-yellow flex-shrink-0" />
-                    <div>
-                      <span className="block text-[10px] text-slate-450">المقاعد المتاحة</span>
-                      <span>{trip.maxParticipants} مقعد فقط</span>
+              {(startDateFormatted || endDateFormatted || trip.maxParticipants) && (
+                <div className="space-y-4 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-600">
+                  {startDateFormatted && (
+                    <div className="flex items-center gap-3">
+                      <Calendar className="w-5 h-5 text-accent-yellow flex-shrink-0" />
+                      <div>
+                        <span className="block text-[10px] text-slate-450">تاريخ الذهاب</span>
+                        <span>{startDateFormatted}</span>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+
+                  {endDateFormatted && (
+                    <div className="flex items-center gap-3">
+                      <Clock className="w-5 h-5 text-accent-yellow flex-shrink-0" />
+                      <div>
+                        <span className="block text-[10px] text-slate-450">تاريخ الإياب</span>
+                        <span>{endDateFormatted}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {trip.maxParticipants && (
+                    <div className="flex items-center gap-3">
+                      <Users className="w-5 h-5 text-accent-yellow flex-shrink-0" />
+                      <div>
+                        <span className="block text-[10px] text-slate-450">المقاعد المتاحة</span>
+                        <span>{trip.maxParticipants} مقعد فقط</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <Link
                 href={`/register?type=trip&name=${encodeURIComponent(trip.title)}`}

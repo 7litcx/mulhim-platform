@@ -51,7 +51,7 @@ export const product = defineType({
       name: "price",
       title: "السعر (ريال سعودي)",
       type: "number",
-      validation: (rule) => rule.required().min(0),
+      validation: (rule) => rule.min(0),
     }),
     defineField({
       name: "compareAtPrice",

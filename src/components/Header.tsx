@@ -16,8 +16,10 @@ export const Header: React.FC = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   React.useEffect(() => {
+    setMounted(true);
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
@@ -92,7 +94,7 @@ export const Header: React.FC = () => {
               })}
               
               {/* Dashboard Link for Admin (Sanity Studio) */}
-              {currentUser?.role === 'admin' && (
+              {mounted && currentUser?.role === 'admin' && (
                 <Link
                   href="/studio"
                   className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all duration-300 self-center mr-2 border hover:scale-105 ${
@@ -120,8 +122,8 @@ export const Header: React.FC = () => {
                 aria-label="سلة المشتريات"
               >
                 <ShoppingCart className="w-6 h-6" />
-                {cartItemsCount > 0 && (
-                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/3 -translate-y-1/3 bg-accent-yellow rounded-full animate-bounce">
+                {mounted && cartItemsCount > 0 && (
+                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-primary-navy transform translate-x-1/3 -translate-y-1/3 bg-accent-yellow rounded-full animate-bounce">
                     {cartItemsCount}
                   </span>
                 )}
@@ -129,25 +131,29 @@ export const Header: React.FC = () => {
 
               {/* User Account / Profile */}
               <div className="relative">
-                {currentUser ? (
-                  <button
-                    onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                    className="w-10 h-10 rounded-full bg-yellow-600 text-white font-bold flex items-center justify-center shadow-md hover:bg-yellow-700 transition-all duration-300"
-                  >
-                    {currentUser.fullName.charAt(0)}
-                  </button>
+                {mounted ? (
+                  currentUser ? (
+                    <button
+                      onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                      className="w-10 h-10 rounded-full bg-yellow-600 text-white font-bold flex items-center justify-center shadow-md hover:bg-yellow-700 transition-all duration-300"
+                    >
+                      {currentUser.fullName.charAt(0)}
+                    </button>
+                  ) : (
+                    <Link
+                      href="/register"
+                      className={`p-2 rounded-full transition-all duration-300 block ${
+                        effectiveScrolled 
+                          ? "text-slate-600 hover:text-accent-yellow hover:bg-slate-100" 
+                          : "text-white/90 hover:text-white hover:bg-white/10"
+                      }`}
+                      aria-label="تسجيل الدخول"
+                    >
+                      <User className="w-6 h-6" />
+                    </Link>
+                  )
                 ) : (
-                  <Link
-                    href="/register"
-                    className={`p-2 rounded-full transition-all duration-300 block ${
-                      effectiveScrolled 
-                        ? "text-slate-600 hover:text-accent-yellow hover:bg-slate-100" 
-                        : "text-white/90 hover:text-white hover:bg-white/10"
-                    }`}
-                    aria-label="تسجيل الدخول"
-                  >
-                    <User className="w-6 h-6" />
-                  </Link>
+                  <div className="w-10 h-10 rounded-full bg-slate-200/20 animate-pulse" />
                 )}
 
                 {/* Profile Dropdown */}
@@ -218,7 +224,7 @@ export const Header: React.FC = () => {
             })}
             
             {/* Dashboard Mobile Link */}
-            {currentUser?.role === 'admin' && (
+            {mounted && currentUser?.role === 'admin' && (
               <Link
                 href="/studio"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -264,7 +270,7 @@ export const Header: React.FC = () => {
                     <Link
                       href="/store"
                       onClick={() => setIsCartOpen(false)}
-                      className="mt-6 px-6 py-2.5 bg-accent-yellow text-white rounded-xl text-sm font-semibold hover:bg-primary-yellow transition-all duration-300"
+                      className="mt-6 px-6 py-2.5 bg-accent-yellow text-primary-navy rounded-xl text-sm font-semibold hover:bg-primary-yellow transition-all duration-300"
                     >
                       تصفح المتجر الآن
                     </Link>
@@ -335,7 +341,7 @@ export const Header: React.FC = () => {
                     <Link
                       href="/store?checkout=true"
                       onClick={() => setIsCartOpen(false)}
-                      className="w-full py-3 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-center text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300"
+                      className="w-full py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-center text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300"
                     >
                       إتمام الطلب
                     </Link>

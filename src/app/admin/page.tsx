@@ -314,7 +314,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`px-5 py-3 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center gap-2 ${
                   activeTab === tab.id
-                    ? "bg-accent-yellow text-white shadow-yellow-500/20"
+                    ? "bg-accent-yellow text-primary-navy shadow-yellow-500/20"
                     : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
                 }`}
               >
@@ -384,7 +384,7 @@ export default function AdminDashboardPage() {
                   <h2 className="font-bold text-slate-800">إدارة المستخدمين</h2>
                   <button 
                     onClick={() => setCreateUserModal(true)}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-accent-yellow hover:bg-yellow-600 text-white rounded-lg text-sm font-bold transition-colors"
+                    className="flex items-center gap-1.5 px-4 py-2 bg-accent-yellow hover:bg-yellow-600 text-primary-navy rounded-lg text-sm font-bold transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                     إضافة مستخدم
@@ -816,7 +816,7 @@ export default function AdminDashboardPage() {
                     <option value="admin">مشرف (Admin)</option>
                   </select>
                 </div>
-                <button type="submit" disabled={isCreatingUser} className="w-full mt-4 py-3.5 bg-accent-yellow hover:bg-yellow-600 text-white rounded-xl text-sm font-bold transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex justify-center items-center gap-2">
+                <button type="submit" disabled={isCreatingUser} className="w-full mt-4 py-3.5 bg-accent-yellow hover:bg-yellow-600 text-primary-navy rounded-xl text-sm font-bold transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex justify-center items-center gap-2">
                   {isCreatingUser ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : "إنشاء الحساب"}
                 </button>
               </form>
