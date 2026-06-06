@@ -120,7 +120,7 @@ export default function HomeClient({
 }: HomeClientProps) {
   const { products: contextProducts, trips: contextTrips, programs: contextPrograms, academies: contextAcademies, addToCart, currentUser } = useApp();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"girls" | "boys">("girls");
+  const [activeTab, setActiveTab] = useState<"girls" | "boys">("boys");
   const [showRegModal, setShowRegModal] = useState(false);
   const [selectedProgram, setSelectedProgram] = useState<any>(null);
 

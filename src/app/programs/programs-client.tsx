@@ -69,7 +69,7 @@ export default function ProgramsClient({
   const router = useRouter();
 
   // Gender tab state
-  const [activeGender, setActiveGender] = useState<"girls" | "boys">("girls");
+  const [activeGender, setActiveGender] = useState<"girls" | "boys">("boys");
 
   // Category sub-filters
   const [activeCategory, setActiveCategory] = useState<string>("all");
