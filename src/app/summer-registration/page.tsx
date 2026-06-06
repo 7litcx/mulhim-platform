@@ -44,6 +44,14 @@ export default function SummerRegistrationPage() {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
     
+    if (name === "birthDate" && value) {
+      const selectedYear = new Date(value).getFullYear();
+      if (selectedYear > 2020) {
+        showToast("عذراً، البرنامج مخصص لمواليد 2020 وما قبل", "error");
+        return; // Do not update the state with the invalid date
+      }
+    }
+
     setFormData(prev => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value
@@ -57,6 +65,14 @@ export default function SummerRegistrationPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+
+    if (formData.birthDate) {
+      const selectedYear = new Date(formData.birthDate).getFullYear();
+      if (selectedYear > 2020) {
+        showToast("عذراً، البرنامج مخصص لمواليد 2020 وما قبل", "error");
+        return;
+      }
+    }
 
     if (!formData.pledgeAccepted) {
       showToast("يجب الموافقة على التعهد والأنظمة والتعليمات", "error");
