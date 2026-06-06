@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { urlFor } from "@/sanity/lib/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
+import QuickRegistrationModal from "@/components/shared/QuickRegistrationModal";
 
 const MotionLink = motion.create(Link);
 
@@ -116,8 +118,11 @@ export default function HomeClient({
   sanityAcademies,
   sanityProducts,
 }: HomeClientProps) {
-  const { products: contextProducts, trips: contextTrips, programs: contextPrograms, academies: contextAcademies, addToCart } = useApp();
+  const { products: contextProducts, trips: contextTrips, programs: contextPrograms, academies: contextAcademies, addToCart, currentUser } = useApp();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<"girls" | "boys">("girls");
+  const [showRegModal, setShowRegModal] = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState<any>(null);
 
   // Filter for home page banners
   const sanityHomeBanners = sanityHeroBanners.filter(banner => banner.page === "home" || !banner.page);
@@ -672,14 +677,28 @@ export default function HomeClient({
                         >
                           التفاصيل
                         </MotionLink>
-                        <MotionLink
-                          href={program.title?.includes("صيف") ? "/summer-registration" : `/register?type=program&name=${encodeURIComponent(program.title)}`}
+                        <motion.button
+                          onClick={() => {
+                            const isSummerProgram = program.title?.includes("صيف");
+                            
+                            if (isSummerProgram) {
+                              router.push('/summer-registration');
+                              return;
+                            }
+
+                            if (!currentUser) {
+                              router.push('/register?type=program&name=' + encodeURIComponent(program.title));
+                              return;
+                            }
+                            setSelectedProgram(program);
+                            setShowRegModal(true);
+                          }}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           className="px-4 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
                         >
                           سجل الآن
-                        </MotionLink>
+                        </motion.button>
                       </div>
                     </div>
                   </div>
@@ -1060,6 +1079,17 @@ export default function HomeClient({
           </div>
         </div>
       </section>
+
+      {/* Program Registration Modal */}
+      <QuickRegistrationModal
+        isOpen={showRegModal}
+        onClose={() => {
+          setShowRegModal(false);
+          setSelectedProgram(null);
+        }}
+        targetItem={selectedProgram}
+        targetType="program"
+      />
 
     </div>
   );
