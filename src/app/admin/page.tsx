@@ -23,12 +23,34 @@ export default function AdminDashboardPage() {
   const router = useRouter();
   
   const [activeTab, setActiveTab] = useState<"overview" | "users" | "registrations" | "orders" | "messages">("overview");
+  const [searchQuery, setSearchQuery] = useState("");
   
   const [users, setUsers] = useState<any[]>([]);
   const [registrations, setRegistrations] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Derived filtered data
+  const filteredUsers = users.filter(u => 
+    (u.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (u.email || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (u.phone || "").includes(searchQuery)
+  );
+
+  const filteredRegistrations = registrations.filter(r => 
+    (r.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (r.target_name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (r.phone || "").includes(searchQuery) || 
+    (r.email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (r.payment_method || "").includes(searchQuery)
+  );
+
+  const filteredOrders = orders.filter(o => 
+    (o.id || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (o.customer_name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (o.phone || "").includes(searchQuery)
+  );
 
   // Custom Confirm Modal State
   const [confirmModal, setConfirmModal] = useState<{
@@ -311,7 +333,10 @@ export default function AdminDashboardPage() {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => {
+                  setActiveTab(tab.id as any);
+                  setSearchQuery("");
+                }}
                 className={`px-5 py-3 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center gap-2 ${
                   activeTab === tab.id
                     ? "bg-accent-yellow text-primary-navy shadow-yellow-500/20"
@@ -380,15 +405,24 @@ export default function AdminDashboardPage() {
             {/* USERS TAB */}
             {activeTab === "users" && (
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden animate-in fade-in">
-                <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50">
                   <h2 className="font-bold text-slate-800">إدارة المستخدمين</h2>
-                  <button 
-                    onClick={() => setCreateUserModal(true)}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-accent-yellow hover:bg-yellow-600 text-primary-navy rounded-lg text-sm font-bold transition-colors"
-                  >
-                    <Plus className="w-4 h-4" />
-                    إضافة مستخدم
-                  </button>
+                  <div className="flex gap-2 w-full sm:w-auto">
+                    <input
+                      type="text"
+                      placeholder="بحث عن مستخدم..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:border-accent-yellow w-full sm:w-64"
+                    />
+                    <button 
+                      onClick={() => setCreateUserModal(true)}
+                      className="flex items-center gap-1.5 px-4 py-2 bg-accent-yellow hover:bg-yellow-600 text-primary-navy rounded-lg text-sm font-bold transition-colors whitespace-nowrap"
+                    >
+                      <Plus className="w-4 h-4" />
+                      إضافة مستخدم
+                    </button>
+                  </div>
                 </div>
                 {/* Desktop Table View */}
                 <div className="hidden lg:block overflow-x-auto">
@@ -404,7 +438,7 @@ export default function AdminDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {users.map((u) => (
+                      {filteredUsers.map((u) => (
                         <tr key={u.id} className="hover:bg-slate-50/50">
                           <td className="px-6 py-4 font-bold text-slate-800">{u.full_name}</td>
                           <td className="px-6 py-4 text-slate-600" dir="ltr">{u.email}</td>
@@ -427,7 +461,7 @@ export default function AdminDashboardPage() {
                 
                 {/* Mobile Cards View */}
                 <div className="grid grid-cols-1 gap-4 lg:hidden p-4 bg-slate-50/50">
-                  {users.map((u) => (
+                  {filteredUsers.map((u) => (
                     <div key={u.id} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col gap-3">
                       <div className="flex justify-between items-start">
                         <div>
@@ -457,15 +491,24 @@ export default function AdminDashboardPage() {
             {/* REGISTRATIONS TAB */}
             {activeTab === "registrations" && (
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden animate-in fade-in">
-                <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
+                <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
                   <h2 className="font-bold text-slate-700">سجل المشتركين</h2>
-                  <button 
-                    onClick={exportRegistrationsCSV}
-                    className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border border-emerald-200"
-                  >
-                    <Download className="w-4 h-4" />
-                    تصدير تقرير (CSV)
-                  </button>
+                  <div className="flex gap-2 w-full sm:w-auto">
+                    <input
+                      type="text"
+                      placeholder="بحث عن مشترك..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:border-accent-yellow w-full sm:w-64"
+                    />
+                    <button 
+                      onClick={exportRegistrationsCSV}
+                      className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 border border-emerald-200 whitespace-nowrap"
+                    >
+                      <Download className="w-4 h-4" />
+                      تصدير تقرير (CSV)
+                    </button>
+                  </div>
                 </div>
                 {/* Desktop Table View */}
                 <div className="hidden lg:block overflow-x-auto">
@@ -481,7 +524,7 @@ export default function AdminDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {registrations.map((r) => (
+                      {filteredRegistrations.map((r) => (
                         <tr key={r.id} className="hover:bg-slate-50/50">
                           <td className="px-6 py-4 font-bold text-slate-800">{r.full_name}</td>
                           <td className="px-6 py-4 text-slate-700">
@@ -538,7 +581,7 @@ export default function AdminDashboardPage() {
 
                 {/* Mobile Cards View */}
                 <div className="grid grid-cols-1 gap-4 lg:hidden p-4 bg-slate-50/50">
-                  {registrations.map((r) => (
+                  {filteredRegistrations.map((r) => (
                     <div key={r.id} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col gap-3 relative">
                       <div className="flex justify-between items-start">
                         <div>
@@ -606,6 +649,18 @@ export default function AdminDashboardPage() {
             {/* ORDERS TAB */}
             {activeTab === "orders" && (
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden animate-in fade-in">
+                <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
+                  <h2 className="font-bold text-slate-700">طلبات المتجر</h2>
+                  <div className="flex gap-2 w-full sm:w-auto">
+                    <input
+                      type="text"
+                      placeholder="بحث برقم الطلب أو الجوال..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:border-accent-yellow w-full sm:w-64"
+                    />
+                  </div>
+                </div>
                 {/* Desktop Table View */}
                 <div className="hidden lg:block overflow-x-auto">
                   <table className="w-full text-sm text-right whitespace-nowrap">
@@ -620,7 +675,7 @@ export default function AdminDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {orders.map((o) => (
+                      {filteredOrders.map((o) => (
                         <tr key={o.id} className="hover:bg-slate-50/50">
                           <td className="px-6 py-4 font-mono text-xs text-slate-500">{o.id.substring(0, 8)}...</td>
                           <td className="px-6 py-4">
@@ -659,7 +714,7 @@ export default function AdminDashboardPage() {
 
                 {/* Mobile Cards View */}
                 <div className="grid grid-cols-1 gap-4 lg:hidden p-4 bg-slate-50/50">
-                  {orders.map((o) => (
+                  {filteredOrders.map((o) => (
                     <div key={o.id} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col gap-3">
                       <div className="flex justify-between items-start border-b border-slate-100 pb-3">
                         <div>
