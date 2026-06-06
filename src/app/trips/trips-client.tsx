@@ -323,7 +323,7 @@ export default function TripsClient({
             whileHover={{ y: -6 }}
             className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm text-center flex flex-col items-center space-y-3 group hover:shadow-md transition-all duration-300"
           >
-            <div className="w-14 h-14 bg-teal-50 text-primary-teal rounded-2xl flex items-center justify-center mb-2 group-hover:scale-110 transition-all duration-300">
+            <div className="w-14 h-14 bg-primary-teal/10 text-primary-teal rounded-2xl flex items-center justify-center mb-2 group-hover:scale-110 transition-all duration-300">
               <Compass className="w-7 h-7" />
             </div>
             <h3 className="font-bold text-slate-800 text-base">رحلات مغامرة</h3>
@@ -337,7 +337,7 @@ export default function TripsClient({
             whileHover={{ y: -6 }}
             className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm text-center flex flex-col items-center space-y-3 group hover:shadow-md transition-all duration-300"
           >
-            <div className="w-14 h-14 bg-teal-50 text-primary-teal rounded-2xl flex items-center justify-center mb-2 group-hover:scale-110 transition-all duration-300">
+            <div className="w-14 h-14 bg-primary-teal/10 text-primary-teal rounded-2xl flex items-center justify-center mb-2 group-hover:scale-110 transition-all duration-300">
               <ShieldCheck className="w-7 h-7" />
             </div>
             <h3 className="font-bold text-slate-800 text-base">رحلات إيمانية</h3>
@@ -351,7 +351,7 @@ export default function TripsClient({
             whileHover={{ y: -6 }}
             className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm text-center flex flex-col items-center space-y-3 group hover:shadow-md transition-all duration-300"
           >
-            <div className="w-14 h-14 bg-teal-50 text-primary-teal rounded-2xl flex items-center justify-center mb-2 group-hover:scale-110 transition-all duration-300">
+            <div className="w-14 h-14 bg-primary-teal/10 text-primary-teal rounded-2xl flex items-center justify-center mb-2 group-hover:scale-110 transition-all duration-300">
               <Heart className="w-7 h-7" />
             </div>
             <h3 className="font-bold text-slate-800 text-base">رحلات ترفيهية</h3>
