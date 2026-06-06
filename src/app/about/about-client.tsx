@@ -266,7 +266,7 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
               whileHover={{ y: -6, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)" }}
               className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm transition-all duration-300 text-center flex flex-col items-center space-y-4 group"
             >
-              <div className="w-14 h-14 bg-yellow-50 text-accent-yellow rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300">
+              <div className="w-14 h-14 bg-primary-teal/10 text-primary-teal rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300">
                 <Compass className="w-7 h-7" />
               </div>
               <h3 className="text-lg font-bold text-slate-800">رؤيتنا</h3>
@@ -281,7 +281,7 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
               whileHover={{ y: -6, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)" }}
               className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm transition-all duration-300 text-center flex flex-col items-center space-y-4 group"
             >
-              <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300">
+              <div className="w-14 h-14 bg-primary-teal/10 text-primary-teal rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300">
                 <Target className="w-7 h-7" />
               </div>
               <h3 className="text-lg font-bold text-slate-800">رسالتنا</h3>
@@ -296,7 +296,7 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
               whileHover={{ y: -6, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)" }}
               className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm transition-all duration-300 text-center flex flex-col items-center space-y-4 group"
             >
-              <div className="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300">
+              <div className="w-14 h-14 bg-primary-teal/10 text-primary-teal rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300">
                 <Heart className="w-7 h-7" />
               </div>
               <h3 className="text-lg font-bold text-slate-800">قيمنا</h3>
