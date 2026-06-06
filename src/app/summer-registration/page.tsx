@@ -68,11 +68,12 @@ export default function SummerRegistrationPage() {
       return;
     }
 
+    // Get base64 image of the signature BEFORE state changes trigger any re-renders
+    const signatureDataUrl = signatureRef.current?.getTrimmedCanvas().toDataURL("image/png");
+
     setIsSubmitting(true);
 
     try {
-      // Get base64 image of the signature
-      const signatureDataUrl = signatureRef.current?.getTrimmedCanvas().toDataURL("image/png");
 
       const extraData = {
         ...formData,
@@ -367,6 +368,7 @@ export default function SummerRegistrationPage() {
                     ref={signatureRef}
                     penColor="#0a2a43"
                     canvasProps={{ className: "w-full h-40 sm:h-48 cursor-crosshair" }}
+                    clearOnResize={false}
                  />
                  <button 
                    type="button" 
