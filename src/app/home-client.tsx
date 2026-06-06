@@ -663,14 +663,24 @@ export default function HomeClient({
                       <span className="text-slate-800 font-bold text-sm">
                         {program.price > 0 ? `${program.price} ر.س` : "مجاناً"}
                       </span>
-                      <MotionLink
-                        href={`/register?type=program&name=${encodeURIComponent(program.title)}`}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="px-4 py-2 bg-accent-teal hover:bg-primary-teal text-white rounded-lg text-xs font-bold transition-all duration-300 cursor-pointer"
-                      >
-                        سجل الآن
-                      </MotionLink>
+                      <div className="flex gap-2">
+                        <MotionLink
+                          href={programLink}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer"
+                        >
+                          التفاصيل
+                        </MotionLink>
+                        <MotionLink
+                          href={program.title?.includes("صيف") ? "/summer-registration" : `/register?type=program&name=${encodeURIComponent(program.title)}`}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-4 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
+                        >
+                          سجل الآن
+                        </MotionLink>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -684,7 +694,7 @@ export default function HomeClient({
             href="/programs"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white border border-slate-200 hover:border-accent-yellow text-slate-700 hover:text-accent-yellow rounded-xl text-sm font-bold shadow-sm transition-all duration-300 cursor-pointer"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white border border-slate-200 hover:border-accent-teal text-slate-700 hover:text-accent-teal rounded-xl text-sm font-bold shadow-sm transition-all duration-300 cursor-pointer"
           >
             مشاهدة كافة البرامج والأنشطة
             <ArrowLeft className="w-4 h-4" />
