@@ -14,6 +14,9 @@ import {
   deleteRecordAction, 
   toggleUserRoleAction 
 } from "./actions";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { SummerProgramPDF } from "@/components/SummerProgramPDF";
 
 export default function AdminDashboardPage() {
   const { currentUser, showToast } = useApp();
@@ -44,11 +47,41 @@ export default function AdminDashboardPage() {
     setConfirmModal({ isOpen: true, title, message, onConfirm });
   };
 
-  // Create User Modal State
   const [createUserModal, setCreateUserModal] = useState(false);
   const [newUser, setNewUser] = useState({ fullName: "", email: "", phone: "", password: "", role: "user" });
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [modalError, setModalError] = useState<string | null>(null);
+
+  const pdfRef = React.useRef<HTMLDivElement>(null);
+  const [pdfRegistration, setPdfRegistration] = useState<any>(null);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+
+  const handleExportPDF = async (registration: any) => {
+    setPdfRegistration(registration);
+    setIsGeneratingPDF(true);
+    showToast("جاري تجهيز ملف الـ PDF...", "success");
+    
+    setTimeout(async () => {
+      try {
+        if (!pdfRef.current) return;
+        const canvas = await html2canvas(pdfRef.current, { scale: 2 } as any);
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF("p", "mm", "a4");
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`استمارة_${registration.full_name.replace(/\s+/g, '_')}.pdf`);
+        showToast("تم تنزيل الملف بنجاح!", "success");
+      } catch (err) {
+        console.error(err);
+        showToast("حدث خطأ أثناء إنشاء الـ PDF", "error");
+      } finally {
+        setPdfRegistration(null);
+        setIsGeneratingPDF(false);
+      }
+    }, 1000); // Wait for render
+  };
 
   const fetchAdminData = async () => {
     setLoading(true);
@@ -245,7 +278,7 @@ export default function AdminDashboardPage() {
   const totalRevenue = orders.reduce((sum, o) => o.status === "paid" ? sum + Number(o.total) : sum, 0);
 
   return (
-    <div className="bg-slate-50 min-h-screen py-10 text-right font-tajawal">
+    <div className="bg-slate-50 min-h-screen pt-28 pb-10 text-right font-tajawal">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
         {/* Admin Header */}
@@ -293,7 +326,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {loading ? (
-          <div className="py-20 flex justify-center">
+          <div className="py-12 flex justify-center">
             <div className="w-8 h-8 border-4 border-accent-yellow border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : (
@@ -486,6 +519,15 @@ export default function AdminDashboardPage() {
                           </td>
                           <td className="px-6 py-4 text-slate-500 text-xs text-center flex flex-col gap-2 items-center">
                             <span>{new Date(r.created_at).toLocaleDateString('ar-SA')}</span>
+                            {r.extra_data?.formType === 'summer_program' && (
+                              <button 
+                                onClick={() => handleExportPDF(r)} 
+                                disabled={isGeneratingPDF}
+                                className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-[10px] font-bold transition-colors w-full text-center"
+                              >
+                                استمارة PDF
+                              </button>
+                            )}
                             <button onClick={() => deleteRecord("registrations", r.id, setRegistrations)} className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[10px] font-bold transition-colors w-full text-center">حذف</button>
                           </td>
                         </tr>
@@ -541,9 +583,20 @@ export default function AdminDashboardPage() {
                         <span className="text-xs text-slate-400">{new Date(r.created_at).toLocaleDateString('ar-SA')}</span>
                       </div>
 
-                      <button onClick={() => deleteRecord("registrations", r.id, setRegistrations)} className="w-full mt-2 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-bold transition-colors">
-                        حذف السجل
-                      </button>
+                      <div className="flex flex-col gap-2 mt-2">
+                        {r.extra_data?.formType === 'summer_program' && (
+                          <button 
+                            onClick={() => handleExportPDF(r)} 
+                            disabled={isGeneratingPDF}
+                            className="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-bold transition-colors"
+                          >
+                            تنزيل الاستمارة (PDF)
+                          </button>
+                        )}
+                        <button onClick={() => deleteRecord("registrations", r.id, setRegistrations)} className="w-full py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-bold transition-colors">
+                          حذف السجل
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -770,6 +823,9 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         )}
+        
+        {/* Hidden PDF component for HTML2Canvas */}
+        <SummerProgramPDF registration={pdfRegistration} ref={pdfRef} />
       </div>
     </div>
   );

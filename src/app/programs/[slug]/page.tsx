@@ -90,7 +90,7 @@ export default async function ProgramDetailsPage({ params }: PageProps) {
             
             <div className="flex flex-wrap gap-2">
               <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                program.target === "girls" ? "bg-rose-600/90" : program.target === "boys" ? "bg-blue-600/90" : "bg-yellow-600/90"
+                program.target === "girls" ? "bg-accent-teal/90" : program.target === "boys" ? "bg-accent-teal/90" : "bg-yellow-600/90"
               }`}>
                 {program.target === "girls" ? "للفتيات" : program.target === "boys" ? "للبنين" : "عام للجميع"}
               </span>
@@ -185,13 +185,18 @@ export default async function ProgramDetailsPage({ params }: PageProps) {
                   </div>
                 </div>
 
-                {program.registrationDeadline && (
+                {program.endDate && (
                   <div className="flex items-center gap-3">
                     <Clock className="w-5 h-5 text-amber-500 flex-shrink-0" />
                     <div>
-                      <span className="block text-[10px] text-slate-450">آخر موعد للتسجيل</span>
+                      <span className="block text-[10px] text-slate-450">تاريخ الانتهاء</span>
                       <span className="text-amber-600">
-                        {new Date(program.registrationDeadline).toLocaleDateString("ar-SA")}
+                        {new Date(program.endDate).toLocaleDateString("ar-SA", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
                       </span>
                     </div>
                   </div>
@@ -199,7 +204,7 @@ export default async function ProgramDetailsPage({ params }: PageProps) {
               </div>
 
               <Link
-                href={`/register?type=program&name=${encodeURIComponent(program.title)}`}
+                href={program.title?.includes("صيف") ? "/summer-registration" : `/register?type=program&name=${encodeURIComponent(program.title)}`}
                 className="w-full block text-center py-4 bg-accent-yellow hover:bg-primary-yellow text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300"
               >
                 احجز مقعدك الآن

@@ -149,7 +149,7 @@ export default function DashboardPage() {
 
   if (currentUser.role === 'admin') {
     return (
-      <div className="bg-slate-50 min-h-screen py-10 text-right font-tajawal">
+      <div className="bg-slate-50 min-h-screen pt-28 pb-10 text-right font-tajawal">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           
           {/* Welcome Section */}
@@ -228,7 +228,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="bg-slate-50 min-h-screen py-10 text-right font-tajawal">
+    <div className="bg-slate-50 min-h-screen pt-28 pb-10 text-right font-tajawal">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
         {/* Welcome Section */}

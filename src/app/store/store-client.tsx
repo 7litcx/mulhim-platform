@@ -46,7 +46,7 @@ const resolveImage = (img: any, width = 600, height = 600) => {
   if (typeof img === "string") return img;
   if (typeof img === "object") {
     try {
-      return urlFor(img).width(width).height(height).url();
+      return urlFor(img).url();
     } catch {
       return "/placeholder.jpg";
     }
@@ -91,7 +91,7 @@ export default function StoreClient({
   });
   const [orderSuccessId, setOrderSuccessId] = useState<string | null>(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const [paymentOption, setPaymentOption] = useState<"cash" | "card" | "tabby">("card");
+  const [paymentOption, setPaymentOption] = useState<"cash" | "card">("cash");
 
   // Pre-populate parent contact details when entering checkout mode
   useEffect(() => {
@@ -178,8 +178,6 @@ export default function StoreClient({
     let finalPaymentMethod = "بطاقة ائتمانية (سداد كامل المبلغ عبر المتجر)";
     if (paymentOption === "cash") {
       finalPaymentMethod = "الدفع النقدي (خصم ١٠٠ ريال لأول ١٠٠ مشترك)";
-    } else if (paymentOption === "tabby") {
-      finalPaymentMethod = "أقساط تابي (٤ أقساط ٣٠٠ ريال كل شهر)";
     }
 
     if (paymentOption === "card") {
@@ -235,27 +233,24 @@ export default function StoreClient({
 
   let paymentTitle = "الدفع النقدي";
   if (paymentOption === "card") paymentTitle = "الدفع الإلكتروني عبر بوابة Tap";
-  else if (paymentOption === "tabby") paymentTitle = "أقساط تابي (Tabby)";
 
   let paymentDesc = "الدفع النقدي";
   if (paymentOption === "card") paymentDesc = "بطاقة ائتمانية (سداد كامل عبر بوابة Tap)";
-  else if (paymentOption === "tabby") paymentDesc = "أقساط تابي (٤ أقساط ٣٠٠ ريال)";
 
   let paymentStatus = "قيد التحقق والتأكيد (Pending)";
   if (paymentOption === "card") paymentStatus = "مدفوع (Paid)";
 
   let submitBtnText = "تأكيد الطلب والحصول على خصم 100 ر.س";
   if (paymentOption === "card") submitBtnText = "ادفع الآن عبر بوابة Tap الآمنة";
-  else if (paymentOption === "tabby") submitBtnText = "تأكيد الطلب عبر أقساط تابي";
 
   return (
-    <div className="space-y-12 pb-20">
+    <div className="space-y-8 pb-10">
 
       {/* RENDER STORE CATALOG MODE */}
       {isCheckoutMode === false ? (
         <>
           {/* 1. Hero Banner */}
-          <section className="relative min-h-[380px] sm:min-h-[450px] md:min-h-[500px] flex items-center py-12 sm:py-20 md:py-24 bg-slate-900 overflow-hidden">
+          <section className="relative min-h-[380px] sm:min-h-[450px] md:min-h-[500px] flex items-center py-12 sm:py-12 md:py-16 bg-slate-900 overflow-hidden">
             {/* Background Image with Overlay */}
             <div className="absolute inset-0 z-0">
               <motion.img
@@ -492,7 +487,7 @@ export default function StoreClient({
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+          className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16"
         >
 
           <AnimatePresence mode="wait">
@@ -616,30 +611,7 @@ export default function StoreClient({
                     <div className="space-y-3 pt-2">
                       <div className="text-xs font-bold text-slate-500 block">اختر طريقة الدفع المفضلة</div>
                       <div className="space-y-3">
-                        {/* Option 1: Card */}
-                        <motion.button
-                          whileHover={{ scale: 1.01 }}
-                          whileTap={{ scale: 0.99 }}
-                          type="button"
-                          onClick={() => setPaymentOption("card")}
-                          className={`p-4 rounded-2xl border text-right transition-all text-xs font-bold flex justify-between items-center cursor-pointer w-full ${paymentOption === "card"
-                              ? "border-accent-yellow bg-yellow-50/50 text-accent-yellow shadow-inner animate-pulse-subtle"
-                              : "border-slate-100 bg-slate-50 text-slate-700 hover:bg-slate-100"
-                            }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "card" ? "bg-accent-yellow text-white shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
-                              <CreditCard className="w-4 h-4" />
-                            </div>
-                            <div className="text-right">
-                              <span className="block font-bold text-xs text-slate-800">بطاقة ائتمانية (سداد كامل المبلغ عبر المتجر)</span>
-                              <span className="text-[10px] text-slate-400 font-normal block mt-0.5">الدفع الآمن عبر Stc pay , Apple pay,مدى </span>
-                            </div>
-                          </div>
-                          <CheckCircle className={`w-4.5 h-4.5 ${paymentOption === "card" ? "text-accent-yellow" : "text-slate-200"}`} />
-                        </motion.button>
-
-                        {/* Option 2: Cash */}
+                        {/* Option 1: Cash */}
                         <motion.button
                           whileHover={{ scale: 1.01 }}
                           whileTap={{ scale: 0.99 }}
@@ -655,34 +627,34 @@ export default function StoreClient({
                               <Sparkles className="w-4 h-4" />
                             </div>
                             <div className="text-right">
-                              <span className="block font-bold text-xs text-slate-800">الدفع النقدي (خصم ١٠٠ ريال لأول ١٠٠ مشترك)</span>
-                              <span className="text-[10px] text-emerald-600 font-extrabold block mt-0.5">احصل على الخصم فوراً عند تأكيد الحجز</span>
+                              <span className="block font-black text-sm text-slate-800 font-tajawal">الدفع النقدي (خصم ١٠٠ ريال لأول ١٠٠ مشترك)</span>
+                              <span className="text-xs text-emerald-600 font-black block mt-1">احصل على الخصم فوراً عند تأكيد الحجز</span>
                             </div>
                           </div>
                           <CheckCircle className={`w-4.5 h-4.5 ${paymentOption === "cash" ? "text-accent-yellow" : "text-slate-200"}`} />
                         </motion.button>
 
-                        {/* Option 3: Tabby */}
+                        {/* Option 2: Card */}
                         <motion.button
                           whileHover={{ scale: 1.01 }}
                           whileTap={{ scale: 0.99 }}
                           type="button"
-                          onClick={() => setPaymentOption("tabby")}
-                          className={`p-4 rounded-2xl border text-right transition-all text-xs font-bold flex justify-between items-center cursor-pointer w-full ${paymentOption === "tabby"
-                              ? "border-accent-yellow bg-yellow-50/50 text-accent-yellow shadow-inner"
+                          onClick={() => setPaymentOption("card")}
+                          className={`p-4 rounded-2xl border text-right transition-all text-xs font-bold flex justify-between items-center cursor-pointer w-full ${paymentOption === "card"
+                              ? "border-accent-yellow bg-yellow-50/50 text-accent-yellow shadow-inner animate-pulse-subtle"
                               : "border-slate-100 bg-slate-50 text-slate-700 hover:bg-slate-100"
                             }`}
                         >
                           <div className="flex items-center gap-3">
-                            <div className={`px-3 py-1 bg-[#d3ffde] text-[#05cd9c] rounded-xl font-sans text-xs font-black uppercase tracking-wider select-none border border-[#b2fad5]`}>
-                              tabby
+                            <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "card" ? "bg-accent-yellow text-white shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
+                              <CreditCard className="w-4 h-4" />
                             </div>
                             <div className="text-right">
-                              <span className="block font-bold text-xs text-slate-800">أقساط تابي (٤ أقساط ٣٠٠ ريال كل شهر)</span>
-                              <span className="text-[10px] text-[#05cd9c] font-extrabold block mt-0.5">قسم فاتورتك على دفعات ميسرة بدون فوائد</span>
+                              <span className="block font-black text-sm text-slate-800 font-tajawal">بطاقة ائتمانية (سداد كامل المبلغ عبر المتجر)</span>
+                              <span className="text-xs text-slate-500 font-bold block mt-1">الدفع الآمن عبر Stc pay , Apple pay,مدى </span>
                             </div>
                           </div>
-                          <CheckCircle className={`w-4.5 h-4.5 ${paymentOption === "tabby" ? "text-accent-yellow" : "text-slate-200"}`} />
+                          <CheckCircle className={`w-4.5 h-4.5 ${paymentOption === "card" ? "text-accent-yellow" : "text-slate-200"}`} />
                         </motion.button>
                       </div>
                     </div>

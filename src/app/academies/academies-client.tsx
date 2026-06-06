@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/context/AppContext";
+import { useRouter } from "next/navigation";
 import { normalizeLink } from "@/utils/link";
 import QuickRegistrationModal from "@/components/shared/QuickRegistrationModal";
 
@@ -44,7 +45,7 @@ const resolveImage = (img: any, width = 600, height = 400) => {
   if (typeof img === "string") return img;
   if (typeof img === "object") {
     try {
-      return urlFor(img).width(width).height(height).url();
+      return urlFor(img).url();
     } catch (e) {
       return "/placeholder.jpg";
     }
@@ -63,7 +64,8 @@ export default function AcademiesClient({
   sanityFAQs,
   sanityHeroBanners = []
 }: AcademiesClientProps) {
-  const { academies: contextAcademies } = useApp();
+  const { academies: contextAcademies, registerUser, currentUser, registrations } = useApp();
+  const router = useRouter();
 
   const [selectedAcademy, setSelectedAcademy] = useState<any | null>(null);
   const [showRegModal, setShowRegModal] = useState(false);
@@ -167,10 +169,10 @@ export default function AcademiesClient({
   });
 
   return (
-    <div className="space-y-20 pb-20">
+    <div className="space-y-8 pb-10">
 
       {/* 1. Hero Section */}
-      <section className="relative min-h-[380px] sm:min-h-[450px] md:min-h-[500px] flex items-center py-12 sm:py-20 md:py-24 bg-slate-900 overflow-hidden">
+      <section className="relative min-h-[380px] sm:min-h-[450px] md:min-h-[500px] flex items-center py-12 sm:py-12 md:py-16 bg-slate-900 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <motion.img
             initial={{ scale: 1.15, opacity: 0 }}
@@ -279,10 +281,10 @@ export default function AcademiesClient({
                     <img
                       src={acadImg}
                       alt={acad.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-all duration-500"
                     />
                   </Link>
-                  <span className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-accent-yellow px-3 py-1 rounded-full text-[10px] font-bold">
+                  <span className="absolute z-20 top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-accent-yellow px-3 py-1 rounded-full text-[10px] font-bold">
                     {acad.ageGroup || acad.targetAge || "جميع الأعمار"}
                   </span>
                 </div>
@@ -328,6 +330,10 @@ export default function AcademiesClient({
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => {
+                          if (!currentUser) {
+                            router.push('/register?type=academy&name=' + encodeURIComponent(acad.title));
+                            return;
+                          }
                           setSelectedAcademy(acad);
                           setShowRegModal(true);
                         }}
@@ -375,7 +381,7 @@ export default function AcademiesClient({
                     <img
                       src={tutorImg}
                       alt={tutor.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300"
+                      className="w-full h-full object-contain object-top group-hover:scale-105 transition-all duration-300"
                     />
                   </div>
                   <div className="space-y-1">

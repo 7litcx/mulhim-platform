@@ -120,10 +120,10 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
   };
 
   return (
-    <div className="space-y-20 pb-20">
+    <div className="space-y-8 pb-10">
       
       {/* 1. Page Hero Banner */}
-      <section className="relative min-h-[380px] sm:min-h-[450px] md:min-h-[500px] flex items-center py-12 sm:py-20 md:py-24 bg-slate-900 overflow-hidden text-white shadow-inner">
+      <section className="relative min-h-[380px] sm:min-h-[450px] md:min-h-[500px] flex items-center py-12 sm:py-12 md:py-16 bg-slate-900 overflow-hidden text-white shadow-inner">
         {/* Background Image with Overlay */}
         {aboutHero.image ? (
           <div className="absolute inset-0 z-0 transition-all duration-1000 ease-in-out">
@@ -474,7 +474,7 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
       </section>
 
       {/* 6. Success Marquee */}
-      <section className="bg-gradient-to-b from-primary-navy to-slate-950 py-20 text-white relative overflow-hidden border-y border-white/5">
+      <section className="bg-gradient-to-b from-primary-navy to-slate-950 py-12 text-white relative overflow-hidden border-y border-white/5">
         {/* Background glow effects */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-72 h-72 bg-accent-yellow/10 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-72 h-72 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />

@@ -92,6 +92,7 @@ interface Registration {
   date: string;
   status: "pending" | "approved" | "completed";
   paymentMethod?: string;
+  extraData?: any; // For custom forms like summer program
 }
 
 interface Order {
@@ -701,7 +702,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       target_id: targetId,
       target_name: reg.targetName,
       status: "pending",
-      payment_method: reg.paymentMethod
+      payment_method: reg.paymentMethod,
+      extra_data: reg.extraData
     });
 
     if (regErr) {

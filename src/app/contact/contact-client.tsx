@@ -91,7 +91,7 @@ export default function ContactClient() {
   return (
     <div className="min-h-screen bg-slate-50/50 pb-20">
       {/* 1. Header Banner */}
-      <section className="relative min-h-[380px] sm:min-h-[450px] md:min-h-[500px] flex items-center py-12 sm:py-20 md:py-24 bg-primary-navy overflow-hidden">
+      <section className="relative min-h-[380px] sm:min-h-[450px] md:min-h-[500px] flex items-center py-12 sm:py-12 md:py-16 bg-primary-navy overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(13,148,136,0.2),transparent_50%)]" />
 
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center text-right text-white space-y-4 sm:space-y-6">

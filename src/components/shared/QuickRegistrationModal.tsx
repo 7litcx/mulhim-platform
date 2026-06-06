@@ -20,9 +20,26 @@ export default function QuickRegistrationModal({
 }: QuickRegistrationModalProps) {
   const { registerUser, currentUser, registrations, showToast } = useApp();
 
-  const [regForm, setRegForm] = useState({ fullName: "", age: "", phone: "", email: "" });
+  const [regForm, setRegForm] = useState({ fullName: "", grade: "", phone: "", email: "" });
+  
+  const getAgeFromGrade = (grade: string): number => {
+    if (grade.includes("الأول الابتدائي")) return 7;
+    if (grade.includes("الثاني الابتدائي")) return 8;
+    if (grade.includes("الثالث الابتدائي")) return 9;
+    if (grade.includes("الرابع الابتدائي")) return 10;
+    if (grade.includes("الخامس الابتدائي")) return 11;
+    if (grade.includes("السادس الابتدائي")) return 12;
+    if (grade.includes("الأول المتوسط")) return 13;
+    if (grade.includes("الثاني المتوسط")) return 14;
+    if (grade.includes("الثالث المتوسط")) return 15;
+    if (grade.includes("الأول الثانوي")) return 16;
+    if (grade.includes("الثاني الثانوي")) return 17;
+    if (grade.includes("الثالث الثانوي")) return 18;
+    if (grade.includes("جامعي")) return 20;
+    return 15;
+  };
   const [regSuccess, setRegSuccess] = useState(false);
-  const [paymentOption, setPaymentOption] = useState<string>("card");
+  const [paymentOption, setPaymentOption] = useState<string>("cash");
 
   // Compute unique children names registered by current parent
   const myChildren = useMemo(() => {
@@ -71,17 +88,17 @@ export default function QuickRegistrationModal({
       try {
         await registerUser({
           fullName: regForm.fullName,
-          age: Number(regForm.age) || 15,
+          age: getAgeFromGrade(regForm.grade),
           phone: regForm.phone,
           email: regForm.email,
-          interests: [typeLabel + targetItem.title],
+          interests: [typeLabel + targetItem.title + " - " + regForm.grade],
           type: targetType,
-          targetName: targetItem.title,
+          targetName: `${targetItem.title} - ${regForm.grade}`,
           paymentMethod: finalPaymentMethod
         });
         
         setRegSuccess(true);
-        setRegForm({ fullName: "", age: "", phone: "", email: "" });
+        setRegForm({ fullName: "", grade: "", phone: "", email: "" });
         setTimeout(() => {
           setRegSuccess(false);
           onClose();
@@ -147,7 +164,7 @@ export default function QuickRegistrationModal({
                             const prevReg = registrations.find((r) => r.fullName.trim() === name);
                             setRegForm({
                               fullName: name,
-                              age: prevReg ? String(prevReg.age) : "",
+                              grade: "",
                               phone: currentUser.phone || "",
                               email: currentUser.email || ""
                             });
@@ -176,16 +193,30 @@ export default function QuickRegistrationModal({
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label htmlFor="modalAge" className="text-xs font-bold text-slate-500 block">العمر</label>
-                    <input
-                      id="modalAge"
-                      type="number"
+                    <label htmlFor="modalGrade" className="text-xs font-bold text-slate-500 block">الفصل الدراسي</label>
+                    <select
+                      id="modalGrade"
                       required
-                      value={regForm.age}
-                      onChange={(e) => setRegForm({ ...regForm, age: e.target.value })}
-                      placeholder="مثال: 12"
-                      className="w-full bg-slate-50 border border-slate-200 focus:border-accent-yellow rounded-xl px-4 py-2.5 text-xs text-right focus:outline-none"
-                    />
+                      value={regForm.grade}
+                      onChange={(e) => setRegForm({ ...regForm, grade: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-accent-yellow rounded-xl px-4 py-2.5 text-xs text-right focus:outline-none appearance-none cursor-pointer"
+                    >
+                      <option value="" disabled>اختر الفصل الدراسي</option>
+                      <option value="الصف الأول الابتدائي">الصف الأول الابتدائي</option>
+                      <option value="الصف الثاني الابتدائي">الصف الثاني الابتدائي</option>
+                      <option value="الصف الثالث الابتدائي">الصف الثالث الابتدائي</option>
+                      <option value="الصف الرابع الابتدائي">الصف الرابع الابتدائي</option>
+                      <option value="الصف الخامس الابتدائي">الصف الخامس الابتدائي</option>
+                      <option value="الصف السادس الابتدائي">الصف السادس الابتدائي</option>
+                      <option value="الصف الأول المتوسط">الصف الأول المتوسط</option>
+                      <option value="الصف الثاني المتوسط">الصف الثاني المتوسط</option>
+                      <option value="الصف الثالث المتوسط">الصف الثالث المتوسط</option>
+                      <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
+                      <option value="الصف الثاني الثانوي">الصف الثاني الثانوي</option>
+                      <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+                      <option value="جامعي">جامعي</option>
+                      <option value="غير ذلك">غير ذلك</option>
+                    </select>
                   </div>
                   <div className="space-y-1">
                     <label htmlFor="modalPhone" className="text-xs font-bold text-slate-500 block">رقم جوال ولي الأمر</label>
@@ -219,28 +250,7 @@ export default function QuickRegistrationModal({
                 <div className="space-y-3 pt-2 border-t border-slate-100 mt-4">
                   <label className="text-xs font-bold text-slate-500 block">اختر طريقة الدفع المفضلة</label>
                   <div className="space-y-3">
-                    {/* Option 1: Card */}
-                    <button
-                      type="button"
-                      onClick={() => setPaymentOption("card")}
-                      className={`p-4 rounded-2xl border text-right transition-all text-xs font-bold flex justify-between items-center cursor-pointer w-full ${paymentOption === "card"
-                          ? "border-accent-yellow bg-yellow-50/50 text-accent-yellow shadow-inner animate-pulse-subtle"
-                          : "border-slate-100 bg-slate-50 text-slate-700 hover:bg-slate-100"
-                        }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "card" ? "bg-accent-yellow text-white shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
-                          <CreditCard className="w-4 h-4" />
-                        </div>
-                        <div className="text-right">
-                          <span className="block font-bold text-xs text-slate-800">بطاقة ائتمانية (سداد كامل المبلغ عبر المتجر)</span>
-                          <span className="text-[10px] text-slate-400 font-normal block mt-0.5">الدفع الآمن عبر Stc pay , Apple pay,مدى </span>
-                        </div>
-                      </div>
-                      <CheckCircle className={`w-4.5 h-4.5 ${paymentOption === "card" ? "text-accent-yellow" : "text-slate-200"}`} />
-                    </button>
-
-                    {/* Option 2: Cash */}
+                    {/* Option 1: Cash (Now First) */}
                     <button
                       type="button"
                       onClick={() => setPaymentOption("cash")}
@@ -261,25 +271,25 @@ export default function QuickRegistrationModal({
                       <CheckCircle className={`w-4.5 h-4.5 ${paymentOption === "cash" ? "text-accent-yellow" : "text-slate-200"}`} />
                     </button>
 
-                    {/* Option 3: Tabby */}
+                    {/* Option 2: Card (Now Second) */}
                     <button
                       type="button"
-                      onClick={() => setPaymentOption("tabby")}
-                      className={`p-4 rounded-2xl border text-right transition-all text-xs font-bold flex justify-between items-center cursor-pointer w-full ${paymentOption === "tabby"
-                          ? "border-accent-yellow bg-yellow-50/50 text-accent-yellow shadow-inner"
+                      onClick={() => setPaymentOption("card")}
+                      className={`p-4 rounded-2xl border text-right transition-all text-xs font-bold flex justify-between items-center cursor-pointer w-full ${paymentOption === "card"
+                          ? "border-accent-yellow bg-yellow-50/50 text-accent-yellow shadow-inner animate-pulse-subtle"
                           : "border-slate-100 bg-slate-50 text-slate-700 hover:bg-slate-100"
                         }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`px-3 py-1 bg-[#d3ffde] text-[#05cd9c] rounded-xl font-sans text-xs font-black uppercase tracking-wider select-none border border-[#b2fad5]`}>
-                          tabby
+                        <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "card" ? "bg-accent-yellow text-white shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
+                          <CreditCard className="w-4 h-4" />
                         </div>
                         <div className="text-right">
-                          <span className="block font-bold text-xs text-slate-800">أقساط تابي (٤ أقساط ٣٠٠ ريال كل شهر)</span>
-                          <span className="text-[10px] text-[#05cd9c] font-extrabold block mt-0.5">قسم فاتورتك على دفعات ميسرة بدون فوائد</span>
+                          <span className="block font-bold text-xs text-slate-800">بطاقة ائتمانية (سداد كامل المبلغ عبر المتجر)</span>
+                          <span className="text-[10px] text-slate-400 font-normal block mt-0.5">الدفع الآمن عبر Stc pay , Apple pay,مدى </span>
                         </div>
                       </div>
-                      <CheckCircle className={`w-4.5 h-4.5 ${paymentOption === "tabby" ? "text-accent-yellow" : "text-slate-200"}`} />
+                      <CheckCircle className={`w-4.5 h-4.5 ${paymentOption === "card" ? "text-accent-yellow" : "text-slate-200"}`} />
                     </button>
                   </div>
                 </div>

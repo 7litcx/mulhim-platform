@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/context/AppContext";
+import { useRouter } from "next/navigation";
 import { normalizeLink } from "@/utils/link";
 import QuickRegistrationModal from "@/components/shared/QuickRegistrationModal";
 
@@ -45,7 +46,7 @@ const resolveImage = (img: any) => {
   if (typeof img === "string") return img;
   if (typeof img === "object") {
     try {
-      return urlFor(img).width(600).height(400).url();
+      return urlFor(img).url();
     } catch (e) {
       return "/placeholder.jpg";
     }
@@ -65,6 +66,7 @@ export default function ProgramsClient({
   sanityHeroBanners = []
 }: ProgramsClientProps) {
   const { programs: contextPrograms, registerUser, currentUser, registrations } = useApp();
+  const router = useRouter();
 
   // Gender tab state
   const [activeGender, setActiveGender] = useState<"girls" | "boys">("girls");
@@ -158,10 +160,10 @@ export default function ProgramsClient({
   };
 
   return (
-    <div className="space-y-20 pb-20">
+    <div className="space-y-8 pb-10">
 
       {/* 1. Hero Section */}
-      <section className="relative min-h-[380px] sm:min-h-[450px] md:min-h-[500px] flex items-center py-12 sm:py-20 md:py-24 bg-slate-900 overflow-hidden">
+      <section className="relative min-h-[380px] sm:min-h-[450px] md:min-h-[500px] flex items-center py-12 sm:py-12 md:py-16 bg-slate-900 overflow-hidden">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <motion.img
@@ -228,7 +230,7 @@ export default function ProgramsClient({
               whileTap={{ scale: 0.98 }}
               onClick={() => handleGenderChange("girls")}
               className={`flex-1 py-3.5 rounded-xl text-sm font-extrabold transition-all duration-300 ${activeGender === "girls"
-                  ? "bg-white text-rose-600 shadow-md scale-100"
+                  ? "bg-white text-accent-teal shadow-md scale-100"
                   : "text-slate-500 hover:text-slate-800"
                 }`}
             >
@@ -238,7 +240,7 @@ export default function ProgramsClient({
               whileTap={{ scale: 0.98 }}
               onClick={() => handleGenderChange("boys")}
               className={`flex-1 py-3.5 rounded-xl text-sm font-extrabold transition-all duration-300 ${activeGender === "boys"
-                  ? "bg-white text-blue-600 shadow-md scale-100"
+                  ? "bg-white text-accent-teal shadow-md scale-100"
                   : "text-slate-500 hover:text-slate-800"
                 }`}
             >
@@ -256,9 +258,7 @@ export default function ProgramsClient({
               whileTap={{ scale: 0.95 }}
               onClick={() => setActiveCategory(cat.id)}
               className={`px-6 py-2.5 rounded-full text-xs font-bold transition-all duration-300 ${activeCategory === cat.id
-                  ? activeGender === "girls"
-                    ? "bg-rose-50 text-rose-600 border border-rose-200"
-                    : "bg-blue-50 text-blue-600 border border-blue-200"
+                  ? "bg-teal-50 text-accent-teal border border-teal-200"
                   : "bg-white border border-slate-200 text-slate-500 hover:text-slate-800 hover:border-slate-300"
                 }`}
             >
@@ -307,13 +307,13 @@ export default function ProgramsClient({
                       <img
                         src={programImg}
                         alt={program.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-all duration-500"
                       />
                     </Link>
-                    <span className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-[10px] font-bold">
+                    <span className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-[10px] font-bold z-20">
                       {program.categoryName || program.category?.title || "برنامج مميز"}
                     </span>
-                    <span className={`absolute top-4 left-4 text-white text-[10px] font-bold px-3 py-1 rounded-full ${program.target === "girls" ? "bg-rose-600/90" : program.target === "boys" ? "bg-blue-600/90" : "bg-yellow-600/90"
+                    <span className={`absolute top-4 left-4 text-white text-[10px] font-bold px-3 py-1 rounded-full ${program.target === "girls" ? "bg-accent-teal/90" : program.target === "boys" ? "bg-accent-teal/90" : "bg-yellow-600/90"
                       }`}>
                       {program.target === "girls" ? "للفتيات" : program.target === "boys" ? "للبنين" : "عام للجميع"}
                     </span>
@@ -353,12 +353,23 @@ export default function ProgramsClient({
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => {
+                            const isSummerProgram = program.title?.includes("صيف");
+                            
+                            if (isSummerProgram) {
+                              router.push('/summer-registration');
+                              return;
+                            }
+
+                            if (!currentUser) {
+                              router.push('/register?type=program&name=' + encodeURIComponent(program.title));
+                              return;
+                            }
                             setSelectedProgram(program);
                             setShowRegModal(true);
                           }}
                           className={`px-4 py-2.5 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg ${activeGender === "girls"
-                              ? "bg-rose-600 hover:bg-rose-700"
-                              : "bg-blue-600 hover:bg-blue-700"
+                              ? "bg-accent-teal hover:bg-primary-teal"
+                              : "bg-accent-teal hover:bg-primary-teal"
                             }`}
                         >
                           سجل الآن

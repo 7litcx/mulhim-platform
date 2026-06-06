@@ -2,18 +2,28 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useApp } from "@/context/AppContext";
 import { ShoppingCart, User, Menu, X, Trash2, Plus, Minus, ShieldAlert } from "lucide-react";
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   
   const { cart, removeFromCart, updateCartQuantity, currentUser, logoutUser } = useApp();
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   if (pathname?.startsWith("/studio")) {
     return null;
@@ -33,15 +43,28 @@ export const Header: React.FC = () => {
     { name: "تواصل معنا", path: "/contact" }
   ];
 
+  const isCheckout = searchParams?.get("checkout") === "true";
+  const isSolidPage = pathname?.startsWith("/register") || 
+                      pathname?.startsWith("/admin") || 
+                      pathname?.startsWith("/dashboard") || 
+                      pathname?.startsWith("/summer-registration") ||
+                      (pathname?.startsWith("/store") && isCheckout);
+                      
+  const effectiveScrolled = scrolled || isSolidPage;
+
   return (
     <>
-      <header className="sticky top-0 z-50 w-full glass bg-white/80 border-b border-slate-100 shadow-sm backdrop-blur-md">
+      <header className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+        effectiveScrolled 
+          ? "bg-white border-b border-slate-100 shadow-sm" 
+          : "bg-transparent border-transparent shadow-none"
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="flex items-center">
-                <img src="/mulihmlogo.svg" alt="Mulhim Logo" className="h-10 w-auto" />
+                <img src="/mulihmlogo.svg" alt="Mulhim Logo" className={`h-14 sm:h-16 w-auto transition-all duration-300 ${!effectiveScrolled ? "brightness-0 invert" : ""}`} />
               </Link>
             </div>
 
@@ -55,8 +78,12 @@ export const Header: React.FC = () => {
                     href={link.path}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                       isActive
-                        ? "text-accent-yellow bg-yellow-50/50 border-b-2 border-accent-yellow"
-                        : "text-slate-600 hover:text-primary-navy hover:bg-slate-50"
+                        ? effectiveScrolled
+                          ? "text-accent-yellow bg-yellow-50/50 border-b-2 border-accent-yellow"
+                          : "text-accent-yellow bg-white/10 border-b-2 border-accent-yellow"
+                        : effectiveScrolled
+                          ? "text-slate-600 hover:text-primary-navy hover:bg-slate-50"
+                          : "text-white/90 hover:text-white hover:bg-white/10"
                     }`}
                   >
                     {link.name}
@@ -68,7 +95,11 @@ export const Header: React.FC = () => {
               {currentUser?.role === 'admin' && (
                 <Link
                   href="/studio"
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all duration-300 self-center mr-2 border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:scale-105`}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all duration-300 self-center mr-2 border hover:scale-105 ${
+                    effectiveScrolled
+                      ? "border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100"
+                      : "border-white/30 bg-white/10 text-white hover:bg-white/20"
+                  }`}
                 >
                   <ShieldAlert className="w-3.5 h-3.5" />
                   لوحة التحكم
@@ -81,7 +112,11 @@ export const Header: React.FC = () => {
               {/* Cart Toggle Button */}
               <button
                 onClick={() => setIsCartOpen(!isCartOpen)}
-                className="relative p-2 rounded-full text-slate-600 hover:text-accent-yellow hover:bg-slate-100 transition-all duration-300"
+                className={`relative p-2 rounded-full transition-all duration-300 ${
+                  effectiveScrolled 
+                    ? "text-slate-600 hover:text-accent-yellow hover:bg-slate-100" 
+                    : "text-white/90 hover:text-white hover:bg-white/10"
+                }`}
                 aria-label="سلة المشتريات"
               >
                 <ShoppingCart className="w-6 h-6" />
@@ -104,7 +139,11 @@ export const Header: React.FC = () => {
                 ) : (
                   <Link
                     href="/register"
-                    className="p-2 rounded-full text-slate-600 hover:text-accent-yellow hover:bg-slate-100 transition-all duration-300 block"
+                    className={`p-2 rounded-full transition-all duration-300 block ${
+                      effectiveScrolled 
+                        ? "text-slate-600 hover:text-accent-yellow hover:bg-slate-100" 
+                        : "text-white/90 hover:text-white hover:bg-white/10"
+                    }`}
                     aria-label="تسجيل الدخول"
                   >
                     <User className="w-6 h-6" />
@@ -144,7 +183,11 @@ export const Header: React.FC = () => {
               {/* Mobile Burger Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden p-2 rounded-lg text-slate-600 hover:text-primary-navy hover:bg-slate-100 transition-all duration-300"
+                className={`md:hidden p-2 rounded-lg transition-all duration-300 ${
+                  effectiveScrolled
+                    ? "text-slate-600 hover:text-primary-navy hover:bg-slate-100"
+                    : "text-white/90 hover:text-white hover:bg-white/10"
+                }`}
                 aria-label="القائمة الرئيسية"
               >
                 {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

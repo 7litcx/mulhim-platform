@@ -5,8 +5,8 @@ import { ShieldCheck, Sparkles } from "lucide-react";
 
 export default function PrivacyPage() {
   return (
-    <div className="space-y-12 pb-20">
-      <section className="relative bg-primary-navy text-white py-14 overflow-hidden shadow-inner">
+    <div className="space-y-8 pb-10">
+      <section className="relative bg-primary-navy text-white pt-32 pb-16 overflow-hidden shadow-inner">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(13,148,136,0.25),transparent_60%)]" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-4">
           <ShieldCheck className="w-12 h-12 text-accent-yellow mx-auto animate-pulse" />

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/context/AppContext";
+import { useRouter } from "next/navigation";
 import { normalizeLink } from "@/utils/link";
 import QuickRegistrationModal from "@/components/shared/QuickRegistrationModal";
 
@@ -45,7 +46,7 @@ const resolveImage = (img: any, width = 800, height = 500) => {
   if (typeof img === "string") return img;
   if (typeof img === "object") {
     try {
-      return urlFor(img).width(width).height(height).url();
+      return urlFor(img).url();
     } catch (e) {
       return "/placeholder.jpg";
     }
@@ -67,6 +68,7 @@ export default function TripsClient({
   sanityHeroBanners = []
 }: TripsClientProps) {
   const { trips: contextTrips, registerUser, currentUser, registrations } = useApp();
+  const router = useRouter();
 
   // Filter states
   const [filterType, setFilterType] = useState<string>("all");
@@ -219,10 +221,10 @@ export default function TripsClient({
     : defaultTestimonials;
 
   return (
-    <div className="space-y-20 pb-20">
+    <div className="space-y-8 pb-10">
 
       {/* 1. Hero Section */}
-      <section className="relative min-h-[380px] sm:min-h-[450px] md:min-h-[500px] flex items-center py-12 sm:py-20 md:py-24 bg-slate-900 overflow-hidden">
+      <section className="relative min-h-[380px] sm:min-h-[450px] md:min-h-[500px] flex items-center py-12 sm:py-12 md:py-16 bg-slate-900 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <motion.img
             initial={{ scale: 1.15, opacity: 0 }}
@@ -416,10 +418,10 @@ export default function TripsClient({
                     <img
                       src={tripImg}
                       alt={trip.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-all duration-500"
                     />
                   </Link>
-                  <span className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-bold">
+                  <span className="absolute z-20 top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-bold">
                     {trip.typeName || trip.type}
                   </span>
                 </div>
@@ -467,6 +469,10 @@ export default function TripsClient({
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => {
+                          if (!currentUser) {
+                            router.push('/register?type=trip&name=' + encodeURIComponent(trip.title));
+                            return;
+                          }
                           setSelectedTrip(trip);
                           setShowRegModal(true);
                         }}
@@ -570,7 +576,7 @@ export default function TripsClient({
             <img
               src="https://images.unsplash.com/photo-1486916856992-e4db22c8df33?auto=format&fit=crop&q=80&w=800"
               alt="تجهيز الرحلة"
-              className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+              className="w-full h-full object-contain object-top group-hover:scale-105 transition-all duration-500"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent" />
             <div className="absolute bottom-6 right-6 text-white space-y-1 text-right">
