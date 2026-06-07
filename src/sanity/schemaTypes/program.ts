@@ -76,24 +76,20 @@ export const program = defineType({
     }),
     defineField({
       name: "startDate",
-      title: "تاريخ البدء",
-      type: "datetime",
+      title: "تاريخ البدء (مثال: 15 محرم 1446 هـ)",
+      type: "string",
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: "endDate",
-      title: "تاريخ الانتهاء",
-      type: "datetime",
-      validation: (rule) => rule.required().custom((endDate, context) => {
-        const startDate = (context.parent as Record<string, unknown>)?.startDate as string | undefined;
-        if (!startDate || !endDate) return true;
-        return new Date(endDate) > new Date(startDate) ? true : "تاريخ الانتهاء يجب أن يكون بعد تاريخ البدء";
-      }),
+      title: "تاريخ الانتهاء (مثال: 20 محرم 1446 هـ)",
+      type: "string",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "registrationDeadline",
-      title: "الموعد النهائي للتسجيل",
-      type: "datetime",
+      title: "الموعد النهائي للتسجيل (مثال: 10 محرم 1446 هـ)",
+      type: "string",
     }),
     defineField({
       name: "location",

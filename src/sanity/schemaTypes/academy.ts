@@ -55,18 +55,13 @@ export const academy = defineType({
     }),
     defineField({
       name: "startDate",
-      title: "تاريخ البدء",
-      type: "date",
+      title: "تاريخ البدء (مثال: 15 محرم 1446 هـ)",
+      type: "string",
     }),
     defineField({
       name: "endDate",
-      title: "تاريخ الانتهاء",
-      type: "date",
-      validation: (rule) => rule.custom((endDate, context) => {
-        const startDate = (context.parent as Record<string, unknown>)?.startDate as string | undefined;
-        if (!startDate || !endDate) return true;
-        return new Date(endDate) > new Date(startDate) ? true : "تاريخ الانتهاء يجب أن يكون بعد تاريخ البدء";
-      }),
+      title: "تاريخ الانتهاء (مثال: 20 محرم 1446 هـ)",
+      type: "string",
     }),
     defineField({
       name: "tutors",

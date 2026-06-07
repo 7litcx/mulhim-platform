@@ -72,14 +72,7 @@ export default async function AcademyDetailsPage({ params }: PageProps) {
     );
   }
 
-  const startDateFormatted = academy.startDate 
-    ? new Date(academy.startDate).toLocaleDateString("ar-SA", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : null;
+  const startDateFormatted = academy.startDate || null;
 
   return (
     <div className="min-h-screen pb-20 bg-slate-50/50">

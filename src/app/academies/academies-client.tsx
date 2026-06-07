@@ -316,7 +316,7 @@ export default function AcademiesClient({
                     )}
                     {(acad.schedule || acad.startDate) && acad.registrationOpen !== false && (
                       <p className="text-xs text-slate-405 font-medium leading-relaxed">
-                        {acad.schedule || (acad.startDate ? new Date(acad.startDate).toLocaleDateString("ar-SA") : "")}
+                        {acad.schedule || acad.startDate || ""}
                       </p>
                     )}
                     <p className="text-sm text-slate-800 leading-relaxed line-clamp-3 pt-1">

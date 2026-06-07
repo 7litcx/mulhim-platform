@@ -665,7 +665,7 @@ export default function HomeClient({
 
               const programLink = program.slug?.current ? `/programs/${program.slug.current}` : `/programs?id=${program.id}`;
               const programImg = resolveImage(program.image || program.images?.[0]);
-              const programDate = program.date || (program.startDate ? new Date(program.startDate).toLocaleDateString("ar-SA") : "");
+              const programDate = program.date || program.startDate || "";
 
               let targetBgClass = "bg-yellow-600/90";
               let targetText = "عام للجميع";
@@ -848,7 +848,7 @@ export default function HomeClient({
                       )}
                       {acad.registrationOpen !== false && (
                         <p className="text-xs text-slate-405 font-medium leading-relaxed">
-                          {acad.schedule || (acad.startDate ? new Date(acad.startDate).toLocaleDateString("ar-SA") : "")}
+                          {acad.schedule || acad.startDate || ""}
                         </p>
                       )}
                       <p className="text-sm text-slate-800 leading-relaxed line-clamp-2 pt-1">
@@ -922,7 +922,7 @@ export default function HomeClient({
 
               const tripLink = trip.slug?.current ? `/trips/${trip.slug.current}` : `/trips?id=${trip.id}`;
               const tripImg = resolveImage(trip.image || trip.images?.[0]);
-              const tripDate = trip.date || (trip.startDate ? new Date(trip.startDate).toLocaleDateString("ar-SA") : "");
+              const tripDate = trip.date || trip.startDate || "";
 
               return (
                 <motion.div

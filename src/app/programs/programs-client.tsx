@@ -296,7 +296,7 @@ export default function ProgramsClient({
               const programSlug = program.slug?.current || program.id;
               const programLink = program.slug?.current ? `/programs/${program.slug.current}` : `/programs?id=${program.id}`;
               const programImg = resolveImage(program.image || program.images?.[0]);
-              const programDate = program.date || (program.startDate ? new Date(program.startDate).toLocaleDateString("ar-SA") : "");
+              const programDate = program.date || program.startDate || "";
 
               return (
                 <motion.div

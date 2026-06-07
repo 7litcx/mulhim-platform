@@ -58,12 +58,7 @@ export default async function ProgramDetailsPage({ params }: PageProps) {
     notFound();
   }
 
-  const startDateFormatted = new Date(program.startDate).toLocaleDateString("ar-SA", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const startDateFormatted = program.startDate || "";
 
   return (
     <div className="min-h-screen pb-20 bg-slate-50/50">
@@ -191,12 +186,7 @@ export default async function ProgramDetailsPage({ params }: PageProps) {
                     <div>
                       <span className="block text-xs font-bold text-slate-500 mb-0.5">تاريخ الانتهاء</span>
                       <span className="text-sm font-semibold text-slate-800">
-                        {new Date(program.endDate).toLocaleDateString("ar-SA", {
-                          weekday: "long",
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
+                        {program.endDate}
                       </span>
                     </div>
                   </div>

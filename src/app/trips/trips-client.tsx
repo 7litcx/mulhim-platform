@@ -407,7 +407,7 @@ export default function TripsClient({
             const tripSlug = trip.slug?.current || trip.id;
             const tripLink = trip.slug?.current ? `/trips/${trip.slug.current}` : `/trips?id=${trip.id}`;
             const tripImg = resolveImage(trip.image || trip.images?.[0]);
-            const tripDate = trip.date || (trip.startDate ? new Date(trip.startDate).toLocaleDateString("ar-SA") : "");
+            const tripDate = trip.date || trip.startDate || "";
 
             return (
               <motion.div
@@ -753,7 +753,7 @@ export default function TripsClient({
                         <div className="space-y-1">
                           <span className="text-slate-400 block font-semibold">التاريخ والموعد</span>
                           <span className="font-bold text-slate-700 flex items-center gap-1 justify-end">
-                            {selectedTrip.date || (selectedTrip.startDate ? new Date(selectedTrip.startDate).toLocaleDateString("ar-SA") : "")}
+                            {selectedTrip.date || selectedTrip.startDate || ""}
                             <Calendar className="w-3.5 h-3.5 text-accent-yellow" />
                           </span>
                         </div>

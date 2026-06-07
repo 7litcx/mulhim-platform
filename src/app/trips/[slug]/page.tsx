@@ -70,17 +70,8 @@ export default async function TripDetailsPage({ params }: PageProps) {
     );
   }
 
-  const startDateFormatted = trip.startDate ? new Date(trip.startDate).toLocaleDateString("ar-SA", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }) : null;
-
-  const endDateFormatted = trip.endDate ? new Date(trip.endDate).toLocaleDateString("ar-SA", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }) : null;
+  const startDateFormatted = trip.startDate || null;
+  const endDateFormatted = trip.endDate || null;
 
   return (
     <div className="min-h-screen pb-20 bg-slate-50/50">
