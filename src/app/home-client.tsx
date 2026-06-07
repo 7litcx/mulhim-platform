@@ -312,7 +312,7 @@ export default function HomeClient({
       </section>
 
       {/* 3. About Mulhim Section */}
-      <section className="bg-slate-50 py-16 border-y border-slate-100">
+      <section className="bg-primary-teal py-16 border-y border-primary-teal/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center gap-12 text-right">
             <motion.div 
@@ -323,11 +323,11 @@ export default function HomeClient({
               className="md:w-1/2 space-y-6"
             >
               <span className="text-xl font-bold text-accent-yellow tracking-widest uppercase block">عن منصة مُلهم</span>
-              <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">نصنع القادة ونبني الأثر</h2>
-              <p className="text-slate-800 text-sl leading-relaxed">
+              <h2 className="text-2xl md:text-3xl font-extrabold text-white font-tajawal">نصنع القادة ونبني الأثر</h2>
+              <p className="text-slate-200 text-sl leading-relaxed">
                 منصة ملهم هي مجتمع شبابي متكامل يهدف إلى تمكين الجيل الجديد وتوفير فرص استثنائية للنمو والتعلم في بيئة محفزة. نحن نؤمن بأن كل شاب وفتاة يمتلك قدرات كامنة تحتاج إلى التوجيه الصحيح والمساحة الآمنة للإبداع.
               </p>
-              <p className="text-slate-800 text-sl leading-relaxed">
+              <p className="text-slate-200 text-sl leading-relaxed">
                 من خلال برامجنا، أكاديمياتنا، ورحلاتنا، نجمع بين الترفيه والفائدة لنبني شخصيات متوازنة قادرة على إحداث تأثير إيجابي ومستدام في المجتمع.
               </p>
               <div className="pt-4 flex justify-end">
@@ -335,7 +335,7 @@ export default function HomeClient({
                   href="/about"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 hover:border-accent-yellow text-slate-700 hover:text-accent-yellow rounded-xl text-sm font-bold shadow-sm transition-all duration-300 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-accent-yellow text-white hover:text-accent-yellow rounded-xl text-sm font-bold shadow-sm transition-all duration-300 cursor-pointer"
                 >
                   تعرف علينا أكثر
                   <ArrowLeft className="w-4 h-4" />
@@ -349,7 +349,7 @@ export default function HomeClient({
               transition={{ duration: 0.6 }}
               className="md:w-1/2 w-full"
             >
-              <div className="relative h-80 sm:h-96 w-full rounded-3xl overflow-hidden shadow-lg border border-slate-100">
+              <div className="relative h-80 sm:h-96 w-full rounded-3xl overflow-hidden shadow-2xl border border-white/10">
                 <Image
                   src="/images/About.jpeg"
                   alt="عن ملهم"
