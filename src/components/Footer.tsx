@@ -42,7 +42,7 @@ export const Footer: React.FC = () => {
                 </svg>
               </a>
               <a
-                href="https://www.snapchat.com/@mulhim.180?sender_web_id=22cab62f-194a-48cb-908b-50f417cbde00&device_type=desktop&is_copy_url=true"
+                href="https://www.snapchat.com/add/mulhim.180"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-xl bg-slate-800/80 hover:bg-yellow-400 hover:text-slate-900 flex items-center justify-center transition-all duration-300 hover:scale-110 text-slate-450"
