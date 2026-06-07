@@ -29,6 +29,11 @@ export const metadata: Metadata = {
   verification: {
     google: "mPkFLAXU_wKxF7gdKsKSPe3lKJ1TDwt6o_f7zOPeTCY",
   },
+  openGraph: {
+    title: "منصة مُلهم | تمكين وإلهام الشباب",
+    description: "منصة ملهم تهدف لتمكين الشباب وتوفير فرص استثنائية للنمو والتعلم في بيئة مجتمعية محفزة عبر برامج، أكاديميات، رحلات استكشافية ومتجر متكامل.",
+    images: ["/mulhim_open_graph.png"],
+  },
 };
 
 export default function RootLayout({

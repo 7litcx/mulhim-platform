@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "منصة مُلهم | تمكين الشباب وبناء قادة المستقبل",
     description: "منصة ملهم تهدف لتمكين الشباب وتوفير فرص استثنائية للنمو والتعلم في بيئة مجتمعية محفزة لبناء جيل يقود المستقبل بأثر مستدام.",
-    images: ["/og-default.jpg"],
+    images: ["/mulhim_open_graph.png"],
   },
 };
 
