@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Sparkles, Heart, Compass, Target, Users, User, BookOpen, Trophy, ShieldCheck, Star, Award } from "lucide-react";
+import { Sparkles, Heart, Compass, Target, Users, User, BookOpen, Trophy, ShieldCheck, Star, Award, UserCheck, Handshake } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
@@ -328,47 +328,61 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
         >
           <motion.div 
             variants={itemVariants}
             whileHover={{ scale: 1.03 }}
-            className="flex gap-4 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 text-right"
+            className="flex flex-col gap-4 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 text-right"
           >
             <div className="w-12 h-12 bg-slate-100 text-primary-navy rounded-xl flex items-center justify-center flex-shrink-0">
-              <BookOpen className="w-6 h-6" />
+              <UserCheck className="w-6 h-6" />
             </div>
-            <div className="space-y-1">
-              <h4 className="font-bold text-slate-800 text-sl">تطوير المهارات</h4>
-              <p className="text-sm text-slate-800 leading-relaxed">تزويد الشباب بأحدث الأدوات والخبرات العملية اللازمة لسوق العمل وريادة الأعمال.</p>
+            <div className="space-y-2">
+              <h4 className="font-bold text-slate-800 text-sl">بناء الشخصية والقيم</h4>
+              <p className="text-sm text-slate-800 leading-relaxed">تنشئة جيل معتز بقيمه، واثق بنفسه، وقادر على تحمل المسؤولية والإسهام الإيجابي في مجتمعه.</p>
             </div>
           </motion.div>
 
           <motion.div 
             variants={itemVariants}
             whileHover={{ scale: 1.03 }}
-            className="flex gap-4 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 text-right"
+            className="flex flex-col gap-4 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 text-right"
           >
             <div className="w-12 h-12 bg-slate-100 text-primary-navy rounded-xl flex items-center justify-center flex-shrink-0">
-              <Users className="w-6 h-6" />
+              <Star className="w-6 h-6" />
             </div>
-            <div className="space-y-1">
-              <h4 className="font-bold text-slate-800 text-sl">بناء المجتمع</h4>
-              <p className="text-sm text-slate-800 leading-relaxed">خلق شبكة علاقات قوية وتفاعلية بين المبدعين من الشباب والفتيات لتبادل الخبرات.</p>
+            <div className="space-y-2">
+              <h4 className="font-bold text-slate-800 text-sl">تقديم برامج نوعية مؤثرة</h4>
+              <p className="text-sm text-slate-800 leading-relaxed">تصميم وتنفيذ برامج تربوية وتعليمية وترفيهية مبتكرة تحقق تجربة مميزة وأثرًا مستدامًا للمشاركين.</p>
             </div>
           </motion.div>
 
           <motion.div 
             variants={itemVariants}
             whileHover={{ scale: 1.03 }}
-            className="flex gap-4 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 text-right"
+            className="flex flex-col gap-4 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 text-right"
           >
             <div className="w-12 h-12 bg-slate-100 text-primary-navy rounded-xl flex items-center justify-center flex-shrink-0">
-              <Trophy className="w-6 h-6" />
+              <Award className="w-6 h-6" />
             </div>
-            <div className="space-y-1">
-              <h4 className="font-bold text-slate-800 text-sl">شراكات استراتيجية</h4>
-              <p className="text-sm text-slate-800 leading-relaxed">التعاون مع المؤسسات والشركات المتميزة لتقديم فرص حصرية وبرامج توظيف وتأهيل للشباب.</p>
+            <div className="space-y-2">
+              <h4 className="font-bold text-slate-800 text-sl">تطوير الكوادر والقيادات</h4>
+              <p className="text-sm text-slate-800 leading-relaxed">تأهيل الكوادر وتطوير قدراتهم المهنية والقيادية لضمان جودة الأداء واستدامة النجاح.</p>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            variants={itemVariants}
+            whileHover={{ scale: 1.03 }}
+            className="flex flex-col gap-4 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 text-right"
+          >
+            <div className="w-12 h-12 bg-slate-100 text-primary-navy rounded-xl flex items-center justify-center flex-shrink-0">
+              <Handshake className="w-6 h-6" />
+            </div>
+            <div className="space-y-2">
+              <h4 className="font-bold text-slate-800 text-sl">تعزيز الاستدامة والشراكات</h4>
+              <p className="text-sm text-slate-800 leading-relaxed">بناء شراكات فاعلة وتنويع الموارد بما يسهم في توسيع الأثر واستمرار البرنامج وتطوره.</p>
             </div>
           </motion.div>
         </motion.div>
