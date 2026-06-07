@@ -551,6 +551,8 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
               </div>
               <div className="text-sm text-slate-800 leading-relaxed text-right space-y-3 w-full">
                 <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm">
+                  <li>مؤسس برنامج ملهم.</li>
+                  <li>خبرة تزيد عن ١٠ سنوات في الممارسة التربوية والتعليمية.</li>
                   <li>خريج جامعة الملك عبدالعزيز.</li>
                   <li>مشرف إداري في برنامج ملهم.</li>
                   <li>يمتلك خبرة في الإدارة والتنظيم وتطوير المبادرات التربوية والتعليمية.</li>
@@ -575,6 +577,8 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
               <div className="text-sm text-slate-800 leading-relaxed text-right space-y-3 w-full">
                 <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm">
                   <li>عضو هيئة تدريس في جامعة الملك عبدالعزيز.</li>
+                  <li>مستشار تربوي.</li>
+                  <li>مهتم بتأسيس الكيانات التربوية والتعليمية.</li>
                   <li>خبرة تزيد على 10 سنوات في التطوير المؤسسي والعمل الشبابي والتدريب.</li>
                   <li>أسهم في تأسيس وإدارة عدد من الجمعيات والمراكز والمبادرات الشبابية والقرآنية.</li>
                   <li>مهتم ببناء البرامج النوعية وتنمية القدرات.</li>
