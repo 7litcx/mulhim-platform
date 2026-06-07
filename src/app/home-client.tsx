@@ -179,7 +179,7 @@ export default function HomeClient({
     .slice(0, 3);
 
   return (
-    <div className="space-y-8 pb-10">
+    <div className="pb-10 flex flex-col w-full">
 
       {/* 1. Premium Hero Banner Section */}
       <section className="relative min-h-[380px] sm:min-h-[450px] md:min-h-[500px] flex items-center pt-32 pb-16 bg-slate-900 overflow-hidden">
