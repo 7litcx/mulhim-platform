@@ -217,7 +217,7 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
             className="relative rounded-3xl overflow-hidden shadow-xl aspect-video lg:aspect-square"
           >
             <Image
-              src="/images/About.png"
+              src="/images/About.jpeg"
               alt="قصتنا"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
