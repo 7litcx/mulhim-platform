@@ -8,7 +8,10 @@ import {
   Users, ShoppingBag, ClipboardList, MessageSquare, TrendingUp, ShieldCheck, Download, AlertCircle, Plus, X
 } from "lucide-react";
 import { 
-  fetchAllAdminData, 
+  fetchAdminUsers,
+  fetchAdminRegistrations,
+  fetchAdminOrders,
+  fetchAdminMessages,
   updateRegistrationStatusAction, 
   updateOrderStatusAction, 
   deleteRecordAction, 
@@ -112,11 +115,15 @@ export default function AdminDashboardPage() {
       const token = session?.access_token;
       if (!token) throw new Error("Unauthorized: لا توجد جلسة صالحة.");
 
-      const data = await fetchAllAdminData(token);
-      setUsers(data.users);
-      setRegistrations(data.registrations);
-      setOrders(data.orders);
-      setMessages(data.messages);
+      // Fetch independently so the UI doesn't block on the slowest query
+      fetchAdminUsers(token).then(setUsers).catch(console.error);
+      fetchAdminRegistrations(token).then(setRegistrations).catch(console.error);
+      fetchAdminOrders(token).then(setOrders).catch(console.error);
+      fetchAdminMessages(token).then(setMessages).catch(console.error);
+      
+      // Give a tiny bit of time for initial queries to resolve before removing skeleton
+      setTimeout(() => setLoading(false), 500);
+
     } catch (error: any) {
       console.error("Error fetching admin data:", error);
       if (error.message?.includes("Unauthorized")) {
@@ -125,7 +132,6 @@ export default function AdminDashboardPage() {
       } else {
         showToast(error.message || "حدث خطأ أثناء جلب بيانات الإدارة.", "error");
       }
-    } finally {
       setLoading(false);
     }
   };

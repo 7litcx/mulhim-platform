@@ -26,27 +26,32 @@ async function verifyAdmin(token: string) {
   }
 }
 
-export async function fetchAllAdminData(token: string) {
+export async function fetchAdminUsers(token: string) {
   await verifyAdmin(token);
+  const { data, error } = await supabaseAdmin.from("profiles").select("*").order("created_at", { ascending: false }).limit(300);
+  if (error) throw new Error(error.message);
+  return data || [];
+}
 
-  const [profilesRes, regsRes, ordersRes, messagesRes] = await Promise.all([
-    supabaseAdmin.from("profiles").select("*").order("created_at", { ascending: false }).limit(300),
-    supabaseAdmin.from("registrations").select("*").order("created_at", { ascending: false }).limit(300),
-    supabaseAdmin.from("orders").select("*, order_items(*)").order("created_at", { ascending: false }).limit(300),
-    supabaseAdmin.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(300),
-  ]);
+export async function fetchAdminRegistrations(token: string) {
+  await verifyAdmin(token);
+  const { data, error } = await supabaseAdmin.from("registrations").select("*").order("created_at", { ascending: false }).limit(300);
+  if (error) throw new Error(error.message);
+  return data || [];
+}
 
-  if (profilesRes.error) throw new Error("Profiles error: " + profilesRes.error.message);
-  if (regsRes.error) throw new Error("Registrations error: " + regsRes.error.message);
-  if (ordersRes.error) throw new Error("Orders error: " + ordersRes.error.message);
-  if (messagesRes.error) throw new Error("Messages error: " + messagesRes.error.message);
+export async function fetchAdminOrders(token: string) {
+  await verifyAdmin(token);
+  const { data, error } = await supabaseAdmin.from("orders").select("*, order_items(*)").order("created_at", { ascending: false }).limit(300);
+  if (error) throw new Error(error.message);
+  return data || [];
+}
 
-  return {
-    users: profilesRes.data || [],
-    registrations: regsRes.data || [],
-    orders: ordersRes.data || [],
-    messages: messagesRes.data || [],
-  };
+export async function fetchAdminMessages(token: string) {
+  await verifyAdmin(token);
+  const { data, error } = await supabaseAdmin.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(300);
+  if (error) throw new Error(error.message);
+  return data || [];
 }
 
 export async function updateRegistrationStatusAction(token: string, id: string, status: string) {
