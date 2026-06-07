@@ -630,8 +630,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Registration Actions
   const registerUser = async (reg: Omit<Registration, "id" | "date" | "status">) => {
     // Check if this person is already registered for this activity
+    const normalizeString = (str: string) => str.trim().replace(/\s+/g, " ");
+    
     const isAlreadyRegistered = registrations.some(
-      (r) => r.fullName === reg.fullName && r.targetName === reg.targetName
+      (r) => normalizeString(r.fullName) === normalizeString(reg.fullName) && r.targetName === reg.targetName
     );
 
     if (isAlreadyRegistered) {

@@ -66,6 +66,12 @@ export default function SummerRegistrationPage() {
     e.preventDefault();
     if (!user) return;
 
+    const nameParts = formData.fullName.trim().split(/\s+/);
+    if (nameParts.length < 3) {
+      showToast("الرجاء إدخال الاسم الثلاثي أو الرباعي للمتقدم", "error");
+      return;
+    }
+
     if (formData.birthDate) {
       const selectedYear = new Date(formData.birthDate).getFullYear();
       if (selectedYear > 2020) {
