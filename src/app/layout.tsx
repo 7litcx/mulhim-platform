@@ -1,8 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
-import { AppProvider } from "@/context/AppContext";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { LayoutWrapper } from "@/components/LayoutWrapper";
 import "./globals.css";
 
 import { Cairo, Tajawal } from "next/font/google";
@@ -41,15 +39,9 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={`h-full scroll-smooth ${cairo.variable} ${tajawal.variable}`} data-scroll-behavior="smooth">
       <body className="min-h-full flex flex-col bg-slate-50/50 text-slate-900 font-tajawal font-medium antialiased text-lg">
-        <AppProvider>
-          <React.Suspense fallback={null}>
-            <Header />
-          </React.Suspense>
-          <main className="flex-grow flex flex-col">
-            {children}
-          </main>
-          <Footer />
-        </AppProvider>
+        <LayoutWrapper>
+          {children}
+        </LayoutWrapper>
       </body>
     </html>
   );
