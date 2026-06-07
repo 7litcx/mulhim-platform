@@ -309,6 +309,7 @@ export default function HomeClient({
               تسوق الآن <ArrowLeft className="w-3 h-3" />
             </Link>
           </motion.div>
+        </motion.div>
         </div>
       </section>
 
