@@ -629,6 +629,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Registration Actions
   const registerUser = async (reg: Omit<Registration, "id" | "date" | "status">) => {
+    // Check if this person is already registered for this activity
+    const isAlreadyRegistered = registrations.some(
+      (r) => r.fullName === reg.fullName && r.targetName === reg.targetName
+    );
+
+    if (isAlreadyRegistered) {
+      showToast("تم التسجيل مسبقاً في هذا البرنامج", "error");
+      throw new Error("Already registered");
+    }
+
     const tempId = generateUUID();
     const newReg: Registration = {
       ...reg,
