@@ -189,7 +189,7 @@ export default function HomeClient({
             initial={{ scale: 1.15, opacity: 0 }}
             animate={{ scale: 1.05, opacity: 0.65 }}
             transition={{ duration: 1.5, ease: "easeOut" }}
-            src={heroSlide.image || "/images/About.png"}
+            src={heroSlide.image || "/images/About.jpeg"}
             alt={heroSlide.title || "Hero Banner"}
             className="w-full h-full object-cover object-center"
           />
@@ -351,7 +351,7 @@ export default function HomeClient({
             >
               <div className="relative h-80 sm:h-96 w-full rounded-3xl overflow-hidden shadow-lg border border-slate-100">
                 <Image
-                  src="/images/About.png"
+                  src="/images/About.jpeg"
                   alt="عن ملهم"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
