@@ -402,7 +402,7 @@ export default function HomeClient({
                 <Users className="w-6 h-6 sm:w-7 sm:h-7" />
               </div>
               <h3 className="text-3xl sm:text-4xl md:text-5xl font-black font-sans bg-clip-text text-transparent bg-gradient-to-r from-accent-yellow to-emerald-400">
-                +<AnimatedCounter target={5000} />
+                +<AnimatedCounter target={500} />
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 font-tajawal font-medium mt-3 leading-relaxed">
                 عضو مشارك ونشط
@@ -420,7 +420,7 @@ export default function HomeClient({
                 <Award className="w-6 h-6 sm:w-7 sm:h-7" />
               </div>
               <h3 className="text-3xl sm:text-4xl md:text-5xl font-black font-sans bg-clip-text text-transparent bg-gradient-to-r from-blue-455 to-accent-yellow">
-                +<AnimatedCounter target={100} />
+                +<AnimatedCounter target={20} />
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 font-tajawal font-medium mt-3 leading-relaxed">
                 برنامج وأكاديمية تدريبية
@@ -438,10 +438,10 @@ export default function HomeClient({
                 <Compass className="w-6 h-6 sm:w-7 sm:h-7 animate-[spin_8s_linear_infinite] group-hover:animate-[spin_3s_linear_infinite]" />
               </div>
               <h3 className="text-3xl sm:text-4xl md:text-5xl font-black font-sans bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-accent-yellow">
-                +<AnimatedCounter target={50} />
+                +<AnimatedCounter target={10} />
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 font-tajawal font-medium mt-3 leading-relaxed">
-                رحلة استكشافية ومغامرة
+                رحلات استكشافية ومغامرات
               </p>
             </motion.div>
 
@@ -456,7 +456,7 @@ export default function HomeClient({
                 <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
               </div>
               <h3 className="text-3xl sm:text-4xl md:text-5xl font-black font-sans bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
-                +<AnimatedCounter target={25} />
+                +<AnimatedCounter target={11} />
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 font-tajawal font-medium mt-3 leading-relaxed">
                 شريك نجاح متميز
