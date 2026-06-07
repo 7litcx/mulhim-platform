@@ -234,19 +234,20 @@ export default function HomeClient({
 
 
       {/* 2. Core Offerings & Features Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-2xl mx-auto space-y-4"
-        >
-          <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">لماذا تنضم إلى مجتمع مُلهم؟</h2>
-          <p className="text-slate-800 text-sl leading-relaxed">
-            نسعى لتقديم تجارب متكاملة تجمع بين العلم، المهارة، المغامرة، والعطاء لتمكينك من صنع أثر مستدام وتطوير ذاتك.
-          </p>
-        </motion.div>
+      <section className="bg-primary-teal py-16 border-y border-primary-teal/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-2xl mx-auto space-y-4"
+          >
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white font-tajawal">لماذا تنضم إلى مجتمع مُلهم؟</h2>
+            <p className="text-slate-200 text-sl leading-relaxed">
+              نسعى لتقديم تجارب متكاملة تجمع بين العلم، المهارة، المغامرة، والعطاء لتمكينك من صنع أثر مستدام وتطوير ذاتك.
+            </p>
+          </motion.div>
 
         <motion.div 
           variants={containerVariants}
@@ -308,7 +309,7 @@ export default function HomeClient({
               تسوق الآن <ArrowLeft className="w-3 h-3" />
             </Link>
           </motion.div>
-        </motion.div>
+        </div>
       </section>
 
       {/* 3. About Mulhim Section */}
