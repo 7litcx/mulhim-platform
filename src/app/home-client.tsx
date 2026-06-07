@@ -1153,35 +1153,28 @@ export default function HomeClient({
               className="flex items-center gap-2 font-tajawal font-black text-slate-400 hover:text-accent-yellow text-xl tracking-wider select-none cursor-pointer transition-colors duration-300"
             >
               <Award className="w-6 h-6 text-slate-350 group-hover:text-accent-yellow" />
-              <span>مؤسسة العطاء</span>
+              <span>شركة هاتريك</span>
             </motion.div>
             <motion.div 
               whileHover={{ scale: 1.1, y: -2 }}
               className="flex items-center gap-2 font-tajawal font-black text-slate-400 hover:text-accent-yellow text-xl tracking-wider select-none cursor-pointer transition-colors duration-300"
             >
               <Award className="w-6 h-6 text-slate-350 group-hover:text-accent-yellow" />
-              <span>أكاديمية الريادة</span>
+              <span>مؤسسة سُرج</span>
             </motion.div>
             <motion.div 
               whileHover={{ scale: 1.1, y: -2 }}
               className="flex items-center gap-2 font-tajawal font-black text-slate-400 hover:text-accent-yellow text-xl tracking-wider select-none cursor-pointer transition-colors duration-300"
             >
               <Award className="w-6 h-6 text-slate-350 group-hover:text-accent-yellow" />
-              <span>جمعية التمكين</span>
+              <span>جامع رافع الغامدي</span>
             </motion.div>
             <motion.div 
               whileHover={{ scale: 1.1, y: -2 }}
               className="flex items-center gap-2 font-tajawal font-black text-slate-400 hover:text-accent-yellow text-xl tracking-wider select-none cursor-pointer transition-colors duration-300"
             >
               <Award className="w-6 h-6 text-slate-350 group-hover:text-accent-yellow" />
-              <span>شركة آفاق</span>
-            </motion.div>
-            <motion.div 
-              whileHover={{ scale: 1.1, y: -2 }}
-              className="flex items-center gap-2 font-tajawal font-black text-slate-400 hover:text-accent-yellow text-xl tracking-wider select-none cursor-pointer transition-colors duration-300"
-            >
-              <Award className="w-6 h-6 text-slate-350 group-hover:text-accent-yellow" />
-              <span>مبادرة أثر</span>
+              <span>مدارس الأندلس</span>
             </motion.div>
           </div>
         </div>

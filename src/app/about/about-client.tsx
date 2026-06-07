@@ -590,6 +590,45 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
         </div>
       </section>
 
+      {/* 6. Success Partners Marquee Logos */}
+      <section className="bg-slate-50/50 py-16 border-t border-slate-100 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h3 className="text-slate-400 font-bold text-xl tracking-widest uppercase">شركاء النجاح المتميزين</h3>
+          </div>
+
+          <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16 opacity-75 transition-all duration-500">
+            <motion.div 
+              whileHover={{ scale: 1.1, y: -2 }}
+              className="flex items-center gap-2 font-tajawal font-black text-slate-400 hover:text-accent-yellow text-xl tracking-wider select-none cursor-pointer transition-colors duration-300"
+            >
+              <Award className="w-6 h-6 text-slate-350 group-hover:text-accent-yellow" />
+              <span>شركة هاتريك</span>
+            </motion.div>
+            <motion.div 
+              whileHover={{ scale: 1.1, y: -2 }}
+              className="flex items-center gap-2 font-tajawal font-black text-slate-400 hover:text-accent-yellow text-xl tracking-wider select-none cursor-pointer transition-colors duration-300"
+            >
+              <Award className="w-6 h-6 text-slate-350 group-hover:text-accent-yellow" />
+              <span>مؤسسة سُرج</span>
+            </motion.div>
+            <motion.div 
+              whileHover={{ scale: 1.1, y: -2 }}
+              className="flex items-center gap-2 font-tajawal font-black text-slate-400 hover:text-accent-yellow text-xl tracking-wider select-none cursor-pointer transition-colors duration-300"
+            >
+              <Award className="w-6 h-6 text-slate-350 group-hover:text-accent-yellow" />
+              <span>جامع رافع الغامدي</span>
+            </motion.div>
+            <motion.div 
+              whileHover={{ scale: 1.1, y: -2 }}
+              className="flex items-center gap-2 font-tajawal font-black text-slate-400 hover:text-accent-yellow text-xl tracking-wider select-none cursor-pointer transition-colors duration-300"
+            >
+              <Award className="w-6 h-6 text-slate-350 group-hover:text-accent-yellow" />
+              <span>مدارس الأندلس</span>
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
     </div>
   );
