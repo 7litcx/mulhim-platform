@@ -298,7 +298,7 @@ export default function TripsClient({
       </section>
 
       {/* 2. Trip Categories / Types Grid */}
-      <section className="bg-primary-teal py-16 w-full mt-0">
+      <section className="bg-primary-teal py-16 w-full !mt-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
