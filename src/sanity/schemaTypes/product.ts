@@ -74,6 +74,13 @@ export const product = defineType({
       validation: (rule) => rule.required().min(0),
     }),
     defineField({
+      name: "isAvailable",
+      title: "المنتج متوفر؟",
+      type: "boolean",
+      description: "إذا تم تعطيل هذا الخيار، سيتم عرض المنتج كـ (غير متوفر) ولن يظهر سعره وتفاصيله.",
+      initialValue: true,
+    }),
+    defineField({
       name: "sizes",
       title: "المقاسات المتوفرة",
       type: "array",

@@ -42,6 +42,7 @@ interface ProductClientProps {
     variants?: string[];
     content?: any[];
     isNew?: boolean;
+    isAvailable?: boolean;
   };
 }
 
@@ -330,31 +331,37 @@ export default function ProductClient({ product }: ProductClientProps) {
           </div>
 
           {/* Pricing Block */}
-          <div className="bg-slate-50/70 p-4 rounded-2xl flex items-center justify-between border border-slate-100">
-            <div className="text-right">
-              <span className="text-[10px] text-slate-400 block font-medium">السعر الحالي</span>
-              <div className="flex items-baseline gap-2 font-sans pt-0.5">
-                <span className="text-2xl md:text-3xl font-black text-slate-900">
-                  {product.price}
-                </span>
-                <span className="text-sm font-bold text-slate-650">ر.س</span>
-              </div>
-            </div>
-            
-            {hasDiscount && (
-              <div className="text-left font-sans">
-                <span className="text-[10px] text-slate-400 block font-medium">السعر الأصلي</span>
-                <div className="flex items-center gap-1.5 pt-0.5">
-                  <span className="text-slate-400 line-through text-sm">
-                    {product.compareAtPrice} ر.س
+          {product.isAvailable !== false ? (
+            <div className="bg-slate-50/70 p-4 rounded-2xl flex items-center justify-between border border-slate-100">
+              <div className="text-right">
+                <span className="text-[10px] text-slate-400 block font-medium">السعر الحالي</span>
+                <div className="flex items-baseline gap-2 font-sans pt-0.5">
+                  <span className="text-2xl md:text-3xl font-black text-slate-900">
+                    {product.price}
                   </span>
-                  <span className="bg-rose-100 text-rose-600 text-[10px] font-extrabold px-2 py-0.5 rounded-md">
-                    وفر {discountPercent}%
-                  </span>
+                  <span className="text-sm font-bold text-slate-650">ر.س</span>
                 </div>
               </div>
-            )}
-          </div>
+              
+              {hasDiscount && (
+                <div className="text-left font-sans">
+                  <span className="text-[10px] text-slate-400 block font-medium">السعر الأصلي</span>
+                  <div className="flex items-center gap-1.5 pt-0.5">
+                    <span className="text-slate-400 line-through text-sm">
+                      {product.compareAtPrice} ر.س
+                    </span>
+                    <span className="bg-rose-100 text-rose-600 text-[10px] font-extrabold px-2 py-0.5 rounded-md">
+                      وفر {discountPercent}%
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="bg-slate-100 p-4 rounded-2xl flex items-center justify-center border border-slate-200">
+               <span className="text-sm font-bold text-slate-500 font-tajawal">غير متوفر حالياً</span>
+            </div>
+          )}
 
           {/* Description Section */}
           <div className="space-y-1.5">
@@ -484,56 +491,58 @@ export default function ProductClient({ product }: ProductClientProps) {
         </div>
 
         {/* Purchase Action Box */}
-        <div className="space-y-4 pt-4 border-t border-slate-100">
-          <div className="flex items-center justify-between gap-4">
-            {/* Quantity control */}
-            <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
-              <button
-                onClick={increaseQuantity}
-                disabled={product.stock !== undefined && quantity >= product.stock}
-                className="p-3 hover:bg-slate-50 text-slate-600 disabled:opacity-20 transition-colors"
-                aria-label="Increase quantity"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
-              <span className="px-5 font-bold text-slate-800 text-sm font-sans w-12 text-center">
-                {quantity}
-              </span>
-              <button
-                onClick={decreaseQuantity}
-                disabled={quantity <= 1}
-                className="p-3 hover:bg-slate-50 text-slate-600 disabled:opacity-20 transition-colors"
-                aria-label="Decrease quantity"
-              >
-                <Minus className="w-4 h-4" />
-              </button>
+        {product.isAvailable !== false && (
+          <div className="space-y-4 pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-between gap-4">
+              {/* Quantity control */}
+              <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
+                <button
+                  onClick={increaseQuantity}
+                  disabled={product.stock !== undefined && quantity >= product.stock}
+                  className="p-3 hover:bg-slate-50 text-slate-600 disabled:opacity-20 transition-colors"
+                  aria-label="Increase quantity"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+                <span className="px-5 font-bold text-slate-800 text-sm font-sans w-12 text-center">
+                  {quantity}
+                </span>
+                <button
+                  onClick={decreaseQuantity}
+                  disabled={quantity <= 1}
+                  className="p-3 hover:bg-slate-50 text-slate-600 disabled:opacity-20 transition-colors"
+                  aria-label="Decrease quantity"
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+              </div>
+              <span className="text-xs font-bold text-slate-600 font-tajawal">الكمية المطلوبة</span>
             </div>
-            <span className="text-xs font-bold text-slate-600 font-tajawal">الكمية المطلوبة</span>
-          </div>
 
-          {/* Add to Cart CTA */}
-          <button
-            onClick={handleAddToCart}
-            disabled={product.stock === 0}
-            className={`w-full py-4 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-all duration-350 active:scale-[0.98] ${
-              addedToCart
-                ? "bg-emerald-600 text-white shadow-emerald-100 hover:bg-emerald-700"
-                : "bg-accent-teal text-white hover:bg-primary-teal shadow-yellow-50/50 glow-btn"
-            } disabled:opacity-50 disabled:cursor-not-allowed`}
-          >
-            {addedToCart ? (
-              <>
-                <Check className="w-5 h-5 animate-scale" />
-                <span>تمت الإضافة إلى سلتك بنجاح!</span>
-              </>
-            ) : (
-              <>
-                <ShoppingBag className="w-5 h-5" />
-                <span>إضافة إلى سلة التسوق</span>
-              </>
-            )}
-          </button>
-        </div>
+            {/* Add to Cart CTA */}
+            <button
+              onClick={handleAddToCart}
+              disabled={product.stock === 0}
+              className={`w-full py-4 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-all duration-350 active:scale-[0.98] ${
+                addedToCart
+                  ? "bg-emerald-600 text-white shadow-emerald-100 hover:bg-emerald-700"
+                  : "bg-accent-teal text-white hover:bg-primary-teal shadow-yellow-50/50 glow-btn"
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              {addedToCart ? (
+                <>
+                  <Check className="w-5 h-5 animate-scale" />
+                  <span>تمت الإضافة إلى سلتك بنجاح!</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingBag className="w-5 h-5" />
+                  <span>إضافة إلى سلة التسوق</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
 
         {/* Tabbed Info Accordion Section (Details, Shipping, Payments) */}
         <div className="border-t border-slate-100 pt-6 mt-6 space-y-3">

@@ -127,6 +127,7 @@ export interface Product {
   images: SanityImage[];
   price?: number;
   compareAtPrice?: number;
+  isAvailable?: boolean;
   isNew: boolean;
   stock: number;
   sizes?: string[];
