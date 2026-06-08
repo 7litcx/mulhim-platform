@@ -190,13 +190,9 @@ export default function SummerRegistrationPage() {
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary-teal to-accent-teal"></div>
           <div className="flex flex-col sm:flex-row justify-between items-center w-full mb-8 gap-6 sm:gap-4">
             <img src="/mulihmlogo.svg" alt="ملهم" className="h-14 sm:h-16 object-contain" />
-            <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
-               <div className="h-10 px-4 sm:px-5 bg-teal-50 text-primary-teal rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border border-teal-100 shadow-sm">
-                 شعار لون صيفك
-               </div>
-               <div className="h-10 px-4 sm:px-5 bg-teal-50 text-primary-teal rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border border-teal-100 shadow-sm">
-                 مدارس الأندلس
-               </div>
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 items-center">
+               <img src="/شعار لون صيفك.svg" alt="شعار لون صيفك" className="h-12 sm:h-16 object-contain drop-shadow-sm" />
+               <img src="/شعار مدارس الاندلس.svg" alt="مدارس الأندلس" className="h-12 sm:h-16 object-contain drop-shadow-sm" />
             </div>
           </div>
           <div className="inline-flex items-center justify-center p-3 bg-teal-50 rounded-2xl mb-4 text-accent-teal">
