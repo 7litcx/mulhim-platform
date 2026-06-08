@@ -191,8 +191,8 @@ export default function SummerRegistrationPage() {
           <div className="flex flex-col sm:flex-row justify-between items-center w-full mb-8 gap-6 sm:gap-4">
             <img src="/mulihmlogo.svg" alt="ملهم" className="h-14 sm:h-16 object-contain" />
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6 items-center">
-               <img src="/summer-logo.svg" alt="شعار لون صيفك" className="h-12 sm:h-16 object-contain drop-shadow-sm" />
-               <img src="/andalus-logo.svg" alt="مدارس الأندلس" className="h-12 sm:h-16 object-contain drop-shadow-sm" />
+               <img src="/summer-logo.svg" alt="شعار لون صيفك" className="h-12 sm:h-16 object-contain mix-blend-multiply" />
+               <img src="/andalus-logo.svg" alt="مدارس الأندلس" className="h-12 sm:h-16 object-contain mix-blend-multiply" />
             </div>
           </div>
           <div className="inline-flex items-center justify-center p-3 bg-teal-50 rounded-2xl mb-4 text-accent-teal">
