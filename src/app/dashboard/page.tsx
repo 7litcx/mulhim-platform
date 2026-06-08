@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 export default function DashboardPage() {
-  const { currentUser, logoutUser, registrations, orders } = useApp();
+  const { currentUser, logoutUser, registrations, familyChildren, orders } = useApp();
   const router = useRouter();
   const [activeSection, setActiveSection] = useState<"family" | "orders">("family");
 
@@ -67,8 +67,11 @@ export default function DashboardPage() {
     childrenMap[name].push(reg);
   });
 
-  // Unique list of children names
-  const childrenNames = Object.keys(childrenMap);
+  // Unique list of children names (from family list + any fallback from registrations)
+  const uniqueChildNames = new Set<string>();
+  familyChildren.forEach(c => uniqueChildNames.add(c.full_name.trim()));
+  myRegistrations.forEach(r => uniqueChildNames.add(r.fullName.trim()));
+  const childrenNames = Array.from(uniqueChildNames);
 
   // Get orders associated with current parent
   const myOrders = orders.filter(
@@ -319,8 +322,14 @@ export default function DashboardPage() {
                 ) : (
                   <div className="space-y-8">
                     {childrenNames.map((childName) => {
-                      const childRegs = childrenMap[childName];
-                      const childAge = childRegs[0]?.age || 12;
+                      const childRegs = childrenMap[childName] || [];
+                      const familyChild = familyChildren.find(c => c.full_name.trim() === childName);
+                      // Estimate age from grade or fallback
+                      let childAge = 12;
+                      if (familyChild?.grade?.includes("الابتدائي")) childAge = 9;
+                      if (familyChild?.grade?.includes("المتوسط")) childAge = 14;
+                      if (familyChild?.grade?.includes("الثانوي")) childAge = 17;
+                      if (childRegs[0]?.age) childAge = childRegs[0].age;
                       
                       return (
                         <div key={childName} className="bg-white rounded-3xl border border-slate-200/60 shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
@@ -342,11 +351,16 @@ export default function DashboardPage() {
 
                           {/* Subscriptions list */}
                           <div className="divide-y divide-slate-100 p-6">
-                            {childRegs.map((reg) => {
-                              // clean up program interest names for display
-                              const displayName = reg.targetName.startsWith("اهتمام بالبرنامج الصيفي:")
-                                ? reg.targetName.replace("اهتمام بالبرنامج الصيفي:", "").trim()
-                                : reg.targetName;
+                            {childRegs.length === 0 ? (
+                              <div className="text-center py-6">
+                                <span className="text-xs text-slate-400">لا توجد اشتراكات مسجلة لهذا الابن حتى الآن.</span>
+                              </div>
+                            ) : (
+                              childRegs.map((reg) => {
+                                // clean up program interest names for display
+                                const displayName = reg.targetName.startsWith("اهتمام بالبرنامج الصيفي:")
+                                  ? reg.targetName.replace("اهتمام بالبرنامج الصيفي:", "").trim()
+                                  : reg.targetName;
 
                               return (
                                 <div key={reg.id} className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row justify-between sm:items-center gap-4 text-right">

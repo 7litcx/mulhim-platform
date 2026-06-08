@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 function RegisterContent() {
-  const { loginUser, currentUser, logoutUser, registerUser, showToast, registrations } = useApp();
+  const { loginUser, currentUser, logoutUser, registerUser, addFamilyChild, showToast, registrations } = useApp();
   const searchParams = useSearchParams();
   const router = useRouter();
   const activityType = searchParams.get("type");
@@ -223,17 +223,12 @@ function RegisterContent() {
           regForm.guardian2Phone
         );
 
-        // 2. Submit to context registrations for each child (this will insert to Supabase)
+        // 2. Submit to context family for each child (this will insert to Supabase)
         for (const child of regForm.children) {
-          await registerUser({
-            fullName: child.fullName,
-            age: getAgeFromGrade(child.grade),
-            phone: `${regForm.guardian1Phone} (ولي الأمر 2: ${regForm.guardian2Phone})`,
-            email: regForm.email,
-            interests: ["program"],
-            type: "program",
-            targetName: `اهتمام بالبرنامج الصيفي: ${child.fullName} - ${child.grade} (${child.gender})`,
-            paymentMethod: paymentOption === "card" ? "بطاقة ائتمانية" : "نقدي"
+          await addFamilyChild({
+            full_name: child.fullName,
+            gender: child.gender,
+            grade: child.grade
           });
         }
 

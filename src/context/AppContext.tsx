@@ -95,6 +95,14 @@ interface Registration {
   extraData?: any; // For custom forms like summer program
 }
 
+interface Child {
+  id: string;
+  parent_id: string;
+  full_name: string;
+  gender: string;
+  grade: string;
+}
+
 interface Order {
   id: string;
   customerName: string;
@@ -114,6 +122,7 @@ interface AppContextType {
   programs: Program[];
   cart: CartItem[];
   registrations: Registration[];
+  familyChildren: Child[];
   orders: Order[];
   currentUser: { id?: string; fullName: string; email: string; phone: string; guardian2Name?: string; guardian2Phone?: string; role?: "user" | "admin"; } | null;
   toasts: Toast[];
@@ -136,6 +145,7 @@ interface AppContextType {
   deleteProgram: (id: string) => void;
   
   // Registration and Checkout
+  addFamilyChild: (child: Omit<Child, "id" | "parent_id">) => Promise<void>;
   registerUser: (reg: Omit<Registration, "id" | "date" | "status">) => Promise<void>;
   placeOrder: (order: Omit<Order, "id" | "date" | "status" | "items" | "total">) => Promise<string>;
   updateOrderStatus: (id: string, status: Order["status"]) => Promise<void>;
@@ -404,6 +414,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [programs, setPrograms] = useState<Program[]>(defaultPrograms);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
+  const [familyChildren, setFamilyChildren] = useState<Child[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [currentUser, setCurrentUser] = useState<{ id?: string; fullName: string; email: string; phone: string; guardian2Name?: string; guardian2Phone?: string; role?: "user" | "admin"; } | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -426,6 +437,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const localPrograms = localStorage.getItem("mulhim_programs");
     const localCart = localStorage.getItem("mulhim_cart");
     const localRegs = localStorage.getItem("mulhim_registrations");
+    const localChildren = localStorage.getItem("mulhim_children");
     const localOrders = localStorage.getItem("mulhim_orders");
     const localUser = localStorage.getItem("mulhim_user");
 
@@ -435,6 +447,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (localPrograms) setPrograms(JSON.parse(localPrograms));
     if (localCart) setCart(JSON.parse(localCart));
     if (localRegs) setRegistrations(JSON.parse(localRegs));
+    if (localChildren) setFamilyChildren(JSON.parse(localChildren));
     if (localOrders) setOrders(JSON.parse(localOrders));
     if (localUser) setCurrentUser(JSON.parse(localUser));
 
@@ -466,6 +479,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           .select("*")
           .eq("user_id", session.user.id);
 
+        const { data: childrenData } = await supabase
+          .from("children")
+          .select("*")
+          .eq("parent_id", session.user.id);
+
         const { data: ordersData } = await supabase
           .from("orders")
           .select("*, order_items(*)")
@@ -492,6 +510,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             saveToLocalStorage("mulhim_registrations", merged);
             return merged;
           });
+        }
+
+        if (childrenData) {
+          setFamilyChildren(childrenData);
+          saveToLocalStorage("mulhim_children", childrenData);
         }
 
         if (ordersData) {
@@ -651,6 +674,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       saveToLocalStorage("mulhim_programs", updated);
       return updated;
     });
+  };
+
+  // Family / Child Actions
+  const addFamilyChild = async (child: Omit<Child, "id" | "parent_id">) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const userId = user?.id || currentUser?.id;
+      
+      if (!userId) throw new Error("User not found");
+
+      const { data: newChild, error: childErr } = await supabase
+        .from("children")
+        .insert({
+          parent_id: userId,
+          full_name: child.full_name,
+          gender: child.gender,
+          grade: child.grade
+        })
+        .select()
+        .single();
+
+      if (childErr) throw childErr;
+
+      if (newChild) {
+        setFamilyChildren((prev) => {
+          // avoid duplicate
+          if (prev.some(c => c.id === newChild.id)) return prev;
+          const updated = [...prev, newChild];
+          saveToLocalStorage("mulhim_children", updated);
+          return updated;
+        });
+      }
+    } catch (err) {
+      console.error("Error adding child:", err);
+      throw err;
+    }
   };
 
   // Registration Actions
@@ -983,6 +1042,7 @@ try {
         programs,
         cart,
         registrations,
+        familyChildren,
         orders,
         currentUser,
         toasts,
@@ -999,6 +1059,7 @@ try {
         deleteTrip,
         deleteAcademy,
         deleteProgram,
+        addFamilyChild,
         registerUser,
         placeOrder,
         updateOrderStatus,

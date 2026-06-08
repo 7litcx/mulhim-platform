@@ -18,7 +18,7 @@ export default function QuickRegistrationModal({
   targetItem,
   targetType
 }: QuickRegistrationModalProps) {
-  const { registerUser, currentUser, registrations, showToast } = useApp();
+  const { registerUser, currentUser, familyChildren, registrations, showToast } = useApp();
 
   const [regForm, setRegForm] = useState({ fullName: "", grade: "", phone: "", email: "" });
   
@@ -44,13 +44,18 @@ export default function QuickRegistrationModal({
   // Compute unique children names registered by current parent
   const myChildren = useMemo(() => {
     if (!currentUser) return [];
-    const unique = new Set(
-      registrations
-        .filter((r) => r.email.trim().toLowerCase() === currentUser.email.trim().toLowerCase() && r.type !== "volunteer")
-        .map((r) => r.fullName.trim())
-    );
+    
+    // Always include family children
+    const unique = new Set<string>();
+    familyChildren.forEach(c => unique.add(c.full_name.trim()));
+    
+    // Fallback: also include children found in previous registrations
+    registrations
+      .filter((r) => r.email.trim().toLowerCase() === currentUser.email.trim().toLowerCase() && r.type !== "volunteer")
+      .forEach((r) => unique.add(r.fullName.trim()));
+      
     return Array.from(unique);
-  }, [registrations, currentUser]);
+  }, [familyChildren, registrations, currentUser]);
 
   // Pre-populate parent contact details when registration modal opens
   useEffect(() => {
