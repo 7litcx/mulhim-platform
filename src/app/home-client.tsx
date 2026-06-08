@@ -1111,27 +1111,35 @@ export default function HomeClient({
                   </div>
 
                   <div className="flex justify-between items-center pt-3 border-t border-slate-50">
-                    <span className="text-accent-yellow font-extrabold text-base">{product.price} ر.س</span>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => {
-                        // Normalize product format for context
-                        addToCart({
-                          id: product.id || product._id,
-                          name: product.name || product.title,
-                          price: product.price,
-                          category: product.category?.slug?.current || product.category || "accessories",
-                          image: productImg,
-                          description: product.description,
-                        });
-                      }}
-                      className="p-2.5 bg-slate-100 hover:bg-accent-yellow text-slate-700 hover:text-primary-navy rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 text-xs font-bold"
-                      aria-label="إضافة للسلة"
-                    >
-                      <ShoppingCart className="w-4 h-4" />
-                      <span>أضف للسلّة</span>
-                    </motion.button>
+                    {product.isAvailable !== false ? (
+                      <>
+                        <span className="text-accent-yellow font-extrabold text-base">{product.price} ر.س</span>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            // Normalize product format for context
+                            addToCart({
+                              id: product.id || product._id,
+                              name: product.name || product.title,
+                              price: product.price,
+                              category: product.category?.slug?.current || product.category || "accessories",
+                              image: productImg,
+                              description: product.description,
+                            });
+                          }}
+                          className="p-2.5 bg-slate-100 hover:bg-accent-yellow text-slate-700 hover:text-primary-navy rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 text-xs font-bold"
+                          aria-label="إضافة للسلة"
+                        >
+                          <ShoppingCart className="w-4 h-4" />
+                          <span>أضف للسلّة</span>
+                        </motion.button>
+                      </>
+                    ) : (
+                      <span className="w-full text-center py-2 bg-slate-100 text-slate-500 rounded-xl text-xs font-bold">
+                        غير متوفر حالياً
+                      </span>
+                    )}
                   </div>
                 </div>
               </motion.div>
