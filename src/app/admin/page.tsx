@@ -22,7 +22,7 @@ import html2canvas from "html2canvas";
 import { SummerProgramPDF } from "@/components/SummerProgramPDF";
 
 export default function AdminDashboardPage() {
-  const { currentUser, showToast } = useApp();
+  const { currentUser, showToast, logoutUser } = useApp();
   const router = useRouter();
   
   const [activeTab, setActiveTab] = useState<"overview" | "users" | "registrations" | "orders" | "messages">("overview");
@@ -124,13 +124,20 @@ export default function AdminDashboardPage() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
-      if (!token) throw new Error("Unauthorized: لا توجد جلسة صالحة.");
+      if (!token) throw new Error("Unauthorized: لا توجد جلسة صالحة. يرجى تسجيل الدخول مجدداً.");
 
-      // Fetch independently so the UI doesn't block on the slowest query
-      fetchAdminUsers(token).then(setUsers).catch(console.error);
-      fetchAdminRegistrations(token).then(setRegistrations).catch(console.error);
-      fetchAdminOrders(token).then(setOrders).catch(console.error);
-      fetchAdminMessages(token).then(setMessages).catch(console.error);
+      // Fetch independently but await all to catch Unauthorized errors from server actions
+      const [usersData, registrationsData, ordersData, messagesData] = await Promise.all([
+        fetchAdminUsers(token),
+        fetchAdminRegistrations(token),
+        fetchAdminOrders(token),
+        fetchAdminMessages(token)
+      ]);
+      
+      setUsers(usersData);
+      setRegistrations(registrationsData);
+      setOrders(ordersData);
+      setMessages(messagesData);
       
       // Give a tiny bit of time for initial queries to resolve before removing skeleton
       setTimeout(() => setLoading(false), 500);
@@ -138,8 +145,11 @@ export default function AdminDashboardPage() {
     } catch (error: any) {
       console.error("Error fetching admin data:", error);
       if (error.message?.includes("Unauthorized")) {
-        showToast("عفواً، لا تملك صلاحية الوصول للوحة التحكم الخاصة بالإدارة.", "error");
-        router.push("/dashboard");
+        showToast("عفواً، انتهت الجلسة أو لا تملك صلاحية الوصول. الرجاء تسجيل الدخول بحساب الإدارة.", "error");
+        if (logoutUser) {
+          await logoutUser();
+        }
+        router.push("/register?mode=login");
       } else {
         showToast(error.message || "حدث خطأ أثناء جلب بيانات الإدارة.", "error");
       }
