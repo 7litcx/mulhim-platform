@@ -360,6 +360,7 @@ export default function TripsClient({
               أنشطة رياضية بحرية، ألعاب شاطئية وفعاليات جماعية ترفيهية ممتعة تعزز الصداقات والألفة.
             </p>
           </motion.div>
+        </motion.div>
         </div>
       </section>
 
