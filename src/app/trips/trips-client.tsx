@@ -221,7 +221,7 @@ export default function TripsClient({
     : defaultTestimonials;
 
   return (
-    <div className="space-y-8 pb-10">
+    <div className="pb-10">
 
       {/* 1. Hero Section */}
       <section className="relative min-h-[380px] sm:min-h-[450px] md:min-h-[500px] flex items-center py-12 sm:py-12 md:py-16 bg-slate-900 overflow-hidden">
@@ -298,7 +298,7 @@ export default function TripsClient({
       </section>
 
       {/* 2. Trip Categories / Types Grid */}
-      <section className="bg-primary-teal py-16 w-full !mt-0">
+      <section className="bg-primary-teal py-16 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -365,7 +365,7 @@ export default function TripsClient({
       </section>
 
       {/* 3. Current Trips Listing & Details Modal */}
-      <section id="trips-list" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="trips-list" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -519,7 +519,7 @@ export default function TripsClient({
       </section>
 
       {/* 4. Suggest next Trip Section */}
-      <section id="suggest-section" className="bg-slate-50 py-16 border-y border-slate-100">
+      <section id="suggest-section" className="bg-slate-50 py-16 border-y border-slate-100 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
@@ -597,7 +597,7 @@ export default function TripsClient({
       </section>
 
       {/* 5. What to take checklist section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
           {/* Visual card */}
@@ -636,7 +636,7 @@ export default function TripsClient({
       </section>
 
       {/* 6. Testimonials */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
         <div className="text-center max-w-2xl mx-auto space-y-4 mb-14">
           <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">آراء مُلهمينا</h2>
           <p className="text-slate-800 text-sl leading-relaxed">
