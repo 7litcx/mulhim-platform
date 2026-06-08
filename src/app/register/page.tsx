@@ -909,54 +909,7 @@ function RegisterContent() {
                         </div>
                       </label>
 
-                      {/* Payment choice */}
-                      <div className="space-y-3 pt-2">
-                        <label className="text-xs font-bold text-slate-500 block">اختر طريقة الدفع المفضلة</label>
-                        <div className="space-y-3">
-                          {/* Option 1: Card */}
-                          <button
-                            type="button"
-                            onClick={() => setPaymentOption("card")}
-                            className={`p-4 rounded-2xl border text-right transition-all text-xs font-bold flex justify-between items-center cursor-pointer w-full ${paymentOption === "card"
-                                ? "border-accent-yellow bg-yellow-50/50 text-accent-yellow shadow-inner animate-pulse-subtle"
-                                : "border-slate-100 bg-slate-50 text-slate-700 hover:bg-slate-100"
-                              }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "card" ? "bg-accent-yellow text-primary-navy shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
-                                <CreditCard className="w-4 h-4" />
-                              </div>
-                              <div className="text-right">
-                                <span className="block font-bold text-xs text-slate-800">بطاقة ائتمانية (سداد كامل المبلغ عبر المتجر)</span>
-                                <span className="text-[10px] text-slate-400 font-normal block mt-0.5">الدفع الآمن عبر Stc pay , Apple pay,مدى </span>
-                              </div>
-                            </div>
-                            <CheckCircle className={`w-4.5 h-4.5 ${paymentOption === "card" ? "text-accent-yellow" : "text-slate-200"}`} />
-                          </button>
 
-                          {/* Option 2: Cash */}
-                          <button
-                            type="button"
-                            onClick={() => setPaymentOption("cash")}
-                            className={`p-4 rounded-2xl border text-right transition-all text-xs font-bold flex justify-between items-center cursor-pointer w-full ${paymentOption === "cash"
-                                ? "border-accent-yellow bg-yellow-50/50 text-accent-yellow shadow-inner"
-                                : "border-slate-100 bg-slate-50 text-slate-700 hover:bg-slate-100"
-                              }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className={`p-2.5 rounded-xl transition-all ${paymentOption === "cash" ? "bg-accent-yellow text-primary-navy shadow-md shadow-yellow-100" : "bg-slate-200 text-slate-500"}`}>
-                                <Sparkles className="w-4 h-4" />
-                              </div>
-                              <div className="text-right">
-                                <span className="block font-bold text-xs text-slate-800">الدفع النقدي (خصم ١٠٠ ريال لأول ١٠٠ مشترك)</span>
-                                <span className="text-[10px] text-emerald-600 font-extrabold block mt-0.5">احصل على الخصم فوراً عند تأكيد الحجز</span>
-                              </div>
-                            </div>
-                            <CheckCircle className={`w-4.5 h-4.5 ${paymentOption === "cash" ? "text-accent-yellow" : "text-slate-200"}`} />
-                          </button>
-
-                        </div>
-                      </div>
                     </div>
                   )}
 
