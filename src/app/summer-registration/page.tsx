@@ -12,6 +12,7 @@ export default function SummerRegistrationPage() {
   const { currentUser: user, showToast, registerUser, familyChildren } = useApp();
   const signatureRef = useRef<SignatureCanvas>(null);
   const [mounted, setMounted] = useState(false);
+  const [invalidFields, setInvalidFields] = useState<string[]>([]);
 
   useEffect(() => {
     setMounted(true);
@@ -65,6 +66,40 @@ export default function SummerRegistrationPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+
+    setInvalidFields([]);
+    const requiredFields = [
+      { name: "fullName", label: "الاسم" },
+      { name: "idNumber", label: "رقم الهوية" },
+      { name: "grade", label: "الصف الدراسي" },
+      { name: "birthDate", label: "تاريخ الميلاد" },
+      { name: "age", label: "العمر" },
+      { name: "neighborhood", label: "الحي" },
+      { name: "parentName", label: "اسم ولي الأمر" },
+      { name: "parentPhone", label: "جوال ولي الأمر" },
+      { name: "howDidYouHear", label: "كيف عرفت عن البرنامج" }
+    ];
+
+    const missingFields: string[] = [];
+    for (const field of requiredFields) {
+      if (!formData[field.name as keyof typeof formData] || String(formData[field.name as keyof typeof formData]).trim() === "") {
+        missingFields.push(field.name);
+      }
+    }
+
+    if (missingFields.length > 0) {
+      setInvalidFields(missingFields);
+      showToast("الرجاء تعبئة كافة البيانات", "error");
+      setTimeout(() => {
+        const firstMissingEl = document.querySelector(`[name="${missingFields[0]}"]`) as HTMLElement;
+        if (firstMissingEl) {
+          firstMissingEl.focus();
+          firstMissingEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+      return;
+    }
+
 
     const nameParts = formData.fullName.trim().split(/\s+/);
     if (nameParts.length < 3) {
@@ -178,7 +213,14 @@ export default function SummerRegistrationPage() {
     );
   }
 
-  const inputClassName = "w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-accent-teal focus:bg-white focus:ring-2 focus:ring-accent-teal/20 transition-all";
+  const getInputClassName = (fieldName: string) => {
+    const isInvalid = invalidFields.includes(fieldName);
+    return `w-full bg-slate-50 border rounded-xl px-4 py-3 outline-none transition-all ${
+      isInvalid 
+        ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 bg-red-50/30" 
+        : "border-slate-200 focus:border-accent-teal focus:bg-white focus:ring-2 focus:ring-accent-teal/20"
+    }`;
+  };
   const labelClassName = "text-sm font-bold text-slate-700 mb-2 block";
   
   return (
@@ -203,7 +245,7 @@ export default function SummerRegistrationPage() {
         </div>
 
         {/* Main Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-b-3xl shadow-sm p-6 sm:p-8 space-y-8">
+        <form noValidate onSubmit={handleSubmit} className="bg-white rounded-b-3xl shadow-sm p-6 sm:p-8 space-y-8">
           
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -237,16 +279,16 @@ export default function SummerRegistrationPage() {
 
             <div>
               <label className={labelClassName}>اسم المتقدم / ة رباعيًا :</label>
-              <input required name="fullName" value={formData.fullName} onChange={handleChange} className={inputClassName} placeholder="أدخل الاسم الرباعي" />
+              <input required name="fullName" value={formData.fullName} onChange={handleChange} className={getInputClassName("fullName")} placeholder="أدخل الاسم الرباعي" />
             </div>
             <div>
               <label className={labelClassName}>رقم الهوية :</label>
-              <input required name="idNumber" value={formData.idNumber} onChange={handleChange} className={inputClassName} placeholder="أدخل رقم الهوية" />
+              <input required name="idNumber" value={formData.idNumber} onChange={handleChange} className={getInputClassName("idNumber")} placeholder="أدخل رقم الهوية" />
             </div>
             
             <div>
               <label className={labelClassName}>الصف الدراسي العام الماضي ١٤٤٧ هـ :</label>
-              <select required name="grade" value={formData.grade} onChange={handleChange} className={inputClassName}>
+              <select required name="grade" value={formData.grade} onChange={handleChange} className={getInputClassName("grade")}>
                 <option value="" disabled>اختر الصف الدراسي</option>
                 <option value="الأول الابتدائي">الأول الابتدائي</option>
                 <option value="الثاني الابتدائي">الثاني الابتدائي</option>
@@ -262,7 +304,7 @@ export default function SummerRegistrationPage() {
             </div>
             <div>
               <label className={labelClassName}>تاريخ الميلاد (بالميلادي) :</label>
-              <input type="date" required name="birthDate" value={formData.birthDate} max="2020-12-31" onChange={handleChange} className={inputClassName} />
+              <input type="date" required name="birthDate" value={formData.birthDate} max="2020-12-31" onChange={handleChange} className={getInputClassName("birthDate")} />
             </div>
 
             <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center gap-6">
@@ -278,25 +320,25 @@ export default function SummerRegistrationPage() {
             </div>
             <div>
               <label className={labelClassName}>العمر :</label>
-              <input required type="number" name="age" value={formData.age} onChange={handleChange} className={inputClassName} placeholder="أدخل العمر" />
+              <input required type="number" name="age" value={formData.age} onChange={handleChange} className={getInputClassName("age")} placeholder="أدخل العمر" />
             </div>
 
             <div className="md:col-span-2">
               <label className={labelClassName}>عنوان الحي الذي تسكن به :</label>
-              <input required name="neighborhood" value={formData.neighborhood} onChange={handleChange} className={inputClassName} placeholder="أدخل اسم الحي" />
+              <input required name="neighborhood" value={formData.neighborhood} onChange={handleChange} className={getInputClassName("neighborhood")} placeholder="أدخل اسم الحي" />
             </div>
 
             <div>
               <label className={labelClassName}>اسم ولي الأمر :</label>
-              <input required name="parentName" value={formData.parentName} onChange={handleChange} className={inputClassName} placeholder="أدخل اسم ولي الأمر" />
+              <input required name="parentName" value={formData.parentName} onChange={handleChange} className={getInputClassName("parentName")} placeholder="أدخل اسم ولي الأمر" />
             </div>
             <div>
               <label className={labelClassName}>جوال ولي الأمر (سيضاف لواتس البرنامج):</label>
-              <input required name="parentPhone" value={formData.parentPhone} onChange={handleChange} className={inputClassName} placeholder="05XXXXXXXX" />
+              <input required name="parentPhone" value={formData.parentPhone} onChange={handleChange} className={getInputClassName("parentPhone")} placeholder="05XXXXXXXX" />
             </div>
             <div>
               <label className={labelClassName}>جوال آخر :</label>
-              <input name="otherPhone" value={formData.otherPhone} onChange={handleChange} className={inputClassName} placeholder="05XXXXXXXX" />
+              <input name="otherPhone" value={formData.otherPhone} onChange={handleChange} className={getInputClassName("otherPhone")} placeholder="05XXXXXXXX" />
             </div>
           </div>
 
@@ -346,7 +388,7 @@ export default function SummerRegistrationPage() {
             
             <div>
               <label className={labelClassName}>كيف عرفت عن البرنامج:</label>
-              <input required name="howDidYouHear" value={formData.howDidYouHear} onChange={handleChange} className={inputClassName} placeholder="مثال: تويتر، صديق، الخ" />
+              <input required name="howDidYouHear" value={formData.howDidYouHear} onChange={handleChange} className={getInputClassName("howDidYouHear")} placeholder="مثال: تويتر، صديق، الخ" />
             </div>
           </div>
 
