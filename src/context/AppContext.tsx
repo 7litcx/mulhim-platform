@@ -812,6 +812,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       target_id: targetId,
       target_name: reg.targetName,
       status: "pending",
+      payment_method: reg.paymentMethod, // Added payment_method directly
       extra_data: {
         ...(reg.extraData || {}),
         paymentMethod: reg.paymentMethod
