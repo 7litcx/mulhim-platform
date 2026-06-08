@@ -490,7 +490,7 @@ export default function DashboardPage() {
                 </p>
               </div>
               <Link
-                href="/trips"
+                href="/programs"
                 className="px-5 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-1.5 whitespace-nowrap self-stretch sm:self-center justify-center"
               >
                 <span>تصفح الرحلات والبرامج</span>
