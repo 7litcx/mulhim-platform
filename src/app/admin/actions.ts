@@ -28,28 +28,28 @@ async function verifyAdmin(token: string) {
 
 export async function fetchAdminUsers(token: string) {
   await verifyAdmin(token);
-  const { data, error } = await supabaseAdmin.from("profiles").select("*").order("created_at", { ascending: false }).limit(300);
+  const { data, error } = await supabaseAdmin.from("profiles").select("*").order("created_at", { ascending: false }).limit(2000);
   if (error) throw new Error(error.message);
   return data || [];
 }
 
 export async function fetchAdminRegistrations(token: string) {
   await verifyAdmin(token);
-  const { data, error } = await supabaseAdmin.from("registrations").select("*").order("created_at", { ascending: false }).limit(300);
+  const { data, error } = await supabaseAdmin.from("registrations").select("*").order("created_at", { ascending: false }).limit(2000);
   if (error) throw new Error(error.message);
   return data || [];
 }
 
 export async function fetchAdminOrders(token: string) {
   await verifyAdmin(token);
-  const { data, error } = await supabaseAdmin.from("orders").select("*, order_items(*)").order("created_at", { ascending: false }).limit(300);
+  const { data, error } = await supabaseAdmin.from("orders").select("*, order_items(*)").order("created_at", { ascending: false }).limit(2000);
   if (error) throw new Error(error.message);
   return data || [];
 }
 
 export async function fetchAdminMessages(token: string) {
   await verifyAdmin(token);
-  const { data, error } = await supabaseAdmin.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(300);
+  const { data, error } = await supabaseAdmin.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(2000);
   if (error) throw new Error(error.message);
   return data || [];
 }

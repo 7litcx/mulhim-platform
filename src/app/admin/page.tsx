@@ -34,6 +34,13 @@ export default function AdminDashboardPage() {
   const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [page, setPage] = useState(1);
+  const ITEMS_PER_PAGE = 20;
+
+  useEffect(() => {
+    setPage(1);
+  }, [activeTab, searchQuery]);
+
   // Derived filtered data
   const filteredUsers = users.filter(u => 
     (u.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -54,6 +61,10 @@ export default function AdminDashboardPage() {
     (o.customer_name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
     (o.phone || "").includes(searchQuery)
   );
+
+  const paginatedUsers = filteredUsers.slice(0, page * ITEMS_PER_PAGE);
+  const paginatedRegistrations = filteredRegistrations.slice(0, page * ITEMS_PER_PAGE);
+  const paginatedOrders = filteredOrders.slice(0, page * ITEMS_PER_PAGE);
 
   // Custom Confirm Modal State
   const [confirmModal, setConfirmModal] = useState<{
@@ -444,7 +455,7 @@ export default function AdminDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {filteredUsers.map((u) => (
+                      {paginatedUsers.map((u) => (
                         <tr key={u.id} className="hover:bg-slate-50/50">
                           <td className="px-6 py-4 font-bold text-slate-800">{u.full_name}</td>
                           <td className="px-6 py-4 text-slate-600" dir="ltr">{u.email}</td>
@@ -467,7 +478,7 @@ export default function AdminDashboardPage() {
                 
                 {/* Mobile Cards View */}
                 <div className="grid grid-cols-1 gap-4 lg:hidden p-4 bg-slate-50/50">
-                  {filteredUsers.map((u) => (
+                  {paginatedUsers.map((u) => (
                     <div key={u.id} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col gap-3">
                       <div className="flex justify-between items-start">
                         <div>
@@ -491,6 +502,14 @@ export default function AdminDashboardPage() {
                     </div>
                   ))}
                 </div>
+
+                {filteredUsers.length > paginatedUsers.length && (
+                  <div className="flex justify-center p-4 border-t border-slate-100">
+                    <button onClick={() => setPage(p => p + 1)} className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-bold transition-all">
+                      عرض المزيد
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
@@ -530,7 +549,7 @@ export default function AdminDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {filteredRegistrations.map((r) => (
+                      {paginatedRegistrations.map((r) => (
                         <tr key={r.id} className="hover:bg-slate-50/50">
                           <td className="px-6 py-4 font-bold text-slate-800">{r.full_name}</td>
                           <td className="px-6 py-4 text-slate-700">
@@ -587,7 +606,7 @@ export default function AdminDashboardPage() {
 
                 {/* Mobile Cards View */}
                 <div className="grid grid-cols-1 gap-4 lg:hidden p-4 bg-slate-50/50">
-                  {filteredRegistrations.map((r) => (
+                  {paginatedRegistrations.map((r) => (
                     <div key={r.id} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col gap-3 relative">
                       <div className="flex justify-between items-start">
                         <div>
@@ -649,6 +668,14 @@ export default function AdminDashboardPage() {
                     </div>
                   ))}
                 </div>
+
+                {filteredRegistrations.length > paginatedRegistrations.length && (
+                  <div className="flex justify-center p-4 border-t border-slate-100">
+                    <button onClick={() => setPage(p => p + 1)} className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-bold transition-all">
+                      عرض المزيد
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
@@ -681,7 +708,7 @@ export default function AdminDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {filteredOrders.map((o) => (
+                      {paginatedOrders.map((o) => (
                         <tr key={o.id} className="hover:bg-slate-50/50">
                           <td className="px-6 py-4 font-mono text-xs text-slate-500">{o.id.substring(0, 8)}...</td>
                           <td className="px-6 py-4">
@@ -720,7 +747,7 @@ export default function AdminDashboardPage() {
 
                 {/* Mobile Cards View */}
                 <div className="grid grid-cols-1 gap-4 lg:hidden p-4 bg-slate-50/50">
-                  {filteredOrders.map((o) => (
+                  {paginatedOrders.map((o) => (
                     <div key={o.id} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col gap-3">
                       <div className="flex justify-between items-start border-b border-slate-100 pb-3">
                         <div>
@@ -761,37 +788,55 @@ export default function AdminDashboardPage() {
                     </div>
                   ))}
                 </div>
+
+                {filteredOrders.length > paginatedOrders.length && (
+                  <div className="flex justify-center p-4 border-t border-slate-100">
+                    <button onClick={() => setPage(p => p + 1)} className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-bold transition-all">
+                      عرض المزيد
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
             {/* MESSAGES TAB */}
             {activeTab === "messages" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in">
-                {messages.length === 0 ? (
-                  <div className="col-span-full py-10 text-center text-slate-500 font-bold">لا توجد رسائل حالياً.</div>
-                ) : (
-                  messages.map((m) => (
-                    <div key={m.id} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-bold text-slate-800">{m.name}</h3>
-                          <div className="text-xs text-slate-500 font-sans" dir="ltr">{m.email} | {m.phone}</div>
+              <div className="animate-in fade-in space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {messages.length === 0 ? (
+                    <div className="col-span-full py-10 text-center text-slate-500 font-bold">لا توجد رسائل حالياً.</div>
+                  ) : (
+                    messages.slice(0, page * ITEMS_PER_PAGE).map((m) => (
+                      <div key={m.id} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-bold text-slate-800">{m.name}</h3>
+                            <div className="text-xs text-slate-500 font-sans" dir="ltr">{m.email} | {m.phone}</div>
+                          </div>
+                          <span className="text-[10px] text-slate-400 bg-slate-50 px-2 py-1 rounded">
+                            {new Date(m.created_at).toLocaleDateString('ar-SA')}
+                          </span>
                         </div>
-                        <span className="text-[10px] text-slate-400 bg-slate-50 px-2 py-1 rounded">
-                          {new Date(m.created_at).toLocaleDateString('ar-SA')}
-                        </span>
-                      </div>
-                      <div className="pt-4 border-t border-slate-100">
-                        <div className="flex justify-between items-start mb-2">
-                          <h4 className="text-xs font-bold text-primary-navy">{m.subject}</h4>
-                          <button onClick={() => deleteRecord("contact_messages", m.id, setMessages)} className="text-[10px] px-2 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded-md font-bold transition-colors">حذف الرسالة</button>
+                        <div className="pt-4 border-t border-slate-100">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="text-xs font-bold text-primary-navy">{m.subject}</h4>
+                            <button onClick={() => deleteRecord("contact_messages", m.id, setMessages)} className="text-[10px] px-2 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded-md font-bold transition-colors">حذف الرسالة</button>
+                          </div>
+                          <p className="text-sm text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-xl">
+                            {m.message}
+                          </p>
                         </div>
-                        <p className="text-sm text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-xl">
-                          {m.message}
-                        </p>
                       </div>
-                    </div>
-                  ))
+                    ))
+                  )}
+                </div>
+
+                {messages.length > page * ITEMS_PER_PAGE && (
+                  <div className="flex justify-center p-4">
+                    <button onClick={() => setPage(p => p + 1)} className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-bold transition-all">
+                      عرض المزيد
+                    </button>
+                  </div>
                 )}
               </div>
             )}
