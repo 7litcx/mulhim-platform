@@ -185,6 +185,15 @@ function RegisterContent() {
         showToast("الرجاء تعبئة كافة الحقول المطلوبة لبيانات أولياء الأمور.", "warning");
         return;
       }
+      const phoneRegex = /^05\d{8}$/;
+      if (!phoneRegex.test(regForm.guardian1Phone)) {
+        showToast("رقم جوال ولي الأمر الأول يجب أن يبدأ بـ 05 ويتكون من 10 أرقام.", "error");
+        return;
+      }
+      if (!phoneRegex.test(regForm.guardian2Phone)) {
+        showToast("رقم جوال ولي الأمر الثاني يجب أن يبدأ بـ 05 ويتكون من 10 أرقام.", "error");
+        return;
+      }
     }
     if (step === 2) {
       const hasEmptyChild = regForm.children.some(
@@ -722,8 +731,14 @@ function RegisterContent() {
                             <input
                               type="tel"
                               required
+                              maxLength={10}
+                              pattern="05[0-9]{8}"
+                              title="يجب أن يبدأ الرقم بـ 05 ويتكون من 10 أرقام"
                               value={regForm.guardian1Phone}
-                              onChange={(e) => setRegForm({ ...regForm, guardian1Phone: e.target.value })}
+                              onChange={(e) => {
+                                const val = e.target.value.replace(/\D/g, '');
+                                setRegForm({ ...regForm, guardian1Phone: val });
+                              }}
                               placeholder="05XXXXXXXX"
                               className="w-full bg-white border border-slate-200 focus:border-accent-yellow rounded-xl px-4 py-3 text-xs text-right focus:outline-none font-sans"
                               dir="ltr"
@@ -751,8 +766,14 @@ function RegisterContent() {
                             <input
                               type="tel"
                               required
+                              maxLength={10}
+                              pattern="05[0-9]{8}"
+                              title="يجب أن يبدأ الرقم بـ 05 ويتكون من 10 أرقام"
                               value={regForm.guardian2Phone}
-                              onChange={(e) => setRegForm({ ...regForm, guardian2Phone: e.target.value })}
+                              onChange={(e) => {
+                                const val = e.target.value.replace(/\D/g, '');
+                                setRegForm({ ...regForm, guardian2Phone: val });
+                              }}
                               placeholder="05XXXXXXXX"
                               className="w-full bg-white border border-slate-200 focus:border-accent-yellow rounded-xl px-4 py-3 text-xs text-right focus:outline-none font-sans"
                               dir="ltr"

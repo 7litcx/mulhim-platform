@@ -81,6 +81,11 @@ export default function QuickRegistrationModal({
     }
     
     if (regForm.fullName && regForm.phone && targetItem) {
+      const phoneRegex = /^05\d{8}$/;
+      if (!phoneRegex.test(regForm.phone)) {
+        showToast("رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام.", "error");
+        return;
+      }
       const typeLabel = targetType === "academy" ? "أكاديمية " : targetType === "trip" ? "رحلة " : "برنامج ";
 
       let finalPaymentMethod = "بطاقة ائتمانية (سداد كامل المبلغ عبر المتجر)";
@@ -229,10 +234,17 @@ export default function QuickRegistrationModal({
                       id="modalPhone"
                       type="tel"
                       required
+                      maxLength={10}
+                      pattern="05[0-9]{8}"
+                      title="يجب أن يبدأ الرقم بـ 05 ويتكون من 10 أرقام"
                       value={regForm.phone}
-                      onChange={(e) => setRegForm({ ...regForm, phone: e.target.value })}
-                      placeholder="+966 5X XXX XXXX"
-                      className="w-full bg-slate-50 border border-slate-200 focus:border-accent-yellow rounded-xl px-4 py-2.5 text-xs text-right focus:outline-none"
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        setRegForm({ ...regForm, phone: val });
+                      }}
+                      placeholder="05XXXXXXXX"
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-accent-yellow rounded-xl px-4 py-2.5 text-xs text-right focus:outline-none font-sans"
+                      dir="ltr"
                     />
                   </div>
                 </div>
