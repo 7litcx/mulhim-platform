@@ -485,8 +485,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             status: r.status || "pending",
             paymentMethod: r.payment_method
           }));
-          setRegistrations(formattedRegs);
-          saveToLocalStorage("mulhim_registrations", formattedRegs);
+          setRegistrations(prev => {
+            const newIds = new Set(formattedRegs.map(r => r.id));
+            const optimisticRegs = prev.filter(r => !newIds.has(r.id));
+            const merged = [...formattedRegs, ...optimisticRegs];
+            saveToLocalStorage("mulhim_registrations", merged);
+            return merged;
+          });
         }
 
         if (ordersData) {
@@ -511,8 +516,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               quantity: oi.quantity
             }))
           }));
-          setOrders(formattedOrders);
-          saveToLocalStorage("mulhim_orders", formattedOrders);
+          setOrders(prev => {
+            const newIds = new Set(formattedOrders.map(o => o.id));
+            const optimisticOrders = prev.filter(o => !newIds.has(o.id));
+            const merged = [...formattedOrders, ...optimisticOrders];
+            saveToLocalStorage("mulhim_orders", merged);
+            return merged;
+          });
         }
       } else {
         const localUserAfter = localStorage.getItem("mulhim_user");
@@ -576,55 +586,71 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Dashboard additions (Admin)
   const addProduct = (p: Omit<Product, "id">) => {
     const newP: Product = { ...p, id: "p_" + Date.now() };
-    const updated = [newP, ...products];
-    setProducts(updated);
-    saveToLocalStorage("mulhim_products", updated);
+    setProducts((prev) => {
+      const updated = [newP, ...prev];
+      saveToLocalStorage("mulhim_products", updated);
+      return updated;
+    });
   };
 
   const addTrip = (t: Omit<Trip, "id">) => {
     const newT: Trip = { ...t, id: "t_" + Date.now() };
-    const updated = [newT, ...trips];
-    setTrips(updated);
-    saveToLocalStorage("mulhim_trips", updated);
+    setTrips((prev) => {
+      const updated = [newT, ...prev];
+      saveToLocalStorage("mulhim_trips", updated);
+      return updated;
+    });
   };
 
   const addAcademy = (a: Omit<Academy, "id">) => {
     const newA: Academy = { ...a, id: "a_" + Date.now() };
-    const updated = [newA, ...academies];
-    setAcademies(updated);
-    saveToLocalStorage("mulhim_academies", updated);
+    setAcademies((prev) => {
+      const updated = [newA, ...prev];
+      saveToLocalStorage("mulhim_academies", updated);
+      return updated;
+    });
   };
 
   const addProgram = (pr: Omit<Program, "id">) => {
     const newPr: Program = { ...pr, id: "pr_" + Date.now() };
-    const updated = [newPr, ...programs];
-    setPrograms(updated);
-    saveToLocalStorage("mulhim_programs", updated);
+    setPrograms((prev) => {
+      const updated = [newPr, ...prev];
+      saveToLocalStorage("mulhim_programs", updated);
+      return updated;
+    });
   };
 
   // Dashboard deletions
   const deleteProduct = (id: string) => {
-    const updated = products.filter((p) => p.id !== id);
-    setProducts(updated);
-    saveToLocalStorage("mulhim_products", updated);
+    setProducts((prev) => {
+      const updated = prev.filter((p) => p.id !== id);
+      saveToLocalStorage("mulhim_products", updated);
+      return updated;
+    });
   };
 
   const deleteTrip = (id: string) => {
-    const updated = trips.filter((t) => t.id !== id);
-    setTrips(updated);
-    saveToLocalStorage("mulhim_trips", updated);
+    setTrips((prev) => {
+      const updated = prev.filter((t) => t.id !== id);
+      saveToLocalStorage("mulhim_trips", updated);
+      return updated;
+    });
   };
 
   const deleteAcademy = (id: string) => {
-    const updated = academies.filter((a) => a.id !== id);
-    setAcademies(updated);
-    saveToLocalStorage("mulhim_academies", updated);
+    setAcademies((prev) => {
+      const updated = prev.filter((a) => a.id !== id);
+      saveToLocalStorage("mulhim_academies", updated);
+      return updated;
+    });
   };
 
   const deleteProgram = (id: string) => {
-    const updated = programs.filter((pr) => pr.id !== id);
-    setPrograms(updated);
-    saveToLocalStorage("mulhim_programs", updated);
+    setPrograms((prev) => {
+      const updated = prev.filter((pr) => pr.id !== id);
+      saveToLocalStorage("mulhim_programs", updated);
+      return updated;
+    });
   };
 
   // Registration Actions
@@ -648,14 +674,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       date: new Date().toLocaleDateString("ar-SA"),
       status: "pending"
     };
-    const updated = [newReg, ...registrations];
-    setRegistrations(updated);
-    saveToLocalStorage("mulhim_registrations", updated);
+    setRegistrations((prev) => {
+      const updated = [newReg, ...prev];
+      saveToLocalStorage("mulhim_registrations", updated);
+      return updated;
+    });
 
     // Sync with Supabase
     try {
-      // Use the currentUser state from Context directly to avoid getSession hanging
-      const userId = currentUser?.id;
+      const { data: { user } } = await supabase.auth.getUser();
+      const userId = user?.id || currentUser?.id;
       
       if (userId) {
         let childId: string | null = null;
@@ -759,9 +787,11 @@ const newOrder: Order = {
   date: new Date().toLocaleDateString("ar-SA"),
   status: ord.paymentMethod.includes("بطاقة") ? "paid" : "pending"
 };
-const updated = [newOrder, ...orders];
-setOrders(updated);
-saveToLocalStorage("mulhim_orders", updated);
+setOrders((prev) => {
+  const updated = [newOrder, ...prev];
+  saveToLocalStorage("mulhim_orders", updated);
+  return updated;
+});
 
 // Sync with Supabase
 try {
@@ -811,9 +841,11 @@ try {
   };
 
   const updateOrderStatus = async (id: string, status: Order["status"]) => {
-    const updated = orders.map((o) => (o.id === id ? { ...o, status } : o));
-    setOrders(updated);
-    saveToLocalStorage("mulhim_orders", updated);
+    setOrders((prev) => {
+      const updated = prev.map((o) => (o.id === id ? { ...o, status } : o));
+      saveToLocalStorage("mulhim_orders", updated);
+      return updated;
+    });
 
     try {
       await supabase
@@ -826,9 +858,11 @@ try {
   };
 
   const updateRegStatus = async (id: string, status: Registration["status"]) => {
-    const updated = registrations.map((r) => (r.id === id ? { ...r, status } : r));
-    setRegistrations(updated);
-    saveToLocalStorage("mulhim_registrations", updated);
+    setRegistrations((prev) => {
+      const updated = prev.map((r) => (r.id === id ? { ...r, status } : r));
+      saveToLocalStorage("mulhim_registrations", updated);
+      return updated;
+    });
 
     try {
       await supabase
