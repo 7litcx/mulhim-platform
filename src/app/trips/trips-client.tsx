@@ -298,19 +298,20 @@ export default function TripsClient({
       </section>
 
       {/* 2. Trip Categories / Types Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-2xl mx-auto space-y-3 mb-12"
-        >
-          <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">أنواع رحلاتنا</h2>
-          <p className="text-slate-800 text-sl">نصنف رحلاتنا لتلبي تطلعاتك وتساعدك على صياغة اهتماماتك المفضلة.</p>
-        </motion.div>
+      <section className="bg-primary-teal py-16 w-full mt-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-2xl mx-auto space-y-3 mb-12"
+          >
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white font-tajawal">أنواع رحلاتنا</h2>
+            <p className="text-teal-50 text-sl">نصنف رحلاتنا لتلبي تطلعاتك وتساعدك على صياغة اهتماماتك المفضلة.</p>
+          </motion.div>
 
-        <motion.div
+          <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
@@ -359,7 +360,7 @@ export default function TripsClient({
               أنشطة رياضية بحرية، ألعاب شاطئية وفعاليات جماعية ترفيهية ممتعة تعزز الصداقات والألفة.
             </p>
           </motion.div>
-        </motion.div>
+        </div>
       </section>
 
       {/* 3. Current Trips Listing & Details Modal */}
