@@ -688,7 +688,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         .from("children")
         .insert({
           parent_id: userId,
-          full_name: child.full_name,
+          full_name: child.full_name.trim(),
           gender: child.gender,
           grade: child.grade
         })
@@ -755,7 +755,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             .from("children")
             .select("id")
             .eq("parent_id", userId)
-            .eq("full_name", reg.fullName)
+            .eq("full_name", reg.fullName.trim())
             .maybeSingle();
           console.log('2. Existing child check done. Found:', !!existingChild);
 
@@ -777,7 +777,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           .from("children")
           .insert({
             parent_id: userId,
-            full_name: reg.fullName,
+            full_name: reg.fullName.trim(),
             gender,
             grade
           })

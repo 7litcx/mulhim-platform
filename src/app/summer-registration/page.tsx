@@ -9,7 +9,7 @@ import { Sparkles, CreditCard, CheckCircle } from "lucide-react";
 
 export default function SummerRegistrationPage() {
   const router = useRouter();
-  const { currentUser: user, showToast, registerUser } = useApp();
+  const { currentUser: user, showToast, registerUser, familyChildren } = useApp();
   const signatureRef = useRef<SignatureCanvas>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -211,6 +211,34 @@ export default function SummerRegistrationPage() {
           
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            {user && familyChildren && familyChildren.length > 0 && (
+              <div className="md:col-span-2 bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-2">
+                <span className="text-xs font-extrabold text-slate-500 block mb-3">اختيار سريع من الأبناء المسجلين (تعبئة تلقائية):</span>
+                <div className="flex flex-wrap gap-2">
+                  {familyChildren.map((child) => (
+                    <button
+                      type="button"
+                      key={child.id}
+                      onClick={() => {
+                        setFormData(prev => ({
+                          ...prev,
+                          fullName: child.full_name,
+                          gender: child.gender || "",
+                          grade: child.grade || "",
+                          parentName: user.fullName || "",
+                          parentPhone: user.phone || ""
+                        }));
+                      }}
+                      className="px-3 py-1.5 bg-white hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold border border-slate-200 transition-all cursor-pointer shadow-sm hover:shadow-md"
+                    >
+                      {child.full_name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div>
               <label className={labelClassName}>اسم المتقدم / ة رباعيًا :</label>
               <input required name="fullName" value={formData.fullName} onChange={handleChange} className={inputClassName} placeholder="أدخل الاسم الرباعي" />
