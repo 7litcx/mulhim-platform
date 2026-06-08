@@ -53,7 +53,7 @@ export const Footer: React.FC = () => {
                 </svg>
               </a>
               <a
-                href="https://www.instagram.com/mulhim180?igsh=MWJzYWptYXBlNXg3bQ=="
+                href="https://www.instagram.com/mulhim.180?igsh=cjZkaGpiOTkyOGll"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-xl bg-slate-800/80 hover:bg-pink-600 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-110 text-slate-450"
