@@ -721,7 +721,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       (r) => normalizeString(r.fullName) === normalizeString(reg.fullName) && r.targetName === reg.targetName
     );
 
-    if (isAlreadyRegistered) {
+    if (isAlreadyRegistered && reg.extraData?.formType !== "summer_program") {
       showToast("تم التسجيل مسبقاً في هذا البرنامج", "error");
       throw new Error("Already registered");
     }
