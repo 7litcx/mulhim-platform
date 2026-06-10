@@ -162,6 +162,18 @@ export default function StoreClient({
       return;
     }
 
+    // Check product availability against sanityProducts
+    const unavailableItems = cart.filter(item => {
+      const sanityProd = displayProducts.find((p: any) => p.id === item.product.id || p._id === item.product.id);
+      if (sanityProd && sanityProd.isAvailable === false) return true;
+      return false;
+    });
+
+    if (unavailableItems.length > 0) {
+      showToast("عذراً، بعض المنتجات في سلتك لم تعد متوفرة. يرجى إزالتها لإتمام الطلب.", "error");
+      return;
+    }
+
     if (cart.length === 0) {
       showToast("سلتك فارغة، يرجى إضافة بعض المنتجات أولاً.", "warning");
       return;

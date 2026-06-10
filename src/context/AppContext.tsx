@@ -853,47 +853,46 @@ setOrders((prev) => {
   return updated;
 });
 
-// Sync with Supabase
+// Sync with Supabase via API route to bypass RLS and securely insert order items
 try {
   const { data: { session } } = await supabase.auth.getSession();
   const userId = session?.user?.id || currentUser?.id || null;
 
-  // 1. Insert order
-  const { error: orderErr } = await supabase.from("orders").insert({
-    id: orderId,
-    user_id: userId,
-    customer_name: ord.customerName,
-    phone: ord.phone,
-    email: ord.email,
-    total,
-    payment_method: ord.paymentMethod,
-    status: ord.paymentMethod.includes("بطاقة") ? "paid" : "pending"
+  const itemsToInsert = cart.map((item) => ({
+    order_id: orderId,
+    product_id: item.product.id,
+    product_name: item.product.name,
+    price: item.product.price,
+    quantity: item.quantity
+  }));
+
+  const res = await fetch("/api/orders", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      orderId,
+      userId,
+      customerName: ord.customerName,
+      phone: ord.phone,
+      email: ord.email,
+      total,
+      paymentMethod: ord.paymentMethod,
+      status: ord.paymentMethod.includes("بطاقة") ? "paid" : "pending",
+      items: itemsToInsert
+    })
   });
 
-  if (!orderErr) {
-    // 2. Insert order items
-    const itemsToInsert = cart.map((item) => ({
-      order_id: orderId,
-      product_id: item.product.id,
-      product_name: item.product.name,
-      price: item.product.price,
-      quantity: item.quantity
-    }));
+  const data = await res.json();
 
-    const { error: itemsErr } = await supabase.from("order_items").insert(itemsToInsert);
-    if (itemsErr) {
-      console.error("Error inserting order items to Supabase:", itemsErr);
-      showToast("حدث خطأ أثناء حفظ تفاصيل المنتجات: " + itemsErr.message, "error");
-    } else {
-      showToast("تم تأكيد وحفظ طلبك بنجاح في قاعدة البيانات!", "success");
-    }
+  if (data.success) {
+    showToast("تم تأكيد وحفظ طلبك بنجاح في قاعدة البيانات!", "success");
   } else {
-    console.error("Error inserting order to Supabase:", orderErr);
-    showToast("فشل حفظ الطلب في قاعدة البيانات: " + orderErr.message, "error");
+    console.error("Error saving order via API:", data.error);
+    showToast("فشل حفظ الطلب في قاعدة البيانات: " + data.error, "error");
   }
 } catch (e: any) {
-  console.error("Error placing order to Supabase:", e);
-  showToast("خطأ غير متوقع في الاتصال بقاعدة البيانات: " + (e?.message || e), "error");
+  console.error("Error calling order API:", e);
+  showToast("خطأ غير متوقع في الاتصال بخادم الطلبات: " + (e?.message || e), "error");
 }
 
     clearCart();
