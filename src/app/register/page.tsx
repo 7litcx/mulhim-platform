@@ -22,19 +22,10 @@ function RegisterContent() {
   const [forgotEmail, setForgotEmail] = useState("");
   const [isSendingReset, setIsSendingReset] = useState(false);
 
-  // Registration Step: 1, 2, 3, 4
-  const [step, setStep] = useState(1);
-  const [isAgreed, setIsAgreed] = useState(false);
-
   // Form states
   const [regForm, setRegForm] = useState({
     guardian1Name: "",
     guardian1Phone: "",
-    guardian2Name: "",
-    guardian2Phone: "",
-    children: [
-      { fullName: "", gender: "", grade: "" }
-    ],
     email: "",
     password: ""
   });
@@ -179,89 +170,40 @@ function RegisterContent() {
     return 12;
   };
 
-  const handleNextStep = () => {
-    if (step === 1) {
-      if (!regForm.guardian1Name || !regForm.guardian1Phone || !regForm.guardian2Name || !regForm.guardian2Phone) {
-        showToast("الرجاء تعبئة كافة الحقول المطلوبة لبيانات أولياء الأمور.", "warning");
-        return;
-      }
-      const phoneRegex = /^05\d{8}$/;
-      if (!phoneRegex.test(regForm.guardian1Phone)) {
-        showToast("رقم جوال ولي الأمر الأول يجب أن يبدأ بـ 05 ويتكون من 10 أرقام.", "error");
-        return;
-      }
-      if (!phoneRegex.test(regForm.guardian2Phone)) {
-        showToast("رقم جوال ولي الأمر الثاني يجب أن يبدأ بـ 05 ويتكون من 10 أرقام.", "error");
-        return;
-      }
-    }
-    if (step === 2) {
-      const hasEmptyChild = regForm.children.some(
-        child => !child.fullName || !child.gender || !child.grade
-      );
-      if (hasEmptyChild || regForm.children.length === 0) {
-        showToast("الرجاء تعبئة كافة الحقول المطلوبة للأبناء والبنات.", "warning");
-        return;
-      }
-    }
-    if (step === 3) {
-      if (!isAgreed) {
-        showToast("الرجاء قراءة الأنظمة والتعليمات والموافقة على التعهد للمتابعة.", "warning");
-        return;
-      }
-    }
-    setStep(step + 1);
-  };
-
-  const handlePrevStep = () => {
-    setStep(step - 1);
-  };
-
   const handleRegisterSubmit = async (e?: React.SyntheticEvent) => {
     if (e) e.preventDefault();
-    if (regForm.guardian1Name && regForm.email && regForm.guardian1Phone && regForm.password) {
-      try {
-        // 1. Login/Signup the user officially (using Guardian 1 & 2 info) via Supabase
-        await loginUser(
-          regForm.guardian1Name,
-          regForm.email,
-          regForm.guardian1Phone,
-          regForm.password,
-          true,
-          regForm.guardian2Name,
-          regForm.guardian2Phone
-        );
+    if (!regForm.guardian1Name || !regForm.email || !regForm.guardian1Phone || !regForm.password) {
+      showToast("الرجاء تعبئة كافة الحقول المطلوبة للتسجيل.", "warning");
+      return;
+    }
+    const phoneRegex = /^05\d{8}$/;
+    if (!phoneRegex.test(regForm.guardian1Phone)) {
+      showToast("رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام.", "error");
+      return;
+    }
+    try {
+      // 1. Login/Signup the user officially via Supabase
+      await loginUser(
+        regForm.guardian1Name,
+        regForm.email,
+        regForm.guardian1Phone,
+        regForm.password,
+        true
+      );
 
-        // 2. Submit to context family for each child (this will insert to Supabase)
-        for (const child of regForm.children) {
-          await addFamilyChild({
-            full_name: child.fullName,
-            gender: child.gender,
-            grade: child.grade
-          });
-        }
+      setIsSuccess(true);
 
-        setIsSuccess(true);
-
-        setTimeout(() => {
-          setIsSuccess(false);
-          setStep(1);
-          setIsAgreed(false);
-          setRegForm({
-            guardian1Name: "",
-            guardian1Phone: "",
-            guardian2Name: "",
-            guardian2Phone: "",
-            children: [
-              { fullName: "", gender: "", grade: "" }
-            ],
-            email: "",
-            password: ""
-          });
-        }, 4000);
-      } catch (err) {
-        console.error("Signup failed:", err);
-      }
+      setTimeout(() => {
+        setIsSuccess(false);
+        setRegForm({
+          guardian1Name: "",
+          guardian1Phone: "",
+          email: "",
+          password: ""
+        });
+      }, 4000);
+    } catch (err) {
+      console.error("Signup failed:", err);
     }
   };
 
@@ -655,366 +597,90 @@ function RegisterContent() {
               </div>
             ) : mode === "register" ? (
               // REGISTER FORM WIZARD
-              <form className="p-8 flex-grow flex flex-col justify-between">
-
-                {/* Step Indicators */}
-                <div className="flex justify-between items-center mb-8 max-w-md mx-auto text-xs relative">
-                  {/* Progress Line */}
-                  <div className="absolute top-4 right-0 left-0 h-0.5 bg-slate-100 z-0" />
-
-                  {/* Progress Line Active */}
-                  <div
-                    className="absolute top-4 right-0 h-0.5 bg-accent-yellow transition-all duration-300 z-0"
-                    style={{ width: step === 1 ? "0%" : step === 2 ? "33%" : step === 3 ? "66%" : "100%" }}
-                  />
-
-                  {/* Step 1 */}
-                  <div className="flex flex-col items-center gap-1 z-10">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold font-sans transition-all duration-300 ${step >= 1 ? "bg-accent-yellow text-primary-navy shadow-sm ring-4 ring-white" : "bg-slate-100 text-slate-400"
-                      }`}>
-                      1
-                    </div>
-                    <span className={`font-bold text-[9px] sm:text-[10px] ${step >= 1 ? "text-accent-yellow" : "text-slate-400"}`}>أولياء الأمور</span>
-                  </div>
-
-                  {/* Step 2 */}
-                  <div className="flex flex-col items-center gap-1 z-10">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold font-sans transition-all duration-300 ${step >= 2 ? "bg-accent-yellow text-primary-navy shadow-sm ring-4 ring-white" : "bg-slate-100 text-slate-400"
-                      }`}>
-                      2
-                    </div>
-                    <span className={`font-bold text-[9px] sm:text-[10px] ${step >= 2 ? "text-accent-yellow" : "text-slate-400"}`}>الأبناء/البنات</span>
-                  </div>
-
-                  {/* Step 3 */}
-                  <div className="flex flex-col items-center gap-1 z-10">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold font-sans transition-all duration-300 ${step >= 3 ? "bg-accent-yellow text-primary-navy shadow-sm ring-4 ring-white" : "bg-slate-100 text-slate-400"
-                      }`}>
-                      3
-                    </div>
-                    <span className={`font-bold text-[9px] sm:text-[10px] ${step >= 3 ? "text-accent-yellow" : "text-slate-400"}`}>التعهد والأنظمة</span>
-                  </div>
-
-                  {/* Step 4 */}
-                  <div className="flex flex-col items-center gap-1 z-10">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold font-sans transition-all duration-300 ${step >= 4 ? "bg-accent-yellow text-primary-navy shadow-sm ring-4 ring-white" : "bg-slate-100 text-slate-400"
-                      }`}>
-                      4
-                    </div>
-                    <span className={`font-bold text-[9px] sm:text-[10px] ${step >= 4 ? "text-accent-yellow" : "text-slate-400"}`}>الحساب</span>
-                  </div>
-                </div>
-
-                {/* Step Contents */}
-                <div className="flex-grow py-4 space-y-4">
-                  {step === 1 && (
-                    // STEP 1: GUARDIANS INFO
-                    <div className="space-y-4 animate-in fade-in slide-in-from-right-3 duration-300">
-                      <span className="text-[10px] text-accent-yellow font-extrabold block">الخطوة ١: بيانات أولياء الأمور</span>
-
-                      <div className="space-y-4 border border-slate-100 p-5 rounded-2xl bg-slate-50/50">
-                        <h4 className="text-xs font-extrabold text-slate-700 font-tajawal">ولي الأمر الأول (الأساسي)</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-1">
-                            <label className="text-xs font-bold text-slate-500 block">اسم ولي الأمر الأول *</label>
-                            <input
-                              type="text"
-                              required
-                              value={regForm.guardian1Name}
-                              onChange={(e) => setRegForm({ ...regForm, guardian1Name: e.target.value })}
-                              placeholder="الاسم الثلاثي لولي الأمر الأول"
-                              className="w-full bg-white border border-slate-200 focus:border-accent-yellow rounded-xl px-4 py-3 text-xs text-right focus:outline-none"
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <label className="text-xs font-bold text-slate-500 block">رقم جوال ولي الأمر الأول *</label>
-                            <input
-                              type="tel"
-                              required
-                              maxLength={10}
-                              pattern="05[0-9]{8}"
-                              title="يجب أن يبدأ الرقم بـ 05 ويتكون من 10 أرقام"
-                              value={regForm.guardian1Phone}
-                              onChange={(e) => {
-                                const val = e.target.value.replace(/\D/g, '');
-                                setRegForm({ ...regForm, guardian1Phone: val });
-                              }}
-                              placeholder="05XXXXXXXX"
-                              className="w-full bg-white border border-slate-200 focus:border-accent-yellow rounded-xl px-4 py-3 text-xs text-right focus:outline-none font-sans"
-                              dir="ltr"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="space-y-4 border border-slate-100 p-5 rounded-2xl bg-slate-50/50">
-                        <h4 className="text-xs font-extrabold text-slate-700 font-tajawal">ولي الأمر الثاني (الاحتياطي)</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-1">
-                            <label className="text-xs font-bold text-slate-500 block">اسم ولي الأمر الثاني *</label>
-                            <input
-                              type="text"
-                              required
-                              value={regForm.guardian2Name}
-                              onChange={(e) => setRegForm({ ...regForm, guardian2Name: e.target.value })}
-                              placeholder="الاسم الثلاثي لولي الأمر الثاني"
-                              className="w-full bg-white border border-slate-200 focus:border-accent-yellow rounded-xl px-4 py-3 text-xs text-right focus:outline-none"
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <label className="text-xs font-bold text-slate-500 block">رقم جوال ولي الأمر الثاني *</label>
-                            <input
-                              type="tel"
-                              required
-                              maxLength={10}
-                              pattern="05[0-9]{8}"
-                              title="يجب أن يبدأ الرقم بـ 05 ويتكون من 10 أرقام"
-                              value={regForm.guardian2Phone}
-                              onChange={(e) => {
-                                const val = e.target.value.replace(/\D/g, '');
-                                setRegForm({ ...regForm, guardian2Phone: val });
-                              }}
-                              placeholder="05XXXXXXXX"
-                              className="w-full bg-white border border-slate-200 focus:border-accent-yellow rounded-xl px-4 py-3 text-xs text-right focus:outline-none font-sans"
-                              dir="ltr"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {step === 2 && (
-                    // STEP 2: CHILDREN INFO
-                    <div className="space-y-4 animate-in fade-in slide-in-from-right-3 duration-300 max-h-[400px] overflow-y-auto pr-1">
-                      <span className="text-[10px] text-accent-yellow font-extrabold block">الخطوة ٢: بيانات الأبناء والبنات</span>
-
-                      {regForm.children.map((child, index) => (
-                        <div key={index} className="space-y-4 border border-slate-100 p-5 rounded-2xl bg-slate-50/50 relative">
-                          <div className="flex justify-between items-center">
-                            <h4 className="text-xs font-extrabold text-slate-700 font-tajawal">الابن/الابنة {index + 1}</h4>
-                            {regForm.children.length > 1 && (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const updated = regForm.children.filter((_, i) => i !== index);
-                                  setRegForm({ ...regForm, children: updated });
-                                }}
-                                className="text-[10px] text-red-500 hover:text-red-700 font-bold transition-all"
-                              >
-                                حذف
-                              </button>
-                            )}
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="space-y-1 md:col-span-1">
-                              <label className="text-xs font-bold text-slate-500 block">الاسم الثلاثي *</label>
-                              <input
-                                type="text"
-                                required
-                                value={child.fullName}
-                                onChange={(e) => {
-                                  const updated = [...regForm.children];
-                                  updated[index].fullName = e.target.value;
-                                  setRegForm({ ...regForm, children: updated });
-                                }}
-                                placeholder="الاسم الأول، اسم الأب، العائلة"
-                                className="w-full bg-white border border-slate-200 focus:border-accent-yellow rounded-xl px-3 py-3 text-xs text-right focus:outline-none"
-                              />
-                            </div>
-
-                            <div className="space-y-1">
-                              <label className="text-xs font-bold text-slate-500 block">الجنس *</label>
-                              <select
-                                required
-                                value={child.gender}
-                                onChange={(e) => {
-                                  const updated = [...regForm.children];
-                                  updated[index].gender = e.target.value;
-                                  setRegForm({ ...regForm, children: updated });
-                                }}
-                                className="w-full bg-white border border-slate-200 focus:border-accent-yellow rounded-xl px-3 py-3 text-xs text-right focus:outline-none text-slate-700 font-bold"
-                              >
-                                <option value="">اختر الجنس</option>
-                                <option value="ذكر">ذكر</option>
-                                <option value="أنثى">أنثى</option>
-                              </select>
-                            </div>
-
-                            <div className="space-y-1">
-                              <label className="text-xs font-bold text-slate-500 block">الصف الدراسي *</label>
-                              <select
-                                required
-                                value={child.grade}
-                                onChange={(e) => {
-                                  const updated = [...regForm.children];
-                                  updated[index].grade = e.target.value;
-                                  setRegForm({ ...regForm, children: updated });
-                                }}
-                                className="w-full bg-white border border-slate-200 focus:border-accent-yellow rounded-xl px-3 py-3 text-xs text-right focus:outline-none text-slate-700 font-bold"
-                              >
-                                <option value="">اختر الصف</option>
-                                <option value="الصف الأول الابتدائي">الصف الأول الابتدائي</option>
-                                <option value="الصف الثاني الابتدائي">الصف الثاني الابتدائي</option>
-                                <option value="الصف الثالث الابتدائي">الصف الثالث الابتدائي</option>
-                                <option value="الصف الرابع الابتدائي">الصف الرابع الابتدائي</option>
-                                <option value="الصف الخامس الابتدائي">الصف الخامس الابتدائي</option>
-                                <option value="الصف السادس الابتدائي">الصف السادس الابتدائي</option>
-                                <option value="الصف الأول المتوسط">الصف الأول المتوسط</option>
-                                <option value="الصف الثاني المتوسط">الصف الثاني المتوسط</option>
-                                <option value="الصف الثالث المتوسط">الصف الثالث المتوسط</option>
-                                <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
-                                <option value="الصف الثاني الثانوي">الصف الثاني الثانوي</option>
-                                <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-
-                      {/* Add Button */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setRegForm({
-                            ...regForm,
-                            children: [...regForm.children, { fullName: "", gender: "", grade: "" }]
-                          });
-                        }}
-                        className="w-full py-4 border-2 border-dashed border-slate-200 hover:border-accent-yellow text-slate-500 hover:text-accent-yellow rounded-2xl text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2 bg-white cursor-pointer"
-                      >
-                        <Plus className="w-4 h-4" />
-                        إضافة ابن/ابنة آخر
-                      </button>
-                    </div>
-                  )}
-
-                  {step === 3 && (
-                    // STEP 3: PLEDGE AND RULES
-                    <div className="space-y-4 animate-in fade-in slide-in-from-right-3 duration-300">
-                      <span className="text-[10px] text-accent-yellow font-extrabold block">الخطوة ٣: التعهد والأنظمة والتعليمات</span>
-
-                      {/* Rules container */}
-                      <div className="border border-slate-200 rounded-2xl bg-slate-50/70 p-4 space-y-3 max-h-[220px] overflow-y-auto text-right text-xs leading-relaxed text-slate-600 font-tajawal scrollbar-thin">
-                        <h4 className="font-bold text-slate-800 text-xs pb-2 border-b border-slate-200">أنظمة وتعليمات البرنامج</h4>
-                        <ol className="list-decimal list-inside space-y-2 text-[11px]">
-                          <li>سوف يتم فتح ملف لكل منتسب بالبرنامج الصيفي، يحتوي عدة نماذج تشمل معلوماته الشخصية مع صورة هويته أو هوية والده إذا كان مضافاً في بطاقة العائلة.</li>
-                          <li>التقيد بالنظافة الشخصية وارتداء الملابس المحتشمة التي تستر العورة وتجنب ارتداء الملابس الضيقة أو التي تحمل عبارات غير لائقة والالتزام بالآداب الإسلامية العامة وعدم التفوه بكلمات بذيئة أو جارحة.</li>
-                          <li>على المشاركين إخلاء الملاعب وجميع الفصول وحمام السباحة قبل الصلاة بمدة لا تزيد عن 5 دقائق استعداداً للصلاة أو الانصراف من البرنامج.</li>
-                          <li>لا يحق لأي مشارك المطالبة باسترجاع رسوم الاشتراك بعد حضور اليوم الثاني للبرنامج.</li>
-                          <li>لدى برنامج لون صيفك 3 والذي يمثله مكتب سرح للاستشارات التربوية والتعليمية الحقوق الحصرية باستخدام صور المشتركين خلال أي دورة تدريبية أو أنشطة وبذلك يسمح باستخدام جميع الصور والفيديوهات للإعلانات والحملات الترويجية من خلال كافة وسائل الإعلام المرئية والمسموعة والمقروءة.</li>
-                          <li>يتحمل المشترك تكلفة أي ضرر أو تلف بممتلكات البرنامج أو المشاركين بها.</li>
-                          <li>نرجو الالتزام بوقت الحضور والانصراف للبرنامج من الساعة السادسة مساءً إلى الساعة الحادية عشر مساءً.</li>
-                          <li>مدة البرنامج شهر كامل 4 أيام أسبوعياً تبدأ من الأربعاء 23 / 01 / 1448هـ إلى الأربعاء 22 / 02 / 1448هـ.</li>
-                          <li>حضور المشارك بالزي الخاص بالبرنامج.</li>
-                          <li>في حال كان المشارك يعاني من أي أمراض مزمنة أو حساسية من أطعمة معينة يتم إبلاغ مشرف المرحلة بذلك للمتابعة.</li>
-                          <li>سيتم عمل قروب خاص لأولياء الأمور في كل مجموعة ويرسل فيه كل ما يخص البرنامج من جداول وفعاليات وتعليمات وتقارير يومية مرئية.</li>
-                          <li>في حال وجود أي ملاحظة أو استفسار لا نتردد بالاتصال على الرقم (0566500555).</li>
-                          <li>وقت حصة السباحة نرجو إحضار ملابس خاصة بالسباحة مع منشفة (يمنع السباحة بملابس قطنية).</li>
-                          <li>ختاماً: نتمنى لأبنائكم صيف ممتع وفعاليات متنوعة وبرامج هادفة برفقة كادر إشراف تربوي متميز. عند التسجيل في برنامج لون صيفك.</li>
-                        </ol>
-                      </div>
-
-                      {/* Pledge checkbox */}
-                      <label className="flex items-start gap-3 p-4 bg-yellow-50/40 border border-yellow-100 rounded-2xl cursor-pointer hover:bg-yellow-50/70 transition-all select-none">
+              <form onSubmit={handleRegisterSubmit} className="p-8 flex-grow flex flex-col justify-between">
+                <div className="space-y-5 animate-in fade-in duration-300">
+                  <span className="text-[10px] text-accent-yellow font-extrabold block">إنشاء حساب جديد</span>
+                  
+                  <div className="space-y-4 border border-slate-100 p-5 rounded-2xl bg-slate-50/50">
+                    <h4 className="text-xs font-extrabold text-slate-700 font-tajawal">بيانات ولي الأمر</h4>
+                    
+                    <div className="space-y-3">
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-slate-500 block">اسم ولي الأمر *</label>
                         <input
-                          type="checkbox"
-                          checked={isAgreed}
-                          onChange={(e) => setIsAgreed(e.target.checked)}
-                          className="mt-1 w-4 h-4 text-accent-yellow focus:ring-accent-yellow border-slate-300 rounded cursor-pointer"
+                          type="text"
+                          required
+                          value={regForm.guardian1Name}
+                          onChange={(e) => setRegForm({ ...regForm, guardian1Name: e.target.value })}
+                          placeholder="الاسم الثلاثي"
+                          className="w-full bg-white border border-slate-200 focus:border-accent-yellow rounded-xl px-4 py-3 text-xs text-right focus:outline-none"
                         />
-                        <div className="text-right text-[11px] leading-relaxed text-slate-700 font-medium">
-                          <span className="font-extrabold text-accent-yellow block mb-1">التعهد والإقرار *</span>
-                          أتعهد أنا الموقع أدناه (ولي أمر المشارك/ة) بأن أتقيد بجميع الأنظمة والتعليمات الخاصة بالبرنامج وأن أتحلى بالآداب الإسلامية والأخلاق الرياضية الحميدة في تعاملي مع المعلمين والمشاركين وبالإدارة كامل الحق في إنهاء اشتراكي واتخاذ القرار الذي تراه مناسباً في حالة مخالفتي لذلك، كما أقر بأنني قرأت جميع الأنظمة والتعليمات أدناه والموافقة عليها.
-                        </div>
-                      </label>
+                      </div>
 
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-slate-500 block">رقم الجوال *</label>
+                        <input
+                          type="tel"
+                          required
+                          maxLength={10}
+                          pattern="05[0-9]{8}"
+                          title="يجب أن يبدأ الرقم بـ 05 ويتكون من 10 أرقام"
+                          value={regForm.guardian1Phone}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, '');
+                            setRegForm({ ...regForm, guardian1Phone: val });
+                          }}
+                          placeholder="05XXXXXXXX"
+                          className="w-full bg-white border border-slate-200 focus:border-accent-yellow rounded-xl px-4 py-3 text-xs text-right focus:outline-none font-sans"
+                          dir="ltr"
+                        />
+                      </div>
 
-                    </div>
-                  )}
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-slate-500 block">البريد الإلكتروني *</label>
+                        <input
+                          type="email"
+                          required
+                          value={regForm.email}
+                          onChange={(e) => setRegForm({ ...regForm, email: e.target.value })}
+                          placeholder="parent@example.com"
+                          className="w-full bg-white border border-slate-200 focus:border-accent-yellow rounded-xl px-4 py-3 text-xs text-left focus:outline-none font-sans"
+                          dir="ltr"
+                        />
+                      </div>
 
-                  {step === 4 && (
-                    // STEP 4: ACCOUNT
-                    <div className="space-y-4 animate-in fade-in slide-in-from-right-3 duration-300">
-                      <span className="text-[10px] text-accent-yellow font-extrabold block">الخطوة ٤: معلومات حساب ولي الأمر</span>
-                      <p className="text-xs text-slate-400">يرجى إدخال البريد الإلكتروني وكلمة المرور لتتمكن من متابعة حالة طلبات الأبناء لاحقاً:</p>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                          <label className="text-xs font-bold text-slate-500 block">البريد الإلكتروني *</label>
+                      <div className="space-y-1 relative">
+                        <label className="text-xs font-bold text-slate-500 block">كلمة المرور *</label>
+                        <div className="relative">
                           <input
-                            type="email"
+                            type={showRegPassword ? "text" : "password"}
                             required
-                            value={regForm.email}
-                            onChange={(e) => setRegForm({ ...regForm, email: e.target.value })}
-                            placeholder="parent@example.com"
-                            className="w-full bg-slate-50 border border-slate-200 focus:border-accent-yellow rounded-xl px-4 py-3 text-xs text-left focus:outline-none font-sans"
-                            dir="ltr"
+                            value={regForm.password}
+                            onChange={(e) => setRegForm({ ...regForm, password: e.target.value })}
+                            placeholder="أدخل كلمة مرور قوية"
+                            className="w-full bg-white border border-slate-200 focus:border-accent-yellow rounded-xl pl-10 pr-4 py-3 text-xs text-right focus:outline-none"
                           />
+                          <button
+                            type="button"
+                            onClick={() => setShowRegPassword(!showRegPassword)}
+                            className="absolute left-3.5 top-3.5 text-slate-400 hover:text-slate-600 transition-colors"
+                          >
+                            {showRegPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
                         </div>
-                        <div className="space-y-1 relative">
-                          <label className="text-xs font-bold text-slate-500 block">كلمة المرور *</label>
-                          <div className="relative">
-                            <input
-                              type={showRegPassword ? "text" : "password"}
-                              required
-                              value={regForm.password}
-                              onChange={(e) => setRegForm({ ...regForm, password: e.target.value })}
-                              placeholder="أدخل كلمة مرور قوية"
-                              className="w-full bg-slate-50 border border-slate-200 focus:border-accent-yellow rounded-xl pl-10 pr-4 py-3 text-xs text-right focus:outline-none"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => setShowRegPassword(!showRegPassword)}
-                              className="absolute left-3.5 top-3.5 text-slate-400 hover:text-slate-600 transition-colors"
-                            >
-                              {showRegPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="p-4 bg-blue-50 border border-blue-100 rounded-2xl text-[11px] text-blue-700 leading-relaxed font-medium">
-                        بالتسجيل، أنت توافق على شروط الخدمة وسياسة الخصوصية الخاصة بمنصة ملهم. سوف تحصل على حساب ولي أمر لمتابعة الأبناء المسجلين.
                       </div>
                     </div>
-                  )}
+                  </div>
                 </div>
 
-                {/* Footer Controls */}
-                <div className="flex justify-between items-center pt-6 border-t border-slate-50 mt-6">
-                  {step > 1 ? (
-                    <button
-                      type="button"
-                      onClick={handlePrevStep}
-                      className="px-5 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all flex items-center gap-1.5 cursor-pointer"
-                    >
-                      <ArrowRight className="w-3.5 h-3.5" />
-                      السابق
-                    </button>
-                  ) : (
-                    <div />
-                  )}
-
-                  {step < 4 ? (
-                    <button
-                      type="button"
-                      onClick={handleNextStep}
-                      className="px-5 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 cursor-pointer"
-                    >
-                      التالي
-                      <ArrowLeft className="w-3.5 h-3.5" />
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleRegisterSubmit}
-                      className="px-6 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 cursor-pointer"
-                    >
-                      تأكيد التسجيل النهائي
-                      <CheckCircle className="w-3.5 h-3.5" />
-                    </button>
-                  )}
+                <div className="flex justify-end items-center pt-6 border-t border-slate-50 mt-6">
+                  <button
+                    type="submit"
+                    className="px-6 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 cursor-pointer"
+                  >
+                    تأكيد التسجيل
+                    <CheckCircle className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </form>
             ) : mode === "login" ? (
@@ -1189,7 +855,6 @@ function RegisterContent() {
                 <button
                   onClick={() => {
                     setMode("register");
-                    setStep(1);
                   }}
                   className="text-xs text-slate-300 hover:text-white transition-all font-bold cursor-pointer"
                 >
