@@ -290,17 +290,36 @@ export default function AdminDashboardPage() {
   };
 
   const exportRegistrationsCSV = () => {
-    const headers = ["اسم المشترك", "البرنامج/الرحلة", "الجوال", "البريد الإلكتروني", "طريقة الدفع", "الحالة", "تاريخ التسجيل"];
+    const headers = [
+      "الاسم الرباعي", "رقم الهوية", "الصف الدراسي", "تاريخ الميلاد", "الجنس", "العمر", "الحي",
+      "اسم ولي الأمر", "جوال ولي الأمر", "جوال آخر", "الأمراض", "الحساسية", "كيف عرفت عن البرنامج",
+      "البرنامج/الرحلة", "البريد الإلكتروني", "طريقة الدفع", "الحالة", "تاريخ التسجيل"
+    ];
     const csvContent = [
       headers.join(","),
       ...registrations.map(r => {
+        const ed = r.extra_data || {};
+        const diseases = ed.hasDiseases === "نعم" ? `نعم - ${ed.diseasesDetails || ""}` : "لا";
+        const allergies = ed.hasAllergies === "نعم" ? `نعم - ${ed.allergiesDetails || ""}` : "لا";
+        const statusText = (r.status === 'registered' || r.status === 'approved' || r.status === 'completed') ? 'تم التسجيل' : 'قيد المراجعة';
         return [
           `"${r.full_name || ""}"`,
+          `"${ed.idNumber || ""}"`,
+          `"${ed.grade || ""}"`,
+          `"${ed.birthDate || ""}"`,
+          `"${ed.gender || ""}"`,
+          `"${r.age || ed.age || ""}"`,
+          `"${ed.neighborhood || ""}"`,
+          `"${ed.parentName || ""}"`,
+          `"${r.phone || ed.parentPhone || ""}"`,
+          `"${ed.otherPhone || ""}"`,
+          `"${diseases}"`,
+          `"${allergies}"`,
+          `"${ed.howDidYouHear || ""}"`,
           `"${r.target_name || ""} (${r.type || ""})"`,
-          `"${r.phone || ""}"`,
           `"${r.email || ""}"`,
           `"${r.payment_method || "غير محدد"}"`,
-          `"${r.status === 'approved' ? 'مقبول' : r.status === 'completed' ? 'مكتمل' : 'قيد المراجعة'}"`,
+          `"${statusText}"`,
           `"${new Date(r.created_at).toLocaleDateString('ar-SA')}"`
         ].join(",");
       })
@@ -550,27 +569,41 @@ export default function AdminDashboardPage() {
                   <table className="w-full text-sm text-right whitespace-nowrap">
                     <thead className="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
                       <tr>
-                        <th className="px-6 py-4">اسم المشترك</th>
-                        <th className="px-6 py-4">البرنامج / الرحلة</th>
-                        <th className="px-6 py-4">التواصل</th>
-                        <th className="px-6 py-4">طريقة الدفع</th>
-                        <th className="px-6 py-4">الحالة</th>
-                        <th className="px-6 py-4 text-center">إجراء</th>
+                        <th className="px-4 py-3">الاسم الرباعي</th>
+                        <th className="px-4 py-3">رقم الهوية</th>
+                        <th className="px-4 py-3">الصف</th>
+                        <th className="px-4 py-3">تاريخ الميلاد</th>
+                        <th className="px-4 py-3">الجنس</th>
+                        <th className="px-4 py-3">العمر</th>
+                        <th className="px-4 py-3">الحي</th>
+                        <th className="px-4 py-3">ولي الأمر</th>
+                        <th className="px-4 py-3">جوال ولي الأمر</th>
+                        <th className="px-4 py-3">جوال آخر</th>
+                        <th className="px-4 py-3">أمراض</th>
+                        <th className="px-4 py-3">حساسية</th>
+                        <th className="px-4 py-3">طريقة الدفع</th>
+                        <th className="px-4 py-3">الحالة</th>
+                        <th className="px-4 py-3 text-center">إجراء</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {paginatedRegistrations.map((r) => (
+                      {paginatedRegistrations.map((r) => {
+                        const ed = r.extra_data || {};
+                        return (
                         <tr key={r.id} className="hover:bg-slate-50/50">
-                          <td className="px-6 py-4 font-bold text-slate-800">{r.full_name}</td>
-                          <td className="px-6 py-4 text-slate-700">
-                            <div className="line-clamp-1 max-w-[200px] whitespace-normal">{r.target_name}</div>
-                            <span className="text-[10px] text-slate-400">{r.type}</span>
-                          </td>
-                          <td className="px-6 py-4 text-xs text-slate-600">
-                            <div dir="ltr">{r.phone}</div>
-                            <div dir="ltr">{r.email}</div>
-                          </td>
-                          <td className="px-6 py-4 text-xs font-bold">
+                          <td className="px-4 py-3 font-bold text-slate-800">{r.full_name}</td>
+                          <td className="px-4 py-3 text-slate-700">{ed.idNumber || "-"}</td>
+                          <td className="px-4 py-3 text-slate-700">{ed.grade || "-"}</td>
+                          <td className="px-4 py-3 text-slate-700">{ed.birthDate || "-"}</td>
+                          <td className="px-4 py-3 text-slate-700">{ed.gender || "-"}</td>
+                          <td className="px-4 py-3 text-slate-700">{r.age || ed.age || "-"}</td>
+                          <td className="px-4 py-3 text-slate-700">{ed.neighborhood || "-"}</td>
+                          <td className="px-4 py-3 text-slate-700">{ed.parentName || "-"}</td>
+                          <td className="px-4 py-3 text-slate-700" dir="ltr">{r.phone || ed.parentPhone || "-"}</td>
+                          <td className="px-4 py-3 text-slate-700" dir="ltr">{ed.otherPhone || "-"}</td>
+                          <td className="px-4 py-3 text-slate-700">{ed.hasDiseases === "نعم" ? `نعم (${ed.diseasesDetails || ""})` : "لا"}</td>
+                          <td className="px-4 py-3 text-slate-700">{ed.hasAllergies === "نعم" ? `نعم (${ed.allergiesDetails || ""})` : "لا"}</td>
+                          <td className="px-4 py-3 text-xs font-bold">
                             <span className={`px-2 py-1 rounded-md ${
                               r.payment_method?.includes('بطاقة') ? 'bg-blue-50 text-blue-700' :
                               r.payment_method?.includes('تابي') ? 'bg-[#d3ffde] text-[#05cd9c]' :
@@ -580,24 +613,22 @@ export default function AdminDashboardPage() {
                               {r.payment_method || 'غير محدد'}
                             </span>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-4 py-3">
                             <select
-                              value={r.status}
+                              value={r.status === 'completed' || r.status === 'registered' ? 'approved' : r.status}
                               onChange={(e) => updateRegistrationStatus(r.id, e.target.value)}
                               className={`text-xs font-bold px-2 py-1.5 rounded outline-none border ${
-                                r.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                                r.status === 'completed' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                r.status === 'approved' || r.status === 'registered' || r.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
                                 'bg-amber-50 text-amber-700 border-amber-200'
                               }`}
                             >
                               <option value="pending">قيد المراجعة</option>
-                              <option value="approved">مقبول</option>
-                              <option value="completed">مكتمل</option>
+                              <option value="approved">تم التسجيل</option>
                             </select>
                           </td>
-                          <td className="px-6 py-4 text-slate-500 text-xs text-center flex flex-col gap-2 items-center">
+                          <td className="px-4 py-3 text-slate-500 text-xs text-center flex flex-col gap-2 items-center">
                             <span>{new Date(r.created_at).toLocaleDateString('ar-SA')}</span>
-                            {r.extra_data?.formType === 'summer_program' && (
+                            {ed.formType === 'summer_program' && (
                               <button 
                                 onClick={() => handleExportPDF(r)} 
                                 disabled={isGeneratingPDF}
@@ -609,44 +640,52 @@ export default function AdminDashboardPage() {
                             <button onClick={() => deleteRecord("registrations", r.id, setRegistrations)} className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[10px] font-bold transition-colors w-full text-center">حذف</button>
                           </td>
                         </tr>
-                      ))}
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
 
                 {/* Mobile Cards View */}
                 <div className="grid grid-cols-1 gap-4 lg:hidden p-4 bg-slate-50/50">
-                  {paginatedRegistrations.map((r) => (
+                  {paginatedRegistrations.map((r) => {
+                    const ed = r.extra_data || {};
+                    return (
                     <div key={r.id} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col gap-3 relative">
-                      <div className="flex justify-between items-start">
+                      <div className="flex justify-between items-start border-b border-slate-100 pb-2">
                         <div>
-                          <div className="font-bold text-slate-800">{r.full_name}</div>
-                          <div className="text-sm font-semibold text-primary-navy mt-1">{r.target_name} <span className="text-[10px] font-normal text-slate-500">({r.type})</span></div>
+                          <div className="font-bold text-slate-800 text-lg">{r.full_name}</div>
+                          <div className="text-xs text-slate-500 mt-1">الهوية: {ed.idNumber || "-"} | العمر: {r.age || ed.age || "-"}</div>
                         </div>
                         <select
-                          value={r.status}
+                          value={r.status === 'completed' || r.status === 'registered' ? 'approved' : r.status}
                           onChange={(e) => updateRegistrationStatus(r.id, e.target.value)}
                           className={`text-[10px] font-bold px-2 py-1 rounded outline-none border ${
-                            r.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                            r.status === 'completed' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                            r.status === 'approved' || r.status === 'registered' || r.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
                             'bg-amber-50 text-amber-700 border-amber-200'
                           }`}
                         >
-                          <option value="pending">مراجعة</option>
-                          <option value="approved">مقبول</option>
-                          <option value="completed">مكتمل</option>
+                          <option value="pending">قيد المراجعة</option>
+                          <option value="approved">تم التسجيل</option>
                         </select>
                       </div>
 
-                      <div className="flex flex-col gap-1 text-xs text-slate-600 bg-slate-50 p-2 rounded-lg">
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold">التواصل:</span>
-                          <span dir="ltr">{r.phone}</span>
-                        </div>
-                        <div className="flex items-center justify-between text-[11px]">
-                          <span></span>
-                          <span dir="ltr">{r.email}</span>
-                        </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg">
+                        <div className="flex flex-col"><span className="text-slate-400 text-[10px]">الصف الدراسي</span><span className="font-bold">{ed.grade || "-"}</span></div>
+                        <div className="flex flex-col"><span className="text-slate-400 text-[10px]">الجنس</span><span className="font-bold">{ed.gender || "-"}</span></div>
+                        <div className="flex flex-col"><span className="text-slate-400 text-[10px]">تاريخ الميلاد</span><span className="font-bold">{ed.birthDate || "-"}</span></div>
+                        <div className="flex flex-col"><span className="text-slate-400 text-[10px]">الحي</span><span className="font-bold">{ed.neighborhood || "-"}</span></div>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border-t border-slate-100 mt-1">
+                        <div className="flex justify-between"><span className="text-slate-400">ولي الأمر:</span><span className="font-bold">{ed.parentName || "-"}</span></div>
+                        <div className="flex justify-between"><span className="text-slate-400">جوال ولي الأمر:</span><span className="font-bold" dir="ltr">{r.phone || ed.parentPhone || "-"}</span></div>
+                        <div className="flex justify-between"><span className="text-slate-400">جوال آخر:</span><span className="font-bold" dir="ltr">{ed.otherPhone || "-"}</span></div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border-t border-slate-100 mt-1">
+                        <div className="flex flex-col"><span className="text-slate-400 text-[10px]">أمراض</span><span className="font-bold text-red-600">{ed.hasDiseases === "نعم" ? `نعم (${ed.diseasesDetails || ""})` : "لا"}</span></div>
+                        <div className="flex flex-col"><span className="text-slate-400 text-[10px]">حساسية</span><span className="font-bold text-red-600">{ed.hasAllergies === "نعم" ? `نعم (${ed.allergiesDetails || ""})` : "لا"}</span></div>
                       </div>
 
                       <div className="flex items-center justify-between mt-1">
@@ -662,7 +701,7 @@ export default function AdminDashboardPage() {
                       </div>
 
                       <div className="flex flex-col gap-2 mt-2">
-                        {r.extra_data?.formType === 'summer_program' && (
+                        {ed.formType === 'summer_program' && (
                           <button 
                             onClick={() => handleExportPDF(r)} 
                             disabled={isGeneratingPDF}
@@ -676,7 +715,8 @@ export default function AdminDashboardPage() {
                         </button>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {filteredRegistrations.length > paginatedRegistrations.length && (
