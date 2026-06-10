@@ -248,11 +248,16 @@ function RegisterContent() {
     }
     setIsSendingReset(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
-        redirectTo: `${window.location.origin}/reset-password`,
+      const response = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail, origin: window.location.origin }),
       });
-      if (error) {
-        showToast(`خطأ: ${error.message}`, "error");
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        showToast(`خطأ: ${result.error || "فشل في إرسال البريد الإلكتروني"}`, "error");
       } else {
         showToast("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني بنجاح!", "success");
         setMode("login");
