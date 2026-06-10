@@ -8,11 +8,7 @@ import {
   Users, ShoppingBag, ClipboardList, MessageSquare, TrendingUp, ShieldCheck, Download, AlertCircle, Plus, X
 } from "lucide-react";
 import { 
-  fetchAdminUsers,
-  fetchAdminRegistrations,
-  fetchAdminOrders,
-  fetchAdminMessages,
-  fetchAdminTestimonials,
+  fetchAllAdminData,
   updateRegistrationStatusAction, 
   updateOrderStatusAction, 
   deleteRecordAction, 
@@ -134,20 +130,14 @@ export default function AdminDashboardPage() {
       const token = session?.access_token;
       if (!token) throw new Error("Unauthorized: لا توجد جلسة صالحة. يرجى تسجيل الدخول مجدداً.");
 
-      // Fetch independently but await all to catch Unauthorized errors from server actions
-      const [usersData, registrationsData, ordersData, messagesData, testimonialsData] = await Promise.all([
-        fetchAdminUsers(token),
-        fetchAdminRegistrations(token),
-        fetchAdminOrders(token),
-        fetchAdminMessages(token),
-        fetchAdminTestimonials(token)
-      ]);
+      // Fetch all data in one optimized backend request
+      const data = await fetchAllAdminData(token);
       
-      setUsers(usersData);
-      setRegistrations(registrationsData);
-      setOrders(ordersData);
-      setMessages(messagesData);
-      setTestimonials(testimonialsData);
+      setUsers(data.users);
+      setRegistrations(data.registrations);
+      setOrders(data.orders);
+      setMessages(data.messages);
+      setTestimonials(data.testimonials);
       
       // Give a tiny bit of time for initial queries to resolve before removing skeleton
       setTimeout(() => setLoading(false), 500);

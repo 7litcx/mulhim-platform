@@ -473,21 +473,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setCurrentUser(user);
         saveToLocalStorage("mulhim_user", user);
 
-        // Fetch user's children and registrations from Supabase
-        const { data: regsData } = await supabase
-          .from("registrations")
-          .select("*")
-          .or(`user_id.eq.${session.user.id},email.eq.${session.user.email}`);
-
-        const { data: childrenData } = await supabase
-          .from("children")
-          .select("*")
-          .eq("parent_id", session.user.id);
-
-        const { data: ordersData } = await supabase
-          .from("orders")
-          .select("*, order_items(*)")
-          .or(`user_id.eq.${session.user.id},email.eq.${session.user.email}`);
+        // Fetch user's children and registrations from Supabase concurrently
+        const [
+          { data: regsData },
+          { data: childrenData },
+          { data: ordersData }
+        ] = await Promise.all([
+          supabase
+            .from("registrations")
+            .select("*")
+            .or(`user_id.eq.${session.user.id},email.eq.${session.user.email}`),
+          supabase
+            .from("children")
+            .select("*")
+            .eq("parent_id", session.user.id),
+          supabase
+            .from("orders")
+            .select("*, order_items(*)")
+            .or(`user_id.eq.${session.user.id},email.eq.${session.user.email}`)
+        ]);
 
         if (regsData) {
           const formattedRegs: Registration[] = regsData.map((r: any) => ({

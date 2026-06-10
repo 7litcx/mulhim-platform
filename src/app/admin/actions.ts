@@ -61,6 +61,31 @@ export async function fetchAdminTestimonials(token: string) {
   return data || [];
 }
 
+export async function fetchAllAdminData(token: string) {
+  await verifyAdmin(token);
+  const [users, registrations, orders, messages, testimonials] = await Promise.all([
+    supabaseAdmin.from("profiles").select("*").order("created_at", { ascending: false }).limit(2000),
+    supabaseAdmin.from("registrations").select("*").order("created_at", { ascending: false }).limit(2000),
+    supabaseAdmin.from("orders").select("*, order_items(*)").order("created_at", { ascending: false }).limit(2000),
+    supabaseAdmin.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(2000),
+    supabaseAdmin.from("testimonials").select("*").order("created_at", { ascending: false }).limit(2000)
+  ]);
+
+  if (users.error) throw new Error(users.error.message);
+  if (registrations.error) throw new Error(registrations.error.message);
+  if (orders.error) throw new Error(orders.error.message);
+  if (messages.error) throw new Error(messages.error.message);
+  if (testimonials.error) throw new Error(testimonials.error.message);
+
+  return {
+    users: users.data || [],
+    registrations: registrations.data || [],
+    orders: orders.data || [],
+    messages: messages.data || [],
+    testimonials: testimonials.data || []
+  };
+}
+
 export async function updateRegistrationStatusAction(token: string, id: string, status: string) {
   await verifyAdmin(token);
   const { error } = await supabaseAdmin.from("registrations").update({ status }).eq("id", id);
