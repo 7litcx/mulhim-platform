@@ -60,6 +60,33 @@ function AnimatedCounter({ target, duration = 2000 }: CounterProps) {
   return <span ref={elementRef}>{count.toLocaleString()}</span>;
 }
 
+function RealVisitorCounter() {
+  const [visits, setVisits] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchVisits = async () => {
+      try {
+        const res = await fetch("/api/visits");
+        if (res.ok) {
+          const data = await res.json();
+          setVisits(data.visits);
+          sessionStorage.setItem("hasVisited", "true");
+        } else {
+          setVisits(12500); // Fallback
+        }
+      } catch (error) {
+        console.error("Failed to fetch visits:", error);
+        setVisits(12500); // Fallback
+      }
+    };
+
+    fetchVisits();
+  }, []);
+
+  if (visits === null) return <span>...</span>;
+  return <AnimatedCounter target={visits} duration={2500} />;
+}
+
 const containerVariants = {
   hidden: { opacity: 0 },
   show: {
@@ -504,10 +531,10 @@ export default function AboutClient({ sanityHeroBanners = [] }: AboutClientProps
                 <Eye className="w-6 h-6 sm:w-7 sm:h-7" />
               </div>
               <h3 className="text-3xl sm:text-4xl md:text-5xl font-black font-sans bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300">
-                +<AnimatedCounter target={15000} />
+                +<RealVisitorCounter />
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 font-tajawal font-medium mt-3 leading-relaxed">
-                زائر ومستفيد
+                زيارات الموقع
               </p>
             </motion.div>
           </motion.div>
