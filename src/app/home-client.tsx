@@ -13,6 +13,7 @@ import { urlFor } from "@/sanity/lib/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import QuickRegistrationModal from "@/components/shared/QuickRegistrationModal";
+import TestimonialsSection from "@/components/shared/TestimonialsSection";
 
 const MotionLink = motion.create(Link);
 
@@ -1147,6 +1148,9 @@ export default function HomeClient({
           })}
         </motion.div>
       </section>
+
+      {/* 6.5. Testimonials Section */}
+      <TestimonialsSection />
 
       {/* 7. Success Partners Marquee Logos */}
       <section className="bg-slate-50/50 py-16 border-t border-slate-100 overflow-hidden">

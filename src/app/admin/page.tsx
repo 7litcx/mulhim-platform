@@ -12,6 +12,7 @@ import {
   fetchAdminRegistrations,
   fetchAdminOrders,
   fetchAdminMessages,
+  fetchAdminTestimonials,
   updateRegistrationStatusAction, 
   updateOrderStatusAction, 
   deleteRecordAction, 
@@ -25,13 +26,14 @@ export default function AdminDashboardPage() {
   const { currentUser, showToast, logoutUser } = useApp();
   const router = useRouter();
   
-  const [activeTab, setActiveTab] = useState<"overview" | "users" | "registrations" | "orders" | "messages">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "users" | "registrations" | "orders" | "messages" | "testimonials">("overview");
   const [searchQuery, setSearchQuery] = useState("");
   
   const [users, setUsers] = useState<any[]>([]);
   const [registrations, setRegistrations] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
+  const [testimonials, setTestimonials] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [page, setPage] = useState(1);
@@ -62,9 +64,15 @@ export default function AdminDashboardPage() {
     (o.phone || "").includes(searchQuery)
   );
 
+  const filteredTestimonials = testimonials.filter(t => 
+    (t.user_name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (t.content || "").toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const paginatedUsers = filteredUsers.slice(0, page * ITEMS_PER_PAGE);
   const paginatedRegistrations = filteredRegistrations.slice(0, page * ITEMS_PER_PAGE);
   const paginatedOrders = filteredOrders.slice(0, page * ITEMS_PER_PAGE);
+  const paginatedTestimonials = filteredTestimonials.slice(0, page * ITEMS_PER_PAGE);
 
   // Custom Confirm Modal State
   const [confirmModal, setConfirmModal] = useState<{
@@ -127,17 +135,19 @@ export default function AdminDashboardPage() {
       if (!token) throw new Error("Unauthorized: لا توجد جلسة صالحة. يرجى تسجيل الدخول مجدداً.");
 
       // Fetch independently but await all to catch Unauthorized errors from server actions
-      const [usersData, registrationsData, ordersData, messagesData] = await Promise.all([
+      const [usersData, registrationsData, ordersData, messagesData, testimonialsData] = await Promise.all([
         fetchAdminUsers(token),
         fetchAdminRegistrations(token),
         fetchAdminOrders(token),
-        fetchAdminMessages(token)
+        fetchAdminMessages(token),
+        fetchAdminTestimonials(token)
       ]);
       
       setUsers(usersData);
       setRegistrations(registrationsData);
       setOrders(ordersData);
       setMessages(messagesData);
+      setTestimonials(testimonialsData);
       
       // Give a tiny bit of time for initial queries to resolve before removing skeleton
       setTimeout(() => setLoading(false), 500);
@@ -374,6 +384,7 @@ export default function AdminDashboardPage() {
             { id: "registrations", label: "الاشتراكات", icon: ClipboardList },
             { id: "orders", label: "طلبات المتجر", icon: ShoppingBag },
             { id: "messages", label: "الرسائل", icon: MessageSquare },
+            { id: "testimonials", label: "الآراء والتقييمات", icon: MessageSquare },
           ].map((tab) => {
             const Icon = tab.icon;
             return (
@@ -882,6 +893,52 @@ export default function AdminDashboardPage() {
                 </div>
 
                 {messages.length > page * ITEMS_PER_PAGE && (
+                  <div className="flex justify-center p-4">
+                    <button onClick={() => setPage(p => p + 1)} className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-bold transition-all">
+                      عرض المزيد
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Testimonials Tab */}
+            {activeTab === "testimonials" && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="grid grid-cols-1 gap-4">
+                  {testimonials.length === 0 ? (
+                    <div className="col-span-full py-10 text-center text-slate-500 font-bold">لا توجد آراء وتقييمات حالياً.</div>
+                  ) : (
+                    paginatedTestimonials.map((t) => (
+                      <div key={t.id} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-bold text-slate-800">{t.user_name}</h3>
+                            <div className="text-xs text-slate-500 font-sans">{t.role}</div>
+                            <div className="flex gap-1 text-accent-gold mt-1">
+                              {[...Array(t.rating || 5)].map((_, i) => (
+                                <svg key={i} className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                              ))}
+                            </div>
+                          </div>
+                          <span className="text-[10px] text-slate-400 bg-slate-50 px-2 py-1 rounded">
+                            {new Date(t.created_at).toLocaleDateString('ar-SA')}
+                          </span>
+                        </div>
+                        <div className="pt-4 border-t border-slate-100">
+                          <div className="flex justify-between items-start mb-2">
+                            <p className="text-sm text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-xl flex-grow ml-4">
+                              {t.content}
+                            </p>
+                            <button onClick={() => deleteRecord("testimonials", t.id, setTestimonials)} className="text-[10px] px-2 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded-md font-bold transition-colors shrink-0 mt-2">حذف الرأي</button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {filteredTestimonials.length > page * ITEMS_PER_PAGE && (
                   <div className="flex justify-center p-4">
                     <button onClick={() => setPage(p => p + 1)} className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-bold transition-all">
                       عرض المزيد

@@ -186,39 +186,6 @@ export default function TripsClient({
     "كاميرا أو هاتف لتوثيق اللحظات الملهمة"
   ];
 
-  const defaultTestimonials = [
-    {
-      name: "أحمد العتيبي",
-      role: "مشارك في رحلة المغرب",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200",
-      content: "كانت رحلة الصحراء المغربية نقطة تحول في حياتي، تنظيم رائع وروح مغامرة ممتازة وجدول غني بالمعرفة والروح الجماعية.",
-      rating: 5
-    },
-    {
-      name: "سارة الغامدي",
-      role: "مشاركة في رحلة مكة",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200",
-      content: "التخييم وتجربة الرحلة الإيمانية كانت مذهلة ومريحة جداً. شكراً للقائمين على اهتمامهم بأدق التفاصيل لسلامة وراحة الجميع.",
-      rating: 5
-    },
-    {
-      name: "محمد عمر",
-      role: "مشارك في هايكنج عسير",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200",
-      content: "تجربة جبلية حماسية مليئة بالتحدي والتعلم، جدول مميز وتنسيق رائع ورفقة شباب ملهمين وصداقات تدوم.",
-      rating: 5
-    }
-  ];
-
-  const displayTestimonials = sanityTestimonials.length > 0
-    ? sanityTestimonials.map(t => ({
-      name: t.title || t.author,
-      role: t.role || "عضو في مجتمع ملهم",
-      image: resolveImage(t.images?.[0] || t.image, 200, 200),
-      content: t.description || t.quote,
-      rating: t.rating || 5
-    }))
-    : defaultTestimonials;
 
   return (
     <div className="pb-10">
@@ -635,61 +602,6 @@ export default function TripsClient({
         </div>
       </section>
 
-      {/* 6. Testimonials */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
-        <div className="text-center max-w-2xl mx-auto space-y-4 mb-14">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-primary-navy font-tajawal">آراء مُلهمينا</h2>
-          <p className="text-slate-800 text-sl leading-relaxed">
-            تجارب حقيقية عاشها شباب وفتيات من مجتمعنا في رحلاتنا الاستكشافية والمغامرات السابقة.
-          </p>
-        </div>
-
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
-        >
-          {displayTestimonials.map((test: any, index: number) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)" }}
-              className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm transition-all duration-300 relative flex flex-col justify-between text-right"
-            >
-              <div className="space-y-4">
-                <div className="flex gap-0.5 text-accent-gold justify-end">
-                  {[...Array(test.rating)].map((_, i) => (
-                    <Star key={i} className="w-4.5 h-4.5 fill-current" />
-                  ))}
-                </div>
-                <p className="text-xs text-slate-800 leading-relaxed font-medium italic">
-                  "{test.content}"
-                </p>
-              </div>
-
-              <div className="flex items-center gap-3 pt-6 mt-6 border-t border-slate-50 justify-end">
-                <div className="text-right">
-                  <h4 className="font-bold text-slate-800 text-xs">{test.name}</h4>
-                  <span className="text-[10px] text-slate-400 font-semibold">{test.role}</span>
-                </div>
-                {test.image && test.image !== "/placeholder.jpg" ? (
-                  <img
-                    src={test.image}
-                    alt={test.name}
-                    className="w-10 h-10 rounded-full object-cover shadow-inner"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-accent-yellow/10 text-accent-yellow flex items-center justify-center font-bold text-sm shadow-inner select-none">
-                    {test.name ? test.name.charAt(0) : "M"}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </section>
 
       {/* 7. Slide-over details drawer */}
       <AnimatePresence>

@@ -54,6 +54,13 @@ export async function fetchAdminMessages(token: string) {
   return data || [];
 }
 
+export async function fetchAdminTestimonials(token: string) {
+  await verifyAdmin(token);
+  const { data, error } = await supabaseAdmin.from("testimonials").select("*").order("created_at", { ascending: false }).limit(2000);
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
 export async function updateRegistrationStatusAction(token: string, id: string, status: string) {
   await verifyAdmin(token);
   const { error } = await supabaseAdmin.from("registrations").update({ status }).eq("id", id);
