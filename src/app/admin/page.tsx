@@ -7,12 +7,16 @@ import { supabase } from "@/utils/supabase";
 import {
   Users, ShoppingBag, ClipboardList, MessageSquare, TrendingUp, ShieldCheck, Download, AlertCircle, Plus, X
 } from "lucide-react";
-import { 
-  fetchAllAdminData,
-  updateRegistrationStatusAction, 
-  updateOrderStatusAction, 
-  deleteRecordAction, 
-  toggleUserRoleAction 
+import {
+  fetchAdminUsers,
+  fetchAdminRegistrations,
+  fetchAdminOrders,
+  fetchAdminMessages,
+  fetchAdminTestimonials,
+  updateRegistrationStatusAction,
+  updateOrderStatusAction,
+  deleteRecordAction,
+  toggleUserRoleAction
 } from "./actions";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -21,10 +25,10 @@ import { SummerProgramPDF } from "@/components/SummerProgramPDF";
 export default function AdminDashboardPage() {
   const { currentUser, showToast, logoutUser } = useApp();
   const router = useRouter();
-  
+
   const [activeTab, setActiveTab] = useState<"overview" | "users" | "registrations" | "orders" | "messages" | "testimonials">("overview");
   const [searchQuery, setSearchQuery] = useState("");
-  
+
   const [users, setUsers] = useState<any[]>([]);
   const [registrations, setRegistrations] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
@@ -40,28 +44,28 @@ export default function AdminDashboardPage() {
   }, [activeTab, searchQuery]);
 
   // Derived filtered data
-  const filteredUsers = users.filter(u => 
-    (u.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
-    (u.email || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredUsers = users.filter(u =>
+    (u.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (u.email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
     (u.phone || "").includes(searchQuery)
   );
 
-  const filteredRegistrations = registrations.filter(r => 
-    (r.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
-    (r.target_name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
-    (r.phone || "").includes(searchQuery) || 
+  const filteredRegistrations = registrations.filter(r =>
+    (r.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (r.target_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (r.phone || "").includes(searchQuery) ||
     (r.email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
     (r.payment_method || "").includes(searchQuery)
   );
 
-  const filteredOrders = orders.filter(o => 
-    (o.id || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
-    (o.customer_name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredOrders = orders.filter(o =>
+    (o.id || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (o.customer_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
     (o.phone || "").includes(searchQuery)
   );
 
-  const filteredTestimonials = testimonials.filter(t => 
-    (t.user_name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredTestimonials = testimonials.filter(t =>
+    (t.user_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
     (t.content || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -80,7 +84,7 @@ export default function AdminDashboardPage() {
     isOpen: false,
     title: "",
     message: "",
-    onConfirm: () => {}
+    onConfirm: () => { }
   });
 
   const confirmAction = (title: string, message: string, onConfirm: () => void) => {
@@ -100,7 +104,7 @@ export default function AdminDashboardPage() {
     setPdfRegistration(registration);
     setIsGeneratingPDF(true);
     showToast("جاري تجهيز ملف الـ PDF...", "success");
-    
+
     setTimeout(async () => {
       try {
         if (!pdfRef.current) return;
@@ -109,7 +113,7 @@ export default function AdminDashboardPage() {
         const pdf = new jsPDF("p", "mm", "a4");
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-        
+
         pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
         pdf.save(`استمارة_${registration.full_name.replace(/\s+/g, '_')}.pdf`);
         showToast("تم تنزيل الملف بنجاح!", "success");
@@ -130,15 +134,21 @@ export default function AdminDashboardPage() {
       const token = session?.access_token;
       if (!token) throw new Error("Unauthorized: لا توجد جلسة صالحة. يرجى تسجيل الدخول مجدداً.");
 
-      // Fetch all data in one optimized backend request
-      const data = await fetchAllAdminData(token);
-      
-      setUsers(data.users);
-      setRegistrations(data.registrations);
-      setOrders(data.orders);
-      setMessages(data.messages);
-      setTestimonials(data.testimonials);
-      
+      // Fetch independently but await all to catch Unauthorized errors from server actions
+      const [usersData, registrationsData, ordersData, messagesData, testimonialsData] = await Promise.all([
+        fetchAdminUsers(token),
+        fetchAdminRegistrations(token),
+        fetchAdminOrders(token),
+        fetchAdminMessages(token),
+        fetchAdminTestimonials(token)
+      ]);
+
+      setUsers(usersData);
+      setRegistrations(registrationsData);
+      setOrders(ordersData);
+      setMessages(messagesData);
+      setTestimonials(testimonialsData);
+
       // Give a tiny bit of time for initial queries to resolve before removing skeleton
       setTimeout(() => setLoading(false), 500);
 
@@ -238,7 +248,7 @@ export default function AdminDashboardPage() {
       return;
     }
     setIsCreatingUser(true);
-    
+
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
@@ -246,7 +256,7 @@ export default function AdminDashboardPage() {
 
       const response = await fetch("/api/admin/create-user", {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
@@ -348,7 +358,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="bg-slate-50 min-h-screen pt-28 pb-10 text-right font-tajawal">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        
+
         {/* Admin Header */}
         <div className="bg-gradient-to-r from-primary-navy to-slate-900 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl border border-slate-800">
           <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-accent-yellow/10 rounded-full blur-2xl" />
@@ -384,11 +394,10 @@ export default function AdminDashboardPage() {
                   setActiveTab(tab.id as any);
                   setSearchQuery("");
                 }}
-                className={`px-5 py-3 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center gap-2 ${
-                  activeTab === tab.id
+                className={`px-5 py-3 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center gap-2 ${activeTab === tab.id
                     ? "bg-accent-yellow text-primary-navy shadow-yellow-500/20"
                     : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
-                }`}
+                  }`}
               >
                 <Icon className="w-4 h-4" />
                 {tab.label}
@@ -403,7 +412,7 @@ export default function AdminDashboardPage() {
           </div>
         ) : (
           <div className="space-y-6">
-            
+
             {/* OVERVIEW TAB */}
             {activeTab === "overview" && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-in fade-in">
@@ -416,7 +425,7 @@ export default function AdminDashboardPage() {
                     <p className="text-2xl font-black text-slate-800">{users.length}</p>
                   </div>
                 </div>
-                
+
                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
                   <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
                     <ClipboardList className="w-6 h-6" />
@@ -462,7 +471,7 @@ export default function AdminDashboardPage() {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:border-accent-yellow w-full sm:w-64"
                     />
-                    <button 
+                    <button
                       onClick={() => setCreateUserModal(true)}
                       className="flex items-center gap-1.5 px-4 py-2 bg-accent-yellow hover:bg-yellow-600 text-primary-navy rounded-lg text-sm font-bold transition-colors whitespace-nowrap"
                     >
@@ -505,7 +514,7 @@ export default function AdminDashboardPage() {
                     </tbody>
                   </table>
                 </div>
-                
+
                 {/* Mobile Cards View */}
                 <div className="grid grid-cols-1 gap-4 lg:hidden p-4 bg-slate-50/50">
                   {paginatedUsers.map((u) => (
@@ -519,12 +528,12 @@ export default function AdminDashboardPage() {
                           {u.role === 'admin' ? 'مشرف' : 'مستخدم'}
                         </span>
                       </div>
-                      
+
                       <div className="flex justify-between items-center text-sm text-slate-600">
                         <span className="text-xs text-slate-400">{new Date(u.created_at).toLocaleDateString('ar-SA')}</span>
                         <span dir="ltr" className="font-medium">{u.phone}</span>
                       </div>
-                      
+
                       <div className="flex gap-2 pt-3 border-t border-slate-100 mt-1">
                         <button onClick={() => toggleUserRole(u.id, u.role)} className="flex-1 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-bold transition-colors">تغيير الصلاحية</button>
                         <button onClick={() => deleteRecord("profiles", u.id, setUsers)} className="flex-1 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-bold transition-colors">حذف</button>
@@ -556,7 +565,7 @@ export default function AdminDashboardPage() {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:border-accent-yellow w-full sm:w-64"
                     />
-                    <button 
+                    <button
                       onClick={exportRegistrationsCSV}
                       className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 border border-emerald-200 whitespace-nowrap"
                     >
@@ -591,56 +600,54 @@ export default function AdminDashboardPage() {
                       {paginatedRegistrations.map((r) => {
                         const ed = r.extra_data || {};
                         return (
-                        <tr key={r.id} className="hover:bg-slate-50/50">
-                          <td className="px-4 py-3 font-bold text-slate-800">{r.full_name}</td>
-                          <td className="px-4 py-3 text-slate-700">{ed.idNumber || "-"}</td>
-                          <td className="px-4 py-3 text-slate-700">{ed.grade || "-"}</td>
-                          <td className="px-4 py-3 text-slate-700">{ed.birthDate || "-"}</td>
-                          <td className="px-4 py-3 text-slate-700">{ed.gender || "-"}</td>
-                          <td className="px-4 py-3 text-slate-700">{r.age || ed.age || "-"}</td>
-                          <td className="px-4 py-3 text-slate-700">{ed.neighborhood || "-"}</td>
-                          <td className="px-4 py-3 text-slate-700">{ed.parentName || "-"}</td>
-                          <td className="px-4 py-3 text-slate-700" dir="ltr">{r.phone || ed.parentPhone || "-"}</td>
-                          <td className="px-4 py-3 text-slate-700" dir="ltr">{ed.otherPhone || "-"}</td>
-                          <td className="px-4 py-3 text-slate-700">{ed.hasDiseases === "نعم" ? `نعم (${ed.diseasesDetails || ""})` : "لا"}</td>
-                          <td className="px-4 py-3 text-slate-700">{ed.hasAllergies === "نعم" ? `نعم (${ed.allergiesDetails || ""})` : "لا"}</td>
-                          <td className="px-4 py-3 text-xs font-bold">
-                            <span className={`px-2 py-1 rounded-md ${
-                              r.payment_method?.includes('بطاقة') ? 'bg-blue-50 text-blue-700' :
-                              r.payment_method?.includes('تابي') ? 'bg-[#d3ffde] text-[#05cd9c]' :
-                              r.payment_method?.includes('نقدي') ? 'bg-emerald-50 text-emerald-700' :
-                              'bg-slate-100 text-slate-500'
-                            }`}>
-                              {r.payment_method || 'غير محدد'}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3">
-                            <select
-                              value={r.status === 'completed' || r.status === 'registered' ? 'approved' : r.status}
-                              onChange={(e) => updateRegistrationStatus(r.id, e.target.value)}
-                              className={`text-xs font-bold px-2 py-1.5 rounded outline-none border ${
-                                r.status === 'approved' || r.status === 'registered' || r.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                                'bg-amber-50 text-amber-700 border-amber-200'
-                              }`}
-                            >
-                              <option value="pending">قيد المراجعة</option>
-                              <option value="approved">تم التسجيل</option>
-                            </select>
-                          </td>
-                          <td className="px-4 py-3 text-slate-500 text-xs text-center flex flex-col gap-2 items-center">
-                            <span>{new Date(r.created_at).toLocaleDateString('ar-SA')}</span>
-                            {ed.formType === 'summer_program' && (
-                              <button 
-                                onClick={() => handleExportPDF(r)} 
-                                disabled={isGeneratingPDF}
-                                className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-[10px] font-bold transition-colors w-full text-center"
+                          <tr key={r.id} className="hover:bg-slate-50/50">
+                            <td className="px-4 py-3 font-bold text-slate-800">{r.full_name}</td>
+                            <td className="px-4 py-3 text-slate-700">{ed.idNumber || "-"}</td>
+                            <td className="px-4 py-3 text-slate-700">{ed.grade || "-"}</td>
+                            <td className="px-4 py-3 text-slate-700">{ed.birthDate || "-"}</td>
+                            <td className="px-4 py-3 text-slate-700">{ed.gender || "-"}</td>
+                            <td className="px-4 py-3 text-slate-700">{r.age || ed.age || "-"}</td>
+                            <td className="px-4 py-3 text-slate-700">{ed.neighborhood || "-"}</td>
+                            <td className="px-4 py-3 text-slate-700">{ed.parentName || "-"}</td>
+                            <td className="px-4 py-3 text-slate-700" dir="ltr">{r.phone || ed.parentPhone || "-"}</td>
+                            <td className="px-4 py-3 text-slate-700" dir="ltr">{ed.otherPhone || "-"}</td>
+                            <td className="px-4 py-3 text-slate-700">{ed.hasDiseases === "نعم" ? `نعم (${ed.diseasesDetails || ""})` : "لا"}</td>
+                            <td className="px-4 py-3 text-slate-700">{ed.hasAllergies === "نعم" ? `نعم (${ed.allergiesDetails || ""})` : "لا"}</td>
+                            <td className="px-4 py-3 text-xs font-bold">
+                              <span className={`px-2 py-1 rounded-md ${r.payment_method?.includes('بطاقة') ? 'bg-blue-50 text-blue-700' :
+                                  r.payment_method?.includes('تابي') ? 'bg-[#d3ffde] text-[#05cd9c]' :
+                                    r.payment_method?.includes('نقدي') ? 'bg-emerald-50 text-emerald-700' :
+                                      'bg-slate-100 text-slate-500'
+                                }`}>
+                                {r.payment_method || 'غير محدد'}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              <select
+                                value={r.status === 'completed' || r.status === 'registered' ? 'approved' : r.status}
+                                onChange={(e) => updateRegistrationStatus(r.id, e.target.value)}
+                                className={`text-xs font-bold px-2 py-1.5 rounded outline-none border ${r.status === 'approved' || r.status === 'registered' || r.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                                    'bg-amber-50 text-amber-700 border-amber-200'
+                                  }`}
                               >
-                                استمارة PDF
-                              </button>
-                            )}
-                            <button onClick={() => deleteRecord("registrations", r.id, setRegistrations)} className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[10px] font-bold transition-colors w-full text-center">حذف</button>
-                          </td>
-                        </tr>
+                                <option value="pending">قيد المراجعة</option>
+                                <option value="approved">تم التسجيل</option>
+                              </select>
+                            </td>
+                            <td className="px-4 py-3 text-slate-500 text-xs text-center flex flex-col gap-2 items-center">
+                              <span>{new Date(r.created_at).toLocaleDateString('ar-SA')}</span>
+                              {ed.formType === 'summer_program' && (
+                                <button
+                                  onClick={() => handleExportPDF(r)}
+                                  disabled={isGeneratingPDF}
+                                  className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-[10px] font-bold transition-colors w-full text-center"
+                                >
+                                  استمارة PDF
+                                </button>
+                              )}
+                              <button onClick={() => deleteRecord("registrations", r.id, setRegistrations)} className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[10px] font-bold transition-colors w-full text-center">حذف</button>
+                            </td>
+                          </tr>
                         );
                       })}
                     </tbody>
@@ -652,70 +659,68 @@ export default function AdminDashboardPage() {
                   {paginatedRegistrations.map((r) => {
                     const ed = r.extra_data || {};
                     return (
-                    <div key={r.id} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col gap-3 relative">
-                      <div className="flex justify-between items-start border-b border-slate-100 pb-2">
-                        <div>
-                          <div className="font-bold text-slate-800 text-lg">{r.full_name}</div>
-                          <div className="text-xs text-slate-500 mt-1">الهوية: {ed.idNumber || "-"} | العمر: {r.age || ed.age || "-"}</div>
-                        </div>
-                        <select
-                          value={r.status === 'completed' || r.status === 'registered' ? 'approved' : r.status}
-                          onChange={(e) => updateRegistrationStatus(r.id, e.target.value)}
-                          className={`text-[10px] font-bold px-2 py-1 rounded outline-none border ${
-                            r.status === 'approved' || r.status === 'registered' || r.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                            'bg-amber-50 text-amber-700 border-amber-200'
-                          }`}
-                        >
-                          <option value="pending">قيد المراجعة</option>
-                          <option value="approved">تم التسجيل</option>
-                        </select>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg">
-                        <div className="flex flex-col"><span className="text-slate-400 text-[10px]">الصف الدراسي</span><span className="font-bold">{ed.grade || "-"}</span></div>
-                        <div className="flex flex-col"><span className="text-slate-400 text-[10px]">الجنس</span><span className="font-bold">{ed.gender || "-"}</span></div>
-                        <div className="flex flex-col"><span className="text-slate-400 text-[10px]">تاريخ الميلاد</span><span className="font-bold">{ed.birthDate || "-"}</span></div>
-                        <div className="flex flex-col"><span className="text-slate-400 text-[10px]">الحي</span><span className="font-bold">{ed.neighborhood || "-"}</span></div>
-                      </div>
-
-                      <div className="grid grid-cols-1 gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border-t border-slate-100 mt-1">
-                        <div className="flex justify-between"><span className="text-slate-400">ولي الأمر:</span><span className="font-bold">{ed.parentName || "-"}</span></div>
-                        <div className="flex justify-between"><span className="text-slate-400">جوال ولي الأمر:</span><span className="font-bold" dir="ltr">{r.phone || ed.parentPhone || "-"}</span></div>
-                        <div className="flex justify-between"><span className="text-slate-400">جوال آخر:</span><span className="font-bold" dir="ltr">{ed.otherPhone || "-"}</span></div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border-t border-slate-100 mt-1">
-                        <div className="flex flex-col"><span className="text-slate-400 text-[10px]">أمراض</span><span className="font-bold text-red-600">{ed.hasDiseases === "نعم" ? `نعم (${ed.diseasesDetails || ""})` : "لا"}</span></div>
-                        <div className="flex flex-col"><span className="text-slate-400 text-[10px]">حساسية</span><span className="font-bold text-red-600">{ed.hasAllergies === "نعم" ? `نعم (${ed.allergiesDetails || ""})` : "لا"}</span></div>
-                      </div>
-
-                      <div className="flex items-center justify-between mt-1">
-                        <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${
-                          r.payment_method?.includes('بطاقة') ? 'bg-blue-50 text-blue-700' :
-                          r.payment_method?.includes('تابي') ? 'bg-[#d3ffde] text-[#05cd9c]' :
-                          r.payment_method?.includes('نقدي') ? 'bg-emerald-50 text-emerald-700' :
-                          'bg-slate-100 text-slate-500'
-                        }`}>
-                          {r.payment_method || 'غير محدد'}
-                        </span>
-                        <span className="text-xs text-slate-400">{new Date(r.created_at).toLocaleDateString('ar-SA')}</span>
-                      </div>
-
-                      <div className="flex flex-col gap-2 mt-2">
-                        {ed.formType === 'summer_program' && (
-                          <button 
-                            onClick={() => handleExportPDF(r)} 
-                            disabled={isGeneratingPDF}
-                            className="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-bold transition-colors"
+                      <div key={r.id} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col gap-3 relative">
+                        <div className="flex justify-between items-start border-b border-slate-100 pb-2">
+                          <div>
+                            <div className="font-bold text-slate-800 text-lg">{r.full_name}</div>
+                            <div className="text-xs text-slate-500 mt-1">الهوية: {ed.idNumber || "-"} | العمر: {r.age || ed.age || "-"}</div>
+                          </div>
+                          <select
+                            value={r.status === 'completed' || r.status === 'registered' ? 'approved' : r.status}
+                            onChange={(e) => updateRegistrationStatus(r.id, e.target.value)}
+                            className={`text-[10px] font-bold px-2 py-1 rounded outline-none border ${r.status === 'approved' || r.status === 'registered' || r.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                                'bg-amber-50 text-amber-700 border-amber-200'
+                              }`}
                           >
-                            تنزيل الاستمارة (PDF)
+                            <option value="pending">قيد المراجعة</option>
+                            <option value="approved">تم التسجيل</option>
+                          </select>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg">
+                          <div className="flex flex-col"><span className="text-slate-400 text-[10px]">الصف الدراسي</span><span className="font-bold">{ed.grade || "-"}</span></div>
+                          <div className="flex flex-col"><span className="text-slate-400 text-[10px]">الجنس</span><span className="font-bold">{ed.gender || "-"}</span></div>
+                          <div className="flex flex-col"><span className="text-slate-400 text-[10px]">تاريخ الميلاد</span><span className="font-bold">{ed.birthDate || "-"}</span></div>
+                          <div className="flex flex-col"><span className="text-slate-400 text-[10px]">الحي</span><span className="font-bold">{ed.neighborhood || "-"}</span></div>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border-t border-slate-100 mt-1">
+                          <div className="flex justify-between"><span className="text-slate-400">ولي الأمر:</span><span className="font-bold">{ed.parentName || "-"}</span></div>
+                          <div className="flex justify-between"><span className="text-slate-400">جوال ولي الأمر:</span><span className="font-bold" dir="ltr">{r.phone || ed.parentPhone || "-"}</span></div>
+                          <div className="flex justify-between"><span className="text-slate-400">جوال آخر:</span><span className="font-bold" dir="ltr">{ed.otherPhone || "-"}</span></div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border-t border-slate-100 mt-1">
+                          <div className="flex flex-col"><span className="text-slate-400 text-[10px]">أمراض</span><span className="font-bold text-red-600">{ed.hasDiseases === "نعم" ? `نعم (${ed.diseasesDetails || ""})` : "لا"}</span></div>
+                          <div className="flex flex-col"><span className="text-slate-400 text-[10px]">حساسية</span><span className="font-bold text-red-600">{ed.hasAllergies === "نعم" ? `نعم (${ed.allergiesDetails || ""})` : "لا"}</span></div>
+                        </div>
+
+                        <div className="flex items-center justify-between mt-1">
+                          <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${r.payment_method?.includes('بطاقة') ? 'bg-blue-50 text-blue-700' :
+                              r.payment_method?.includes('تابي') ? 'bg-[#d3ffde] text-[#05cd9c]' :
+                                r.payment_method?.includes('نقدي') ? 'bg-emerald-50 text-emerald-700' :
+                                  'bg-slate-100 text-slate-500'
+                            }`}>
+                            {r.payment_method || 'غير محدد'}
+                          </span>
+                          <span className="text-xs text-slate-400">{new Date(r.created_at).toLocaleDateString('ar-SA')}</span>
+                        </div>
+
+                        <div className="flex flex-col gap-2 mt-2">
+                          {ed.formType === 'summer_program' && (
+                            <button
+                              onClick={() => handleExportPDF(r)}
+                              disabled={isGeneratingPDF}
+                              className="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-bold transition-colors"
+                            >
+                              تنزيل الاستمارة (PDF)
+                            </button>
+                          )}
+                          <button onClick={() => deleteRecord("registrations", r.id, setRegistrations)} className="w-full py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-bold transition-colors">
+                            حذف السجل
                           </button>
-                        )}
-                        <button onClick={() => deleteRecord("registrations", r.id, setRegistrations)} className="w-full py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-bold transition-colors">
-                          حذف السجل
-                        </button>
+                        </div>
                       </div>
-                    </div>
                     );
                   })}
                 </div>
@@ -776,11 +781,10 @@ export default function AdminDashboardPage() {
                             <select
                               value={o.status}
                               onChange={(e) => updateOrderStatus(o.id, e.target.value)}
-                              className={`text-xs font-bold px-2 py-1.5 rounded outline-none border ${
-                                o.status === 'paid' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                                o.status === 'shipped' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                'bg-amber-50 text-amber-700 border-amber-200'
-                              }`}
+                              className={`text-xs font-bold px-2 py-1.5 rounded outline-none border ${o.status === 'paid' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                                  o.status === 'shipped' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                    'bg-amber-50 text-amber-700 border-amber-200'
+                                }`}
                             >
                               <option value="pending">قيد الانتظار</option>
                               <option value="paid">مدفوع</option>
@@ -811,11 +815,10 @@ export default function AdminDashboardPage() {
                           <select
                             value={o.status}
                             onChange={(e) => updateOrderStatus(o.id, e.target.value)}
-                            className={`text-[10px] font-bold px-2 py-1 rounded outline-none border ${
-                              o.status === 'paid' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                              o.status === 'shipped' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                              'bg-amber-50 text-amber-700 border-amber-200'
-                            }`}
+                            className={`text-[10px] font-bold px-2 py-1 rounded outline-none border ${o.status === 'paid' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                                o.status === 'shipped' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                  'bg-amber-50 text-amber-700 border-amber-200'
+                              }`}
                           >
                             <option value="pending">قيد الانتظار</option>
                             <option value="paid">مدفوع</option>
@@ -907,7 +910,7 @@ export default function AdminDashboardPage() {
                             <div className="text-xs text-slate-500 font-sans">{t.role}</div>
                             <div className="flex gap-1 text-accent-gold mt-1">
                               {[...Array(t.rating || 5)].map((_, i) => (
-                                <svg key={i} className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                <svg key={i} className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg>
                               ))}
                             </div>
                           </div>
@@ -978,7 +981,7 @@ export default function AdminDashboardPage() {
         {createUserModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 relative overflow-hidden animate-in zoom-in-95 duration-300">
-              <button 
+              <button
                 onClick={() => setCreateUserModal(false)}
                 className="absolute top-4 left-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
               >
@@ -988,7 +991,7 @@ export default function AdminDashboardPage() {
                 <Users className="w-6 h-6 text-accent-yellow" />
                 إضافة مستخدم جديد
               </h3>
-              
+
               {modalError && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg">
                   {modalError}
@@ -998,23 +1001,23 @@ export default function AdminDashboardPage() {
               <form onSubmit={handleCreateUser} className="space-y-4">
                 <div>
                   <label htmlFor="createFullName" className="block text-sm font-bold text-slate-700 mb-1">الاسم الكامل *</label>
-                  <input id="createFullName" required type="text" value={newUser.fullName} onChange={(e) => setNewUser({...newUser, fullName: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-accent-yellow focus:ring-1 focus:ring-accent-yellow outline-none transition-all text-sm" placeholder="الاسم الكامل" />
+                  <input id="createFullName" required type="text" value={newUser.fullName} onChange={(e) => setNewUser({ ...newUser, fullName: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-accent-yellow focus:ring-1 focus:ring-accent-yellow outline-none transition-all text-sm" placeholder="الاسم الكامل" />
                 </div>
                 <div>
                   <label htmlFor="createEmail" className="block text-sm font-bold text-slate-700 mb-1">البريد الإلكتروني *</label>
-                  <input id="createEmail" required type="email" value={newUser.email} onChange={(e) => setNewUser({...newUser, email: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-accent-yellow focus:ring-1 focus:ring-accent-yellow outline-none transition-all text-sm" placeholder="example@email.com" />
+                  <input id="createEmail" required type="email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-accent-yellow focus:ring-1 focus:ring-accent-yellow outline-none transition-all text-sm" placeholder="example@email.com" />
                 </div>
                 <div>
                   <label htmlFor="createPassword" className="block text-sm font-bold text-slate-700 mb-1">كلمة المرور *</label>
-                  <input id="createPassword" required type="password" value={newUser.password} onChange={(e) => setNewUser({...newUser, password: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-accent-yellow focus:ring-1 focus:ring-accent-yellow outline-none transition-all text-sm" placeholder="••••••••" />
+                  <input id="createPassword" required type="password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-accent-yellow focus:ring-1 focus:ring-accent-yellow outline-none transition-all text-sm" placeholder="••••••••" />
                 </div>
                 <div>
                   <label htmlFor="createPhone" className="block text-sm font-bold text-slate-700 mb-1">رقم الهاتف</label>
-                  <input id="createPhone" type="tel" value={newUser.phone} onChange={(e) => setNewUser({...newUser, phone: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-accent-yellow focus:ring-1 focus:ring-accent-yellow outline-none transition-all text-sm" placeholder="05XXXXXXXX" />
+                  <input id="createPhone" type="tel" value={newUser.phone} onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-accent-yellow focus:ring-1 focus:ring-accent-yellow outline-none transition-all text-sm" placeholder="05XXXXXXXX" />
                 </div>
                 <div>
                   <label htmlFor="createRole" className="block text-sm font-bold text-slate-700 mb-1">الصلاحية</label>
-                  <select id="createRole" value={newUser.role} onChange={(e) => setNewUser({...newUser, role: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-accent-yellow focus:ring-1 focus:ring-accent-yellow outline-none transition-all text-sm">
+                  <select id="createRole" value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-accent-yellow focus:ring-1 focus:ring-accent-yellow outline-none transition-all text-sm">
                     <option value="user">مستخدم عادي</option>
                     <option value="admin">مشرف (Admin)</option>
                   </select>
@@ -1026,7 +1029,7 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         )}
-        
+
         {/* Hidden PDF component for HTML2Canvas */}
         <SummerProgramPDF registration={pdfRegistration} ref={pdfRef} />
       </div>

@@ -127,13 +127,13 @@ interface AppContextType {
   currentUser: { id?: string; fullName: string; email: string; phone: string; guardian2Name?: string; guardian2Phone?: string; role?: "user" | "admin"; } | null;
   toasts: Toast[];
   showToast: (message: string, type?: Toast["type"]) => void;
-  
+
   // E-commerce Actions
   addToCart: (product: Product) => void;
   removeFromCart: (productId: string) => void;
   updateCartQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
-  
+
   // Dashboard & Addition Actions
   addProduct: (product: Omit<Product, "id">) => void;
   addTrip: (trip: Omit<Trip, "id">) => void;
@@ -143,7 +143,7 @@ interface AppContextType {
   deleteTrip: (id: string) => void;
   deleteAcademy: (id: string) => void;
   deleteProgram: (id: string) => void;
-  
+
   // Registration and Checkout
   addFamilyChild: (child: Omit<Child, "id" | "parent_id">) => Promise<void>;
   registerUser: (reg: Omit<Registration, "id" | "date" | "status">) => Promise<void>;
@@ -473,25 +473,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setCurrentUser(user);
         saveToLocalStorage("mulhim_user", user);
 
-        // Fetch user's children and registrations from Supabase concurrently
-        const [
-          { data: regsData },
-          { data: childrenData },
-          { data: ordersData }
-        ] = await Promise.all([
-          supabase
-            .from("registrations")
-            .select("*")
-            .or(`user_id.eq.${session.user.id},email.eq.${session.user.email}`),
-          supabase
-            .from("children")
-            .select("*")
-            .eq("parent_id", session.user.id),
-          supabase
-            .from("orders")
-            .select("*, order_items(*)")
-            .or(`user_id.eq.${session.user.id},email.eq.${session.user.email}`)
-        ]);
+        // Fetch user's children and registrations from Supabase
+        const { data: regsData } = await supabase
+          .from("registrations")
+          .select("*")
+          .eq("user_id", session.user.id);
+
+        const { data: childrenData } = await supabase
+          .from("children")
+          .select("*")
+          .eq("parent_id", session.user.id);
+
+        const { data: ordersData } = await supabase
+          .from("orders")
+          .select("*, order_items(*)")
+          .eq("user_id", session.user.id);
 
         if (regsData) {
           const formattedRegs: Registration[] = regsData.map((r: any) => ({
@@ -507,8 +503,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             status: r.status || "pending",
             paymentMethod: r.payment_method
           }));
-          setRegistrations(formattedRegs);
-          saveToLocalStorage("mulhim_registrations", formattedRegs);
+          setRegistrations(prev => {
+            const newIds = new Set(formattedRegs.map(r => r.id));
+            const optimisticRegs = prev.filter(r => !newIds.has(r.id));
+            const merged = [...formattedRegs, ...optimisticRegs];
+            saveToLocalStorage("mulhim_registrations", merged);
+            return merged;
+          });
         }
 
         if (childrenData) {
@@ -538,8 +539,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               quantity: oi.quantity
             }))
           }));
-          setOrders(formattedOrders);
-          saveToLocalStorage("mulhim_orders", formattedOrders);
+          setOrders(prev => {
+            const newIds = new Set(formattedOrders.map(o => o.id));
+            const optimisticOrders = prev.filter(o => !newIds.has(o.id));
+            const merged = [...formattedOrders, ...optimisticOrders];
+            saveToLocalStorage("mulhim_orders", merged);
+            return merged;
+          });
         }
       } else {
         const localUserAfter = localStorage.getItem("mulhim_user");
@@ -675,7 +681,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const { data: { user } } = await supabase.auth.getUser();
       const userId = user?.id || currentUser?.id;
-      
+
       if (!userId) throw new Error("User not found");
 
       const { data: newChild, error: childErr } = await supabase
@@ -710,7 +716,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const registerUser = async (reg: Omit<Registration, "id" | "date" | "status">) => {
     // Check if this person is already registered for this activity
     const normalizeString = (str: string) => str.trim().replace(/\s+/g, " ");
-    
+
     const isAlreadyRegistered = registrations.some(
       (r) => normalizeString(r.fullName) === normalizeString(reg.fullName) && r.targetName === reg.targetName
     );
@@ -727,12 +733,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       date: new Date().toLocaleDateString("ar-SA"),
       status: "pending"
     };
+    setRegistrations((prev) => {
+      const updated = [newReg, ...prev];
+      saveToLocalStorage("mulhim_registrations", updated);
+      return updated;
+    });
 
     // Sync with Supabase
     try {
       const { data: { user } } = await supabase.auth.getUser();
       const userId = user?.id || currentUser?.id;
-      
+
       if (userId) {
         let childId: string | null = null;
 
@@ -761,135 +772,128 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               }
             }
 
-        console.log('3. Inserting child...');
-        const { data: newChild, error: childErr } = await supabase
-          .from("children")
-          .insert({
-            parent_id: userId,
-            full_name: reg.fullName.trim(),
-            gender,
-            grade
-          })
-          .select()
-          .single();
-        console.log('3. Child insert done.');
+            console.log('3. Inserting child...');
+            const { data: newChild, error: childErr } = await supabase
+              .from("children")
+              .insert({
+                parent_id: userId,
+                full_name: reg.fullName.trim(),
+                gender,
+                grade
+              })
+              .select()
+              .single();
+            console.log('3. Child insert done.');
 
-        if (childErr) {
-          console.error("Error inserting child to Supabase:", childErr);
+            if (childErr) {
+              console.error("Error inserting child to Supabase:", childErr);
+            }
+
+            if (newChild) {
+              childId = newChild.id;
+            }
+          }
         }
 
-        if (newChild) {
-          childId = newChild.id;
+        // Insert registration record
+        const targetId = reg.targetName.includes(":") ? reg.targetName.split(":")[1]?.trim() : reg.targetName.replace(/\s+/g, "-");
+
+        console.log('4. Inserting registration...');
+        const { error: regErr } = await supabase.from("registrations").insert({
+          id: tempId,
+          user_id: userId,
+          child_id: childId,
+          full_name: reg.fullName,
+          age: reg.age || null,
+          phone: reg.phone,
+          email: reg.email,
+          interests: reg.interests,
+          type: reg.type,
+          target_id: targetId,
+          target_name: reg.targetName,
+          status: "pending",
+          payment_method: reg.paymentMethod, // Added payment_method directly
+          extra_data: {
+            ...(reg.extraData || {}),
+            paymentMethod: reg.paymentMethod
+          }
+        });
+        console.log('4. Registration insert done.');
+
+        if (regErr) {
+          console.error("Error inserting registration to Supabase:", regErr);
+          showToast("حدث خطأ أثناء حفظ البيانات: " + regErr.message, "error");
+          throw new Error(regErr.message);
         }
       }
+    } catch (e: any) {
+      console.error("Error inserting registration to Supabase:", e);
+      showToast("حدث خطأ غير متوقع أثناء الحفظ: " + (e?.message || e), "error");
+      throw e;
     }
+  };
 
-    // Insert registration record
-    const targetId = reg.targetName.includes(":") ? reg.targetName.split(":")[1]?.trim() : reg.targetName.replace(/\s+/g, "-");
-
-    console.log('4. Inserting registration...');
-    const { error: regErr } = await supabase.from("registrations").insert({
-      id: tempId,
-      user_id: userId,
-      child_id: childId,
-      full_name: reg.fullName,
-      age: reg.age || null,
-      phone: reg.phone,
-      email: reg.email,
-      interests: reg.interests,
-      type: reg.type,
-      target_id: targetId,
-      target_name: reg.targetName,
-      status: "pending",
-      payment_method: reg.paymentMethod, // Added payment_method directly
-      extra_data: {
-        ...(reg.extraData || {}),
-        paymentMethod: reg.paymentMethod
-      }
-    });
-    console.log('4. Registration insert done.');
-
-    if (regErr) {
-      console.error("Error inserting registration to Supabase:", regErr);
-      showToast("حدث خطأ أثناء حفظ البيانات: " + regErr.message, "error");
-      throw new Error(regErr.message);
-    }
-    
-    // Only update local state if Supabase insert was successful
-    setRegistrations((prev) => {
-      const updated = [newReg, ...prev];
-      saveToLocalStorage("mulhim_registrations", updated);
-      return updated;
-    });
-  }
-} catch (e: any) {
-  console.error("Error inserting registration to Supabase:", e);
-  showToast("حدث خطأ غير متوقع أثناء الحفظ: " + (e?.message || e), "error");
-  throw e;
-}
-};
-
-// Order Placement
-const placeOrder = async (ord: Omit<Order, "id" | "date" | "status" | "items" | "total">): Promise<string> => {
-const orderId = generateUUID();
-const baseTotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-const discount = ord.paymentMethod.includes("خصم") ? 100 : 0;
-const total = Math.max(0, baseTotal - discount);
-const newOrder: Order = {
-  ...ord,
-  id: orderId,
-  items: [...cart],
-  total,
-  date: new Date().toLocaleDateString("ar-SA"),
-  status: ord.paymentMethod.includes("بطاقة") ? "paid" : "pending"
-};
-
-// Sync with Supabase via API route to bypass RLS and securely insert order items
-try {
-  const { data: { session } } = await supabase.auth.getSession();
-  const userId = session?.user?.id || currentUser?.id || null;
-
-  const itemsToInsert = cart.map((item) => ({
-    order_id: orderId,
-    product_id: item.product.id,
-    product_name: item.product.name,
-    price: item.product.price,
-    quantity: item.quantity
-  }));
-
-  const res = await fetch("/api/orders", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      orderId,
-      userId,
-      customerName: ord.customerName,
-      phone: ord.phone,
-      email: ord.email,
+  // Order Placement
+  const placeOrder = async (ord: Omit<Order, "id" | "date" | "status" | "items" | "total">): Promise<string> => {
+    const orderId = generateUUID();
+    const baseTotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+    const discount = ord.paymentMethod.includes("خصم") ? 100 : 0;
+    const total = Math.max(0, baseTotal - discount);
+    const newOrder: Order = {
+      ...ord,
+      id: orderId,
+      items: [...cart],
       total,
-      paymentMethod: ord.paymentMethod,
-      status: ord.paymentMethod.includes("بطاقة") ? "paid" : "pending",
-      items: itemsToInsert
-    })
-  });
-
-  const data = await res.json();
-
-  if (data.success) {
-    showToast("تم تأكيد وحفظ طلبك بنجاح في قاعدة البيانات!", "success");
+      date: new Date().toLocaleDateString("ar-SA"),
+      status: ord.paymentMethod.includes("بطاقة") ? "paid" : "pending"
+    };
     setOrders((prev) => {
       const updated = [newOrder, ...prev];
       saveToLocalStorage("mulhim_orders", updated);
       return updated;
     });
-  } else {
-    console.error("Error saving order via API:", data.error);
-    showToast("فشل حفظ الطلب في قاعدة البيانات: " + data.error, "error");
-  }
-} catch (e: any) {
-  console.error("Error calling order API:", e);
-  showToast("خطأ غير متوقع في الاتصال بخادم الطلبات: " + (e?.message || e), "error");
-}
+
+    // Sync with Supabase via API route to bypass RLS and securely insert order items
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id || currentUser?.id || null;
+
+      const itemsToInsert = cart.map((item) => ({
+        order_id: orderId,
+        product_id: item.product.id,
+        product_name: item.product.name,
+        price: item.product.price,
+        quantity: item.quantity
+      }));
+
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId,
+          userId,
+          customerName: ord.customerName,
+          phone: ord.phone,
+          email: ord.email,
+          total,
+          paymentMethod: ord.paymentMethod,
+          status: ord.paymentMethod.includes("بطاقة") ? "paid" : "pending",
+          items: itemsToInsert
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        showToast("تم تأكيد وحفظ طلبك بنجاح في قاعدة البيانات!", "success");
+      } else {
+        console.error("Error saving order via API:", data.error);
+        showToast("فشل حفظ الطلب في قاعدة البيانات: " + data.error, "error");
+      }
+    } catch (e: any) {
+      console.error("Error calling order API:", e);
+      showToast("خطأ غير متوقع في الاتصال بخادم الطلبات: " + (e?.message || e), "error");
+    }
 
     clearCart();
     return orderId;
@@ -1156,4 +1160,8 @@ export const useApp = () => {
     throw new Error("useApp must be used within an AppProvider");
   }
   return context;
+};
+throw new Error("useApp must be used within an AppProvider");
+  }
+return context;
 };

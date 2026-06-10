@@ -701,7 +701,14 @@ function RegisterContent() {
                   </div>
                 </div>
 
-                <div className="flex justify-end items-center pt-6 border-t border-slate-50 mt-6">
+                <div className="flex justify-between items-center pt-6 border-t border-slate-50 mt-6 font-tajawal">
+                  <button
+                    type="button"
+                    onClick={() => setMode("login")}
+                    className="text-xs text-slate-400 hover:text-accent-yellow transition-all font-semibold cursor-pointer"
+                  >
+                    لديك حساب بالفعل؟ تسجيل الدخول
+                  </button>
                   <button
                     type="submit"
                     className="px-6 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 cursor-pointer"
@@ -870,33 +877,7 @@ function RegisterContent() {
               </div>
             </div>
 
-            {/* Bottom toggle indicator */}
-            <div className="pt-6 border-t border-slate-800 text-center font-tajawal">
-              {mode === "register" ? (
-                <button
-                  onClick={() => setMode("login")}
-                  className="text-xs text-slate-300 hover:text-white transition-all font-bold cursor-pointer"
-                >
-                  لديك حساب بالفعل؟ تسجيل الدخول
-                </button>
-              ) : mode === "login" ? (
-                <button
-                  onClick={() => {
-                    setMode("register");
-                  }}
-                  className="text-xs text-slate-300 hover:text-white transition-all font-bold cursor-pointer"
-                >
-                  لا تملك حساباً؟ إنشاء حساب الآن
-                </button>
-              ) : (
-                <button
-                  onClick={() => setMode("login")}
-                  className="text-xs text-slate-300 hover:text-white transition-all font-bold cursor-pointer"
-                >
-                  العودة لتسجيل الدخول
-                </button>
-              )}
-            </div>
+
           </div>
 
         </div>

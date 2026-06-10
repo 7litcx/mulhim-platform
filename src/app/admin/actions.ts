@@ -11,7 +11,7 @@ const supabaseAdmin = createClient(
 // Helper to verify admin status
 async function verifyAdmin(token: string) {
   if (!token) throw new Error("Unauthorized: Token missing");
-  
+
   const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token);
   if (userError || !user) throw new Error("Unauthorized: Invalid token.");
 
@@ -20,7 +20,7 @@ async function verifyAdmin(token: string) {
     .select("role")
     .eq("id", user.id)
     .single();
-    
+
   if (error || data?.role !== "admin") {
     throw new Error("Unauthorized: You must be an admin.");
   }
@@ -61,31 +61,6 @@ export async function fetchAdminTestimonials(token: string) {
   return data || [];
 }
 
-export async function fetchAllAdminData(token: string) {
-  await verifyAdmin(token);
-  const [users, registrations, orders, messages, testimonials] = await Promise.all([
-    supabaseAdmin.from("profiles").select("*").order("created_at", { ascending: false }).limit(2000),
-    supabaseAdmin.from("registrations").select("*").order("created_at", { ascending: false }).limit(2000),
-    supabaseAdmin.from("orders").select("*, order_items(*)").order("created_at", { ascending: false }).limit(2000),
-    supabaseAdmin.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(2000),
-    supabaseAdmin.from("testimonials").select("*").order("created_at", { ascending: false }).limit(2000)
-  ]);
-
-  if (users.error) throw new Error(users.error.message);
-  if (registrations.error) throw new Error(registrations.error.message);
-  if (orders.error) throw new Error(orders.error.message);
-  if (messages.error) throw new Error(messages.error.message);
-  if (testimonials.error) throw new Error(testimonials.error.message);
-
-  return {
-    users: users.data || [],
-    registrations: registrations.data || [],
-    orders: orders.data || [],
-    messages: messages.data || [],
-    testimonials: testimonials.data || []
-  };
-}
-
 export async function updateRegistrationStatusAction(token: string, id: string, status: string) {
   await verifyAdmin(token);
   const { error } = await supabaseAdmin.from("registrations").update({ status }).eq("id", id);
@@ -102,7 +77,7 @@ export async function updateOrderStatusAction(token: string, id: string, status:
 
 export async function deleteRecordAction(token: string, table: string, id: string) {
   await verifyAdmin(token);
-  
+
   // Handle specific tables to avoid Foreign Key constraint violations
   if (table === "orders") {
     await supabaseAdmin.from("order_items").delete().eq("order_id", id);
@@ -111,9 +86,9 @@ export async function deleteRecordAction(token: string, table: string, id: strin
     await supabaseAdmin.from("children").delete().eq("parent_id", id);
     await supabaseAdmin.from("registrations").delete().eq("user_id", id);
     await supabaseAdmin.from("orders").delete().eq("user_id", id);
-    
+
     // Attempt to delete from Auth as well (if this fails, we still proceed to delete the profile)
-    await supabaseAdmin.auth.admin.deleteUser(id).catch(() => {});
+    await supabaseAdmin.auth.admin.deleteUser(id).catch(() => { });
   }
 
   const { error } = await supabaseAdmin.from(table).delete().eq("id", id);
