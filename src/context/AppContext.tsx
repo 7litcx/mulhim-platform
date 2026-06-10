@@ -477,7 +477,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const { data: regsData } = await supabase
           .from("registrations")
           .select("*")
-          .eq("user_id", session.user.id);
+          .or(`user_id.eq.${session.user.id},email.eq.${session.user.email}`);
 
         const { data: childrenData } = await supabase
           .from("children")
@@ -487,7 +487,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const { data: ordersData } = await supabase
           .from("orders")
           .select("*, order_items(*)")
-          .eq("user_id", session.user.id);
+          .or(`user_id.eq.${session.user.id},email.eq.${session.user.email}`);
 
         if (regsData) {
           const formattedRegs: Registration[] = regsData.map((r: any) => ({
@@ -503,13 +503,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             status: r.status || "pending",
             paymentMethod: r.payment_method
           }));
-          setRegistrations(prev => {
-            const newIds = new Set(formattedRegs.map(r => r.id));
-            const optimisticRegs = prev.filter(r => !newIds.has(r.id));
-            const merged = [...formattedRegs, ...optimisticRegs];
-            saveToLocalStorage("mulhim_registrations", merged);
-            return merged;
-          });
+          setRegistrations(formattedRegs);
+          saveToLocalStorage("mulhim_registrations", formattedRegs);
         }
 
         if (childrenData) {
@@ -539,13 +534,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               quantity: oi.quantity
             }))
           }));
-          setOrders(prev => {
-            const newIds = new Set(formattedOrders.map(o => o.id));
-            const optimisticOrders = prev.filter(o => !newIds.has(o.id));
-            const merged = [...formattedOrders, ...optimisticOrders];
-            saveToLocalStorage("mulhim_orders", merged);
-            return merged;
-          });
+          setOrders(formattedOrders);
+          saveToLocalStorage("mulhim_orders", formattedOrders);
         }
       } else {
         const localUserAfter = localStorage.getItem("mulhim_user");
@@ -733,11 +723,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       date: new Date().toLocaleDateString("ar-SA"),
       status: "pending"
     };
-    setRegistrations((prev) => {
-      const updated = [newReg, ...prev];
-      saveToLocalStorage("mulhim_registrations", updated);
-      return updated;
-    });
 
     // Sync with Supabase
     try {
@@ -825,6 +810,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       showToast("حدث خطأ أثناء حفظ البيانات: " + regErr.message, "error");
       throw new Error(regErr.message);
     }
+    
+    // Only update local state if Supabase insert was successful
+    setRegistrations((prev) => {
+      const updated = [newReg, ...prev];
+      saveToLocalStorage("mulhim_registrations", updated);
+      return updated;
+    });
   }
 } catch (e: any) {
   console.error("Error inserting registration to Supabase:", e);
@@ -847,11 +839,6 @@ const newOrder: Order = {
   date: new Date().toLocaleDateString("ar-SA"),
   status: ord.paymentMethod.includes("بطاقة") ? "paid" : "pending"
 };
-setOrders((prev) => {
-  const updated = [newOrder, ...prev];
-  saveToLocalStorage("mulhim_orders", updated);
-  return updated;
-});
 
 // Sync with Supabase via API route to bypass RLS and securely insert order items
 try {
@@ -886,6 +873,11 @@ try {
 
   if (data.success) {
     showToast("تم تأكيد وحفظ طلبك بنجاح في قاعدة البيانات!", "success");
+    setOrders((prev) => {
+      const updated = [newOrder, ...prev];
+      saveToLocalStorage("mulhim_orders", updated);
+      return updated;
+    });
   } else {
     console.error("Error saving order via API:", data.error);
     showToast("فشل حفظ الطلب في قاعدة البيانات: " + data.error, "error");
