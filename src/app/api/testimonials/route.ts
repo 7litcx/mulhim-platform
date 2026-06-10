@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/utils/supabase";
+import { createClient } from "@supabase/supabase-js";
 
 // Prevent caching to ensure we always get the real-time testimonials
 export const dynamic = "force-dynamic";
 
+// Initialize Supabase admin client with service_role key to bypass RLS
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY! || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
 export async function GET() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("testimonials")
       .select("*")
       .eq("is_approved", true)
@@ -33,9 +39,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 });
     }
 
-    // Insert into testimonials table.
-    // By default, it could be is_approved = true, but let's just insert it.
-    const { error } = await supabase.from("testimonials").insert([
+    // Insert into testimonials table using admin client to bypass RLS
+    const { error } = await supabaseAdmin.from("testimonials").insert([
       {
         user_id: user_id || null,
         user_name,
