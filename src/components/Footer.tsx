@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Mail, Phone, MapPin } from "lucide-react";
 
+import VisitorCounter from "./shared/VisitorCounter";
+
 export const Footer: React.FC = () => {
   const pathname = usePathname();
 
@@ -165,9 +167,12 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-slate-300 text-center text-xs text-slate-300 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p>© {new Date().getFullYear()} منصة مُلهم (Mulhim Platform). جميع الحقوق محفوظة.</p>
-          <div className="flex flex-wrap items-center justify-center gap-4 text-slate-300">
+        <div className="mt-16 pt-8 border-t border-slate-300 text-center text-xs text-slate-300 flex flex-col sm:flex-row justify-between items-center gap-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <p>© {new Date().getFullYear()} منصة مُلهم (Mulhim Platform). جميع الحقوق محفوظة.</p>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-slate-300">
+            <VisitorCounter />
             <span>تطوير وإشراف فريق ملهم التقني</span>
           </div>
         </div>
