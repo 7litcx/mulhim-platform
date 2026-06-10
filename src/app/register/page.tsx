@@ -27,7 +27,8 @@ function RegisterContent() {
     guardian1Name: "",
     guardian1Phone: "",
     email: "",
-    password: ""
+    password: "",
+    confirmPassword: ""
   });
 
   const [loginForm, setLoginForm] = useState({
@@ -36,6 +37,7 @@ function RegisterContent() {
   });
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showRegPassword, setShowRegPassword] = useState(false);
+  const [showRegConfirmPassword, setShowRegConfirmPassword] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
 
   const [isSuccess, setIsSuccess] = useState(false);
@@ -172,8 +174,12 @@ function RegisterContent() {
 
   const handleRegisterSubmit = async (e?: React.SyntheticEvent) => {
     if (e) e.preventDefault();
-    if (!regForm.guardian1Name || !regForm.email || !regForm.guardian1Phone || !regForm.password) {
+    if (!regForm.guardian1Name || !regForm.email || !regForm.guardian1Phone || !regForm.password || !regForm.confirmPassword) {
       showToast("الرجاء تعبئة كافة الحقول المطلوبة للتسجيل.", "warning");
+      return;
+    }
+    if (regForm.password !== regForm.confirmPassword) {
+      showToast("كلمة المرور وتأكيد كلمة المرور غير متطابقين.", "error");
       return;
     }
     const phoneRegex = /^05\d{8}$/;
@@ -199,7 +205,8 @@ function RegisterContent() {
           guardian1Name: "",
           guardian1Phone: "",
           email: "",
-          password: ""
+          password: "",
+          confirmPassword: ""
         });
       }, 4000);
     } catch (err) {
@@ -666,6 +673,27 @@ function RegisterContent() {
                             className="absolute left-3.5 top-3.5 text-slate-400 hover:text-slate-600 transition-colors"
                           >
                             {showRegPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1 relative">
+                        <label className="text-xs font-bold text-slate-500 block">تأكيد كلمة المرور *</label>
+                        <div className="relative">
+                          <input
+                            type={showRegConfirmPassword ? "text" : "password"}
+                            required
+                            value={regForm.confirmPassword}
+                            onChange={(e) => setRegForm({ ...regForm, confirmPassword: e.target.value })}
+                            placeholder="أعد إدخال كلمة المرور"
+                            className="w-full bg-white border border-slate-200 focus:border-accent-yellow rounded-xl pl-10 pr-4 py-3 text-xs text-right focus:outline-none"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowRegConfirmPassword(!showRegConfirmPassword)}
+                            className="absolute left-3.5 top-3.5 text-slate-400 hover:text-slate-600 transition-colors"
+                          >
+                            {showRegConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                           </button>
                         </div>
                       </div>
