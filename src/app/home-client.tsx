@@ -7,7 +7,7 @@ import { useApp } from "@/context/AppContext";
 import {
   Sparkles, Compass, GraduationCap, ShoppingBag,
   ArrowLeft, Calendar, MapPin,
-  ShoppingCart, Award, Users
+  ShoppingCart, Award, Users, Eye
 } from "lucide-react";
 import { urlFor } from "@/sanity/lib/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -391,7 +391,7 @@ export default function HomeClient({
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
-            className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8" 
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8" 
             dir="rtl"
           >
             {/* Stat 1 */}
@@ -463,6 +463,24 @@ export default function HomeClient({
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 font-tajawal font-medium mt-3 leading-relaxed">
                 شريك نجاح متميز
+              </p>
+            </motion.div>
+
+            {/* Stat 5 */}
+            <motion.div 
+              variants={itemVariants}
+              whileHover={{ y: -8, transition: { duration: 0.2 } }}
+              className="relative group p-6 sm:p-8 bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-accent-yellow/30 rounded-3xl backdrop-blur-md transition-all duration-300 flex flex-col items-center text-center shadow-lg"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-accent-yellow/0 via-accent-yellow/0 to-accent-yellow/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+                <Eye className="w-6 h-6 sm:w-7 sm:h-7" />
+              </div>
+              <h3 className="text-3xl sm:text-4xl md:text-5xl font-black font-sans bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300">
+                +<AnimatedCounter target={15000} />
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 font-tajawal font-medium mt-3 leading-relaxed">
+                زائر ومستفيد
               </p>
             </motion.div>
           </motion.div>
