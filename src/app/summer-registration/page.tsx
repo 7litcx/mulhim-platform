@@ -125,8 +125,32 @@ export default function SummerRegistrationPage() {
       return;
     }
 
-    // Get base64 image of the signature BEFORE state changes trigger any re-renders
-    const signatureDataUrl = signatureRef.current?.getTrimmedCanvas().toDataURL("image/png");
+    // Compress and resize signature image to reduce payload size
+    const originalCanvas = signatureRef.current?.getTrimmedCanvas();
+    let signatureDataUrl = "";
+    if (originalCanvas) {
+      const MAX_WIDTH = 400;
+      let width = originalCanvas.width;
+      let height = originalCanvas.height;
+      
+      if (width > MAX_WIDTH) {
+        height = Math.round((height * MAX_WIDTH) / width);
+        width = MAX_WIDTH;
+      }
+      
+      const smallCanvas = document.createElement("canvas");
+      smallCanvas.width = width;
+      smallCanvas.height = height;
+      const ctx = smallCanvas.getContext("2d");
+      if (ctx) {
+        ctx.fillStyle = "white"; // White background for JPEG
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(originalCanvas, 0, 0, width, height);
+        signatureDataUrl = smallCanvas.toDataURL("image/jpeg", 0.5);
+      } else {
+        signatureDataUrl = originalCanvas.toDataURL("image/png");
+      }
+    }
 
     setIsSubmitting(true);
 
