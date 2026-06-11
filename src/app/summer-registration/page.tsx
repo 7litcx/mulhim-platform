@@ -40,19 +40,33 @@ export default function SummerRegistrationPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentOption, setPaymentOption] = useState<"cash" | "card">("cash");
+  const [dateSegments, setDateSegments] = useState({ day: "", month: "", year: "" });
 
+  const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    const newSegments = { ...dateSegments, [name]: value };
+    setDateSegments(newSegments);
+    
+    if (newSegments.day && newSegments.month && newSegments.year) {
+      const formattedMonth = newSegments.month.padStart(2, '0');
+      const formattedDay = newSegments.day.padStart(2, '0');
+      const dateStr = `${newSegments.year}-${formattedMonth}-${formattedDay}`;
+      
+      if (parseInt(newSegments.year) > 2020) {
+        showToast("عذراً، البرنامج مخصص لمواليد 2020 وما قبل", "error");
+        setDateSegments(prev => ({ ...prev, year: "" }));
+        setFormData(prev => ({ ...prev, birthDate: "" }));
+        return;
+      }
+      setFormData(prev => ({ ...prev, birthDate: dateStr }));
+    } else {
+      setFormData(prev => ({ ...prev, birthDate: "" }));
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
-    
-    if (name === "birthDate" && value) {
-      const selectedYear = new Date(value).getFullYear();
-      if (selectedYear > 2020) {
-        showToast("عذراً، البرنامج مخصص لمواليد 2020 وما قبل", "error");
-        return; // Do not update the state with the invalid date
-      }
-    }
 
     setFormData(prev => ({
       ...prev,
@@ -288,7 +302,44 @@ export default function SummerRegistrationPage() {
             </div>
             <div>
               <label className={labelClassName}>تاريخ الميلاد (بالميلادي) :</label>
-              <input type="date" required name="birthDate" value={formData.birthDate} max="2020-12-31" onChange={handleChange} className={getInputClassName("birthDate")} />
+              <div className="flex gap-2">
+                <select 
+                  required
+                  name="day" 
+                  value={dateSegments.day} 
+                  onChange={handleDateChange} 
+                  className={getInputClassName("birthDate") + " w-1/3 px-2 text-center"}
+                >
+                  <option value="" disabled>اليوم</option>
+                  {Array.from({ length: 31 }, (_, i) => i + 1).map(d => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+                <select 
+                  required
+                  name="month" 
+                  value={dateSegments.month} 
+                  onChange={handleDateChange} 
+                  className={getInputClassName("birthDate") + " w-1/3 px-2 text-center"}
+                >
+                  <option value="" disabled>الشهر</option>
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+                <select 
+                  required
+                  name="year" 
+                  value={dateSegments.year} 
+                  onChange={handleDateChange} 
+                  className={getInputClassName("birthDate") + " w-1/3 px-2 text-center"}
+                >
+                  <option value="" disabled>السنة</option>
+                  {Array.from({ length: 21 }, (_, i) => 2020 - i).map(y => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center gap-6">
