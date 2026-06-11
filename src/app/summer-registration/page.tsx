@@ -222,8 +222,8 @@ export default function SummerRegistrationPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4 py-16 bg-slate-50 text-right pt-32" dir="rtl">
         <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-150 shadow-xl max-w-md w-full text-center space-y-6 animate-in zoom-in-95 duration-200">
-          <div className="w-24 h-24 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
-             <CheckCircle className="w-12 h-12" />
+          <div className="flex items-center justify-center mx-auto mb-4">
+             <img src="/mulihmlogo.svg" alt="ملهم" className="h-24 sm:h-28 object-contain" />
           </div>
           <div className="space-y-3">
             <h2 className="text-2xl font-black text-slate-800 font-tajawal">تم إرسال البيانات لإدارة منصة ملهم</h2>
