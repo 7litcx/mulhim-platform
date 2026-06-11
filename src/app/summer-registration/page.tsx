@@ -9,10 +9,11 @@ import { Sparkles, CreditCard, CheckCircle } from "lucide-react";
 
 export default function SummerRegistrationPage() {
   const router = useRouter();
-  const { currentUser: user, showToast, registerUser, familyChildren } = useApp();
+  const { showToast } = useApp();
   const signatureRef = useRef<SignatureCanvas>(null);
   const [mounted, setMounted] = useState(false);
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -65,7 +66,6 @@ export default function SummerRegistrationPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
 
     setInvalidFields([]);
     const requiredFields = [
@@ -162,33 +162,26 @@ export default function SummerRegistrationPage() {
         formType: "summer_program"
       };
 
-      // Create an AbortController or a proper timeout mechanism
-      let timeoutId: NodeJS.Timeout;
-      const timeoutPromise = new Promise((_, reject) => {
-        timeoutId = setTimeout(() => reject(new Error("طال الاتصال بالخادم . الرجاء المحاولة مرة أخرى.")), 150000);
+      const response = await fetch("/api/summer-register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: formData.fullName,
+          age: parseInt(formData.age) || 0,
+          phone: formData.parentPhone,
+          email: "guest_public@mulhim.com",
+          interests: [],
+          type: "program",
+          targetName: "برنامج لون صيفك 3",
+          paymentMethod: paymentOption === "cash" ? "دفع نقدي" : "دفع اونلاين",
+          extraData: extraData
+        })
       });
-
-      try {
-        // Race the registration against the timeout
-        await Promise.race([
-          registerUser({
-            fullName: formData.fullName,
-            age: parseInt(formData.age) || 0,
-            phone: formData.parentPhone,
-            email: user.email,
-            interests: [],
-            type: "program",
-            targetName: "برنامج لون صيفك 3",
-            paymentMethod: paymentOption === "cash" ? "دفع نقدي" : "دفع اونلاين",
-            extraData: extraData
-          }),
-          timeoutPromise
-        ]);
-      } finally {
-        clearTimeout(timeoutId!);
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.error || "فشل التسجيل");
       }
-
-      showToast(paymentOption === "card" ? "تم الإرسال! سيتم تحويلك لصفحة الدفع الآن..." : "تم إرسال استمارة التسجيل بنجاح! سيتم التواصل معكم قريباً", "success");
+      showToast(paymentOption === "card" ? "تم الإرسال! سيتم تحويلك لصفحة الدفع الآن..." : "تم إرسال البيانات لإدارة منصة ملهم، شكراً لك", "success");
       setIsSubmitting(false);
       setTimeout(() => {
         if (paymentOption === "card") {
@@ -197,7 +190,7 @@ export default function SummerRegistrationPage() {
             : "https://salla.sa/sorog/payment/p1113970107";
           window.location.href = paymentUrl;
         } else {
-          router.push("/dashboard");
+          setIsSuccess(true);
         }
       }, 1500);
     } catch (error: any) {
@@ -211,27 +204,19 @@ export default function SummerRegistrationPage() {
     return null; // Or a loading spinner
   }
 
-  if (!user) {
+  if (isSuccess) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 py-16 bg-slate-50 text-right pt-32">
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-16 bg-slate-50 text-right pt-32" dir="rtl">
         <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-150 shadow-xl max-w-md w-full text-center space-y-6 animate-in zoom-in-95 duration-200">
-          <div className="w-20 h-20 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
-             <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-               <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-             </svg>
+          <div className="w-24 h-24 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
+             <CheckCircle className="w-12 h-12" />
           </div>
-          <div className="space-y-2">
-            <h2 className="text-xl font-bold text-slate-800 font-tajawal">يجب تسجيل الدخول</h2>
-            <p className="text-xs text-slate-500 leading-relaxed font-tajawal">
-              للوصول إلى استمارة التسجيل في برنامج لون صيفك، يرجى تسجيل الدخول لحسابك في منصة ملهم.
+          <div className="space-y-3">
+            <h2 className="text-2xl font-black text-slate-800 font-tajawal">تم إرسال البيانات لإدارة منصة ملهم</h2>
+            <p className="text-sm text-slate-500 leading-relaxed font-tajawal font-medium">
+              شكراً لك. سيتم مراجعة طلبك والتواصل معك قريباً.
             </p>
           </div>
-          <button
-            onClick={() => router.push("/register?redirect=/summer-registration")}
-            className="w-full py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-sm font-bold transition-all shadow-md"
-          >
-            تسجيل الدخول / إنشاء حساب
-          </button>
         </div>
       </div>
     );
@@ -274,32 +259,7 @@ export default function SummerRegistrationPage() {
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            {user && familyChildren && familyChildren.length > 0 && (
-              <div className="md:col-span-2 bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-2">
-                <span className="text-xs font-extrabold text-slate-500 block mb-3">اختيار سريع من الأبناء المسجلين (تعبئة تلقائية):</span>
-                <div className="flex flex-wrap gap-2">
-                  {familyChildren.map((child) => (
-                    <button
-                      type="button"
-                      key={child.id}
-                      onClick={() => {
-                        setFormData(prev => ({
-                          ...prev,
-                          fullName: child.full_name,
-                          gender: child.gender || "",
-                          grade: child.grade || "",
-                          parentName: user.fullName || "",
-                          parentPhone: user.phone || ""
-                        }));
-                      }}
-                      className="px-3 py-1.5 bg-white hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold border border-slate-200 transition-all cursor-pointer shadow-sm hover:shadow-md"
-                    >
-                      {child.full_name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+
 
             <div>
               <label className={labelClassName}>اسم المتقدم / ة رباعيًا :</label>
