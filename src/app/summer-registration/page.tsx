@@ -165,7 +165,7 @@ export default function SummerRegistrationPage() {
       // Create an AbortController or a proper timeout mechanism
       let timeoutId: NodeJS.Timeout;
       const timeoutPromise = new Promise((_, reject) => {
-        timeoutId = setTimeout(() => reject(new Error("طال الاتصال بالخادم (ربما بسبب التحديث أو بدء تشغيل قاعدة البيانات). الرجاء المحاولة مرة أخرى.")), 150000);
+        timeoutId = setTimeout(() => reject(new Error("طال الاتصال بالخادم . الرجاء المحاولة مرة أخرى.")), 150000);
       });
 
       try {
@@ -412,7 +412,14 @@ export default function SummerRegistrationPage() {
             
             <div>
               <label className={labelClassName}>كيف عرفت عن البرنامج:</label>
-              <input required name="howDidYouHear" value={formData.howDidYouHear} onChange={handleChange} className={getInputClassName("howDidYouHear")} placeholder="مثال: تويتر، صديق، الخ" />
+              <select required name="howDidYouHear" value={formData.howDidYouHear} onChange={handleChange} className={getInputClassName("howDidYouHear")}>
+                <option value="" disabled>اختر من القائمة</option>
+                <option value="صديق">صديق</option>
+                <option value="الانستقرام">الانستقرام</option>
+                <option value="سناب شات">سناب شات</option>
+                <option value="اليوتيوب">اليوتيوب</option>
+                <option value="اخرى">اخرى</option>
+              </select>
             </div>
           </div>
 

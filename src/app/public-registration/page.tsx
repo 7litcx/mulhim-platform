@@ -13,6 +13,7 @@ export default function SummerRegistrationPage() {
   const signatureRef = useRef<SignatureCanvas>(null);
   const [mounted, setMounted] = useState(false);
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -181,7 +182,7 @@ export default function SummerRegistrationPage() {
         throw new Error(data.error || "فشل التسجيل");
       }
 
-      showToast(paymentOption === "card" ? "تم الإرسال! سيتم تحويلك لصفحة الدفع الآن..." : "تم إرسال استمارة التسجيل بنجاح! سيتم التواصل معكم قريباً", "success");
+      showToast(paymentOption === "card" ? "تم الإرسال! سيتم تحويلك لصفحة الدفع الآن..." : "تم إرسال البيانات لإدارة منصة ملهم، شكراً لك", "success");
       setIsSubmitting(false);
       setTimeout(() => {
         if (paymentOption === "card") {
@@ -190,7 +191,7 @@ export default function SummerRegistrationPage() {
             : "https://salla.sa/sorog/payment/p1113970107";
           window.location.href = paymentUrl;
         } else {
-          router.push("/");
+          setIsSuccess(true);
         }
       }, 1500);
     } catch (error: any) {
@@ -204,7 +205,29 @@ export default function SummerRegistrationPage() {
     return null; // Or a loading spinner
   }
 
-
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-16 bg-slate-50 text-right pt-32" dir="rtl">
+        <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-150 shadow-xl max-w-md w-full text-center space-y-6 animate-in zoom-in-95 duration-200">
+          <div className="w-24 h-24 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
+             <CheckCircle className="w-12 h-12" />
+          </div>
+          <div className="space-y-3">
+            <h2 className="text-2xl font-black text-slate-800 font-tajawal">تم إرسال البيانات لإدارة منصة ملهم</h2>
+            <p className="text-sm text-slate-500 leading-relaxed font-tajawal font-medium">
+              شكراً لك. سيتم مراجعة طلبك والتواصل معك قريباً.
+            </p>
+          </div>
+          <button
+            onClick={() => router.push("/")}
+            className="w-full mt-4 py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-sm font-bold transition-all shadow-md"
+          >
+            العودة للصفحة الرئيسية
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const getInputClassName = (fieldName: string) => {
     const isInvalid = invalidFields.includes(fieldName);
@@ -356,7 +379,14 @@ export default function SummerRegistrationPage() {
             
             <div>
               <label className={labelClassName}>كيف عرفت عن البرنامج:</label>
-              <input required name="howDidYouHear" value={formData.howDidYouHear} onChange={handleChange} className={getInputClassName("howDidYouHear")} placeholder="مثال: تويتر، صديق، الخ" />
+              <select required name="howDidYouHear" value={formData.howDidYouHear} onChange={handleChange} className={getInputClassName("howDidYouHear")}>
+                <option value="" disabled>اختر من القائمة</option>
+                <option value="صديق">صديق</option>
+                <option value="الانستقرام">الانستقرام</option>
+                <option value="سناب شات">سناب شات</option>
+                <option value="اليوتيوب">اليوتيوب</option>
+                <option value="اخرى">اخرى</option>
+              </select>
             </div>
           </div>
 
