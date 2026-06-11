@@ -842,7 +842,7 @@ function RegisterContent() {
           </div>
 
           {/* RIGHT COLUMN: BENEFITS PANEL (4 cols) */}
-          <div className="lg:col-span-4 bg-gradient-to-br from-primary-navy to-slate-900 rounded-3xl p-8 text-white flex flex-col justify-between border border-slate-800 shadow-xl space-y-10">
+          <div className="lg:col-span-4 bg-gradient-to-br from-primary-teal to-accent-teal rounded-3xl p-8 text-white flex flex-col justify-between border border-teal-700/50 shadow-xl space-y-10">
             <div className="space-y-8">
               <h3 className="font-extrabold text-base font-tajawal relative pb-2 after:content-[''] after:absolute after:bottom-0 after:right-0 after:w-8 after:h-0.5 after:bg-accent-yellow">
                 لماذا تنضم إلينا؟
