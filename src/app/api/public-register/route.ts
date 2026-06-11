@@ -21,14 +21,41 @@ export async function POST(req: Request) {
     const regId = uuidv4();
     const targetId = targetName.includes(":") ? targetName.split(":")[1]?.trim() : targetName.replace(/\s+/g, "-");
 
+    // Fix for "null value in column user_id violates not-null constraint"
+    // We need a valid user_id from auth.users to attach this public registration to.
+    let guestUserId = null;
+    
+    // Try to find the dedicated guest user by email using Admin API
+    const { data: usersData } = await supabaseAdmin.auth.admin.listUsers();
+    let guestUser = usersData?.users.find(u => u.email === "guest_public@mulhim.com");
+    
+    if (guestUser) {
+      guestUserId = guestUser.id;
+    } else {
+      // Create a dedicated guest user
+      const { data: newGuest, error: createErr } = await supabaseAdmin.auth.admin.createUser({
+        email: "guest_public@mulhim.com",
+        password: "GuestPublicPassword123!",
+        email_confirm: true,
+        user_metadata: { full_name: "زائر (تسجيل خارجي)" }
+      });
+      if (newGuest?.user) {
+        guestUserId = newGuest.user.id;
+      } else {
+        // Fallback to the first available user if creation fails
+        console.error("Failed to create guest user:", createErr);
+        guestUserId = usersData?.users[0]?.id || null;
+      }
+    }
+
     const { error: regErr } = await supabaseAdmin.from("registrations").insert({
       id: regId,
-      user_id: null, // Public registration
+      user_id: guestUserId, // Assigned to guest user to bypass not-null constraint
       child_id: null, // Public registration
       full_name: fullName,
       age: age || null,
       phone: phone,
-      email: email || "guest@mulhim.com",
+      email: email || "guest_public@mulhim.com",
       interests: interests || [],
       type: type,
       target_id: targetId,
