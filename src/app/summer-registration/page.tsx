@@ -165,7 +165,7 @@ export default function SummerRegistrationPage() {
       // Create an AbortController or a proper timeout mechanism
       let timeoutId: NodeJS.Timeout;
       const timeoutPromise = new Promise((_, reject) => {
-        timeoutId = setTimeout(() => reject(new Error("طال الاتصال بالخادم (ربما بسبب التحديث). الرجاء المحاولة مرة أخرى.")), 60000);
+        timeoutId = setTimeout(() => reject(new Error("طال الاتصال بالخادم (ربما بسبب التحديث أو بدء تشغيل قاعدة البيانات). الرجاء المحاولة مرة أخرى.")), 150000);
       });
 
       try {

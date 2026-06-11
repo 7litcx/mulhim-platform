@@ -741,8 +741,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     // Sync with Supabase
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      const userId = user?.id || currentUser?.id;
+      let userId = currentUser?.id;
+      if (!userId) {
+        const { data: { user } } = await supabase.auth.getUser();
+        userId = user?.id;
+      }
 
       if (userId) {
         let childId: string | null = null;
