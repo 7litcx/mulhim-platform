@@ -23,7 +23,7 @@ import html2canvas from "html2canvas";
 import { SummerProgramPDF } from "@/components/SummerProgramPDF";
 
 export default function AdminDashboardPage() {
-  const { currentUser, showToast, logoutUser } = useApp();
+  const { currentUser, showToast, logoutUser, deleteRegistrationFromState, deleteOrderFromState } = useApp();
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<"overview" | "users" | "registrations" | "orders" | "messages" | "testimonials">("overview");
@@ -211,6 +211,13 @@ export default function AdminDashboardPage() {
 
           await deleteRecordAction(token, table, id);
           stateUpdater((prev: any[]) => prev.filter((item: any) => item.id !== id));
+          
+          if (table === "registrations" && deleteRegistrationFromState) {
+            deleteRegistrationFromState(id);
+          } else if (table === "orders" && deleteOrderFromState) {
+            deleteOrderFromState(id);
+          }
+          
           showToast("تم الحذف بنجاح.", "success");
         } catch (e: any) {
           showToast("فشل الحذف: " + e.message, "error");

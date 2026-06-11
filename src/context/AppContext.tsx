@@ -143,6 +143,8 @@ interface AppContextType {
   deleteTrip: (id: string) => void;
   deleteAcademy: (id: string) => void;
   deleteProgram: (id: string) => void;
+  deleteRegistrationFromState: (id: string) => void;
+  deleteOrderFromState: (id: string) => void;
 
   // Registration and Checkout
   addFamilyChild: (child: Omit<Child, "id" | "parent_id">) => Promise<void>;
@@ -676,6 +678,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   };
 
+  const deleteRegistrationFromState = (id: string) => {
+    setRegistrations((prev) => {
+      const updated = prev.filter((r) => r.id !== id);
+      saveToLocalStorage("mulhim_registrations", updated);
+      return updated;
+    });
+  };
+
+  const deleteOrderFromState = (id: string) => {
+    setOrders((prev) => {
+      const updated = prev.filter((o) => o.id !== id);
+      saveToLocalStorage("mulhim_orders", updated);
+      return updated;
+    });
+  };
+
   // Family / Child Actions
   const addFamilyChild = async (child: Omit<Child, "id" | "parent_id">) => {
     try {
@@ -1062,6 +1080,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         deleteTrip,
         deleteAcademy,
         deleteProgram,
+        deleteRegistrationFromState,
+        deleteOrderFromState,
         addFamilyChild,
         registerUser,
         placeOrder,
