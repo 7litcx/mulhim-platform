@@ -197,18 +197,21 @@ function RegisterContent() {
         true
       );
 
-      setIsSuccess(true);
-
-      setTimeout(() => {
-        setIsSuccess(false);
-        setRegForm({
-          guardian1Name: "",
-          guardian1Phone: "",
-          email: "",
-          password: "",
-          confirmPassword: ""
-        });
-      }, 4000);
+      if (!activityType) {
+        window.location.href = "/dashboard";
+      } else {
+        setIsSuccess(true);
+        setTimeout(() => {
+          setIsSuccess(false);
+          setRegForm({
+            guardian1Name: "",
+            guardian1Phone: "",
+            email: "",
+            password: "",
+            confirmPassword: ""
+          });
+        }, 4000);
+      }
     } catch (err) {
       console.error("Signup failed:", err);
     }
@@ -228,11 +231,16 @@ function RegisterContent() {
     try {
       const simulatedName = loginForm.email.split("@")[0];
       await loginUser(simulatedName, loginForm.email, "", loginForm.password, false);
-      setIsSuccess(true);
-      setTimeout(() => {
-        setIsSuccess(false);
-        setLoginForm({ email: "", password: "" });
-      }, 3000);
+      
+      if (!activityType) {
+        window.location.href = "/dashboard";
+      } else {
+        setIsSuccess(true);
+        setTimeout(() => {
+          setIsSuccess(false);
+          setLoginForm({ email: "", password: "" });
+        }, 3000);
+      }
     } catch (err) {
       console.error("Login failed:", err);
     } finally {
