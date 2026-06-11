@@ -9,7 +9,7 @@ import { Sparkles, CreditCard, CheckCircle } from "lucide-react";
 
 export default function SummerRegistrationPage() {
   const router = useRouter();
-  const { showToast } = useApp();
+  const { showToast, currentUser } = useApp();
   const signatureRef = useRef<SignatureCanvas>(null);
   const [mounted, setMounted] = useState(false);
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
@@ -183,7 +183,8 @@ export default function SummerRegistrationPage() {
           fullName: formData.fullName,
           age: parseInt(formData.age) || 0,
           phone: formData.parentPhone,
-          email: "guest_public@mulhim.com",
+          email: currentUser?.email || "guest_public@mulhim.com",
+          userId: currentUser?.id,
           interests: [],
           type: "program",
           targetName: "برنامج لون صيفك 3",

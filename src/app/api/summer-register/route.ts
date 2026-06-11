@@ -12,7 +12,7 @@ const supabaseAdmin = createClient(
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { fullName, age, phone, email, interests, type, targetName, paymentMethod, extraData } = body;
+    const { fullName, age, phone, email, interests, type, targetName, paymentMethod, extraData, userId } = body;
 
     if (!fullName || !phone) {
       return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 });
@@ -22,34 +22,38 @@ export async function POST(req: Request) {
     const targetId = targetName.includes(":") ? targetName.split(":")[1]?.trim() : targetName.replace(/\s+/g, "-");
 
     // We need a valid user_id from auth.users to attach this public registration to.
-    let guestUserId = null;
+    let finalUserId = userId;
     
-    // Try to find the dedicated guest user by email using Admin API
-    const { data: usersData } = await supabaseAdmin.auth.admin.listUsers();
-    let guestUser = usersData?.users.find(u => u.email === "guest_public@mulhim.com");
-    
-    if (guestUser) {
-      guestUserId = guestUser.id;
-    } else {
-      // Create a dedicated guest user
-      const { data: newGuest, error: createErr } = await supabaseAdmin.auth.admin.createUser({
-        email: "guest_public@mulhim.com",
-        password: "GuestPublicPassword123!",
-        email_confirm: true,
-        user_metadata: { full_name: "زائر (تسجيل خارجي)" }
-      });
-      if (newGuest?.user) {
-        guestUserId = newGuest.user.id;
+    if (!finalUserId) {
+      let guestUserId = null;
+      // Try to find the dedicated guest user by email using Admin API
+      const { data: usersData } = await supabaseAdmin.auth.admin.listUsers();
+      let guestUser = usersData?.users.find(u => u.email === "guest_public@mulhim.com");
+      
+      if (guestUser) {
+        guestUserId = guestUser.id;
       } else {
-        // Fallback to the first available user if creation fails
-        console.error("Failed to create guest user:", createErr);
-        guestUserId = usersData?.users[0]?.id || null;
+        // Create a dedicated guest user
+        const { data: newGuest, error: createErr } = await supabaseAdmin.auth.admin.createUser({
+          email: "guest_public@mulhim.com",
+          password: "GuestPublicPassword123!",
+          email_confirm: true,
+          user_metadata: { full_name: "زائر (تسجيل خارجي)" }
+        });
+        if (newGuest?.user) {
+          guestUserId = newGuest.user.id;
+        } else {
+          // Fallback to the first available user if creation fails
+          console.error("Failed to create guest user:", createErr);
+          guestUserId = usersData?.users[0]?.id || null;
+        }
       }
+      finalUserId = guestUserId;
     }
 
     const { error: regErr } = await supabaseAdmin.from("registrations").insert({
       id: regId,
-      user_id: guestUserId, // Assigned to guest user to bypass not-null constraint
+      user_id: finalUserId, // Assigned to user or guest user to bypass not-null constraint
       child_id: null, // Public registration
       full_name: fullName,
       age: age || null,
