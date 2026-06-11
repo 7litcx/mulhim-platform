@@ -505,13 +505,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             status: r.status || "pending",
             paymentMethod: r.payment_method
           }));
-          setRegistrations(prev => {
-            const newIds = new Set(formattedRegs.map(r => r.id));
-            const optimisticRegs = prev.filter(r => !newIds.has(r.id));
-            const merged = [...formattedRegs, ...optimisticRegs];
-            saveToLocalStorage("mulhim_registrations", merged);
-            return merged;
-          });
+          setRegistrations(formattedRegs);
+          saveToLocalStorage("mulhim_registrations", formattedRegs);
         }
 
         if (childrenData) {
@@ -541,13 +536,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               quantity: oi.quantity
             }))
           }));
-          setOrders(prev => {
-            const newIds = new Set(formattedOrders.map(o => o.id));
-            const optimisticOrders = prev.filter(o => !newIds.has(o.id));
-            const merged = [...formattedOrders, ...optimisticOrders];
-            saveToLocalStorage("mulhim_orders", merged);
-            return merged;
-          });
+          setOrders(formattedOrders);
+          saveToLocalStorage("mulhim_orders", formattedOrders);
         }
       } else {
         const localUserAfter = localStorage.getItem("mulhim_user");
@@ -1044,7 +1034,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const logoutUser = async () => {
     // Clear local state and localStorage immediately to ensure instant UI response and prevent race conditions
     setCurrentUser(null);
+    setRegistrations([]);
+    setOrders([]);
+    setFamilyChildren([]);
     localStorage.removeItem("mulhim_user");
+    localStorage.removeItem("mulhim_registrations");
+    localStorage.removeItem("mulhim_orders");
+    localStorage.removeItem("mulhim_children");
     showToast("تم تسجيل الخروج", "info");
 
     try {
