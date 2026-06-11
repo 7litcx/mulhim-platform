@@ -218,12 +218,6 @@ export default function SummerRegistrationPage() {
               شكراً لك. سيتم مراجعة طلبك والتواصل معك قريباً.
             </p>
           </div>
-          <button
-            onClick={() => router.push("/")}
-            className="w-full mt-4 py-3 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-sm font-bold transition-all shadow-md"
-          >
-            العودة للصفحة الرئيسية
-          </button>
         </div>
       </div>
     );
