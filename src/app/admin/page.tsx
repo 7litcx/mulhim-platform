@@ -143,7 +143,7 @@ export default function AdminDashboardPage() {
         fetchAdminTestimonials(token)
       ]);
 
-      setUsers(usersData);
+      setUsers(usersData.filter((u: any) => u.email !== "guest_public@mulhim.com"));
       setRegistrations(registrationsData);
       setOrders(ordersData);
       setMessages(messagesData);
