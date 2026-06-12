@@ -30,6 +30,7 @@ function RegisterContent() {
     password: "",
     confirmPassword: ""
   });
+  const [isRegistering, setIsRegistering] = useState(false);
 
   const [loginForm, setLoginForm] = useState({
     email: "",
@@ -187,6 +188,8 @@ function RegisterContent() {
       showToast("رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام.", "error");
       return;
     }
+    
+    setIsRegistering(true);
     try {
       // 1. Login/Signup the user officially via Supabase
       await loginUser(
@@ -214,6 +217,8 @@ function RegisterContent() {
       }
     } catch (err) {
       console.error("Signup failed:", err);
+    } finally {
+      setIsRegistering(false);
     }
   };
 
@@ -724,10 +729,11 @@ function RegisterContent() {
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 cursor-pointer"
+                    disabled={isRegistering}
+                    className="px-6 py-2.5 bg-accent-teal hover:bg-primary-teal disabled:bg-slate-300 text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 cursor-pointer"
                   >
-                    تأكيد التسجيل
-                    <CheckCircle className="w-3.5 h-3.5" />
+                    {isRegistering ? "جاري التسجيل..." : "تأكيد التسجيل"}
+                    {!isRegistering && <CheckCircle className="w-3.5 h-3.5" />}
                   </button>
                 </div>
               </form>
