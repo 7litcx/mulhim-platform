@@ -154,6 +154,7 @@ interface AppContextType {
   updateRegStatus: (id: string, status: Registration["status"]) => Promise<void>;
   loginUser: (fullName: string, email: string, phone: string, password?: string, isSignUp?: boolean, guardian2Name?: string, guardian2Phone?: string) => Promise<void>;
   logoutUser: () => void;
+  fetchUserData: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -430,6 +431,95 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
+  const fetchUserData = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      // Fetch user profile from Supabase profiles
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", session.user.id)
+        .single();
+
+      const user = {
+        id: session.user.id,
+        fullName: profile?.full_name || session.user.user_metadata.full_name || session.user.email?.split("@")[0] || "عضو ملهم",
+        email: session.user.email || "",
+        phone: profile?.phone || session.user.user_metadata.phone || "",
+        guardian2Name: profile?.guardian2_name || session.user.user_metadata.guardian2_name || "",
+        guardian2Phone: profile?.guardian2_phone || session.user.user_metadata.guardian2_phone || "",
+        role: profile?.role || "user"
+      };
+      setCurrentUser(user);
+      saveToLocalStorage("mulhim_user", user);
+
+      // Fetch user's children and registrations from Supabase
+      const { data: regsData } = await supabase
+        .from("registrations")
+        .select("*")
+        .eq("user_id", session.user.id);
+
+      const { data: childrenData } = await supabase
+        .from("children")
+        .select("*")
+        .eq("parent_id", session.user.id);
+
+      const { data: ordersData } = await supabase
+        .from("orders")
+        .select("*, order_items(*)")
+        .eq("user_id", session.user.id);
+
+      if (regsData) {
+        const formattedRegs: Registration[] = regsData.map((r: any) => ({
+          id: r.id,
+          fullName: r.full_name,
+          age: r.age || 0,
+          phone: r.phone || "",
+          email: r.email || "",
+          interests: r.interests || [],
+          type: r.type,
+          targetName: r.target_name || "",
+          date: new Date(r.created_at).toLocaleDateString("ar-SA"),
+          status: r.status || "pending",
+          paymentMethod: r.payment_method
+        }));
+        setRegistrations(formattedRegs);
+        saveToLocalStorage("mulhim_registrations", formattedRegs);
+      }
+
+      if (childrenData) {
+        setFamilyChildren(childrenData);
+        saveToLocalStorage("mulhim_children", childrenData);
+      }
+
+      if (ordersData) {
+        const formattedOrders: Order[] = ordersData.map((o: any) => ({
+          id: o.id,
+          customerName: o.customer_name,
+          phone: o.phone,
+          email: o.email,
+          total: Number(o.total),
+          paymentMethod: o.payment_method,
+          status: o.status,
+          date: new Date(o.created_at).toLocaleDateString("ar-SA"),
+          items: (o.order_items || []).map((oi: any) => ({
+            product: {
+              id: oi.product_id,
+              name: oi.product_name,
+              price: Number(oi.price),
+              category: "all",
+              image: "",
+              description: ""
+            },
+            quantity: oi.quantity
+          }))
+        }));
+        setOrders(formattedOrders);
+        saveToLocalStorage("mulhim_orders", formattedOrders);
+      }
+    }
+  };
+
   // Sync state with LocalStorage and Supabase on client side
   useEffect(() => {
     // 1. Initial LocalStorage fetch
@@ -456,89 +546,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // 2. Real-time Supabase Auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        // Fetch user profile from Supabase profiles
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
-
-        const user = {
-          id: session.user.id,
-          fullName: profile?.full_name || session.user.user_metadata.full_name || session.user.email?.split("@")[0] || "عضو ملهم",
-          email: session.user.email || "",
-          phone: profile?.phone || session.user.user_metadata.phone || "",
-          guardian2Name: profile?.guardian2_name || session.user.user_metadata.guardian2_name || "",
-          guardian2Phone: profile?.guardian2_phone || session.user.user_metadata.guardian2_phone || "",
-          role: profile?.role || "user"
-        };
-        setCurrentUser(user);
-        saveToLocalStorage("mulhim_user", user);
-
-        // Fetch user's children and registrations from Supabase
-        const { data: regsData } = await supabase
-          .from("registrations")
-          .select("*")
-          .eq("user_id", session.user.id);
-
-        const { data: childrenData } = await supabase
-          .from("children")
-          .select("*")
-          .eq("parent_id", session.user.id);
-
-        const { data: ordersData } = await supabase
-          .from("orders")
-          .select("*, order_items(*)")
-          .eq("user_id", session.user.id);
-
-        if (regsData) {
-          const formattedRegs: Registration[] = regsData.map((r: any) => ({
-            id: r.id,
-            fullName: r.full_name,
-            age: r.age || 0,
-            phone: r.phone || "",
-            email: r.email || "",
-            interests: r.interests || [],
-            type: r.type,
-            targetName: r.target_name || "",
-            date: new Date(r.created_at).toLocaleDateString("ar-SA"),
-            status: r.status || "pending",
-            paymentMethod: r.payment_method
-          }));
-          setRegistrations(formattedRegs);
-          saveToLocalStorage("mulhim_registrations", formattedRegs);
-        }
-
-        if (childrenData) {
-          setFamilyChildren(childrenData);
-          saveToLocalStorage("mulhim_children", childrenData);
-        }
-
-        if (ordersData) {
-          const formattedOrders: Order[] = ordersData.map((o: any) => ({
-            id: o.id,
-            customerName: o.customer_name,
-            phone: o.phone,
-            email: o.email,
-            total: Number(o.total),
-            paymentMethod: o.payment_method,
-            status: o.status,
-            date: new Date(o.created_at).toLocaleDateString("ar-SA"),
-            items: (o.order_items || []).map((oi: any) => ({
-              product: {
-                id: oi.product_id,
-                name: oi.product_name,
-                price: Number(oi.price),
-                category: "all",
-                image: "",
-                description: ""
-              },
-              quantity: oi.quantity
-            }))
-          }));
-          setOrders(formattedOrders);
-          saveToLocalStorage("mulhim_orders", formattedOrders);
-        }
+        await fetchUserData();
       } else {
         const localUserAfter = localStorage.getItem("mulhim_user");
         if (!localUserAfter) {
@@ -836,6 +844,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           showToast("حدث خطأ أثناء حفظ البيانات: " + regErr.message, "error");
           throw new Error(regErr.message);
         }
+
+        // Fetch user data to sync children and final registrations with real DB IDs
+        await fetchUserData();
       }
     } catch (e: any) {
       console.error("Error inserting registration to Supabase:", e);
@@ -1084,7 +1095,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateOrderStatus,
         updateRegStatus,
         loginUser,
-        logoutUser
+        logoutUser,
+        fetchUserData
       }}
     >
       {children}

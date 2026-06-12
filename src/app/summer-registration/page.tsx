@@ -9,7 +9,7 @@ import { Sparkles, CreditCard, CheckCircle } from "lucide-react";
 
 export default function SummerRegistrationPage() {
   const router = useRouter();
-  const { showToast, currentUser } = useApp();
+  const { showToast, currentUser, fetchUserData } = useApp();
   const signatureRef = useRef<SignatureCanvas>(null);
   const [mounted, setMounted] = useState(false);
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
@@ -196,6 +196,12 @@ export default function SummerRegistrationPage() {
       if (!data.success) {
         throw new Error(data.error || "فشل التسجيل");
       }
+      
+      // Refresh user data so the new registration appears in the dashboard
+      if (currentUser?.id) {
+        await fetchUserData();
+      }
+
       showToast(paymentOption === "card" ? "تم الإرسال! سيتم تحويلك لصفحة الدفع الآن..." : "تم إرسال البيانات لإدارة منصة ملهم، شكراً لك", "success");
       setIsSubmitting(false);
       setTimeout(() => {
