@@ -143,6 +143,11 @@ export default function AdminDashboardPage() {
         fetchAdminTestimonials(token)
       ]);
 
+      const possibleError = [usersData, registrationsData, ordersData, messagesData, testimonialsData].find((res: any) => res && !Array.isArray(res) && res.error);
+      if (possibleError) {
+        throw new Error(possibleError.error);
+      }
+
       setUsers(usersData.filter((u: any) => u.email !== "guest_public@mulhim.com"));
       setRegistrations(registrationsData);
       setOrders(ordersData);
@@ -177,7 +182,8 @@ export default function AdminDashboardPage() {
       const token = session?.access_token;
       if (!token) return;
 
-      await updateRegistrationStatusAction(token, id, status);
+      const res = await updateRegistrationStatusAction(token, id, status);
+      if (res && typeof res === 'object' && (res as any).error) throw new Error((res as any).error);
       setRegistrations(prev => prev.map(r => r.id === id ? { ...r, status } : r));
       showToast("تم تحديث حالة التسجيل بنجاح.", "success");
     } catch (e: any) {
@@ -191,7 +197,8 @@ export default function AdminDashboardPage() {
       const token = session?.access_token;
       if (!token) return;
 
-      await updateOrderStatusAction(token, id, status);
+      const res = await updateOrderStatusAction(token, id, status);
+      if (res && typeof res === 'object' && (res as any).error) throw new Error((res as any).error);
       setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
       showToast("تم تحديث حالة الطلب بنجاح.", "success");
     } catch (e: any) {
@@ -209,7 +216,8 @@ export default function AdminDashboardPage() {
           const token = session?.access_token;
           if (!token) return;
 
-          await deleteRecordAction(token, table, id);
+          const res = await deleteRecordAction(token, table, id);
+          if (res && typeof res === 'object' && (res as any).error) throw new Error((res as any).error);
           stateUpdater((prev: any[]) => prev.filter((item: any) => item.id !== id));
           
           if (table === "registrations" && deleteRegistrationFromState) {
@@ -237,7 +245,8 @@ export default function AdminDashboardPage() {
           const token = session?.access_token;
           if (!token) return;
 
-          await toggleUserRoleAction(token, id, newRole);
+          const res = await toggleUserRoleAction(token, id, newRole);
+          if (res && typeof res === 'object' && (res as any).error) throw new Error((res as any).error);
           setUsers(prev => prev.map(u => u.id === id ? { ...u, role: newRole } : u));
           showToast("تم تحديث الصلاحية بنجاح.", "success");
         } catch (e: any) {

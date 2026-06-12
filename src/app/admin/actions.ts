@@ -27,78 +27,92 @@ async function verifyAdmin(token: string) {
 }
 
 export async function fetchAdminUsers(token: string) {
-  await verifyAdmin(token);
-  const { data, error } = await supabaseAdmin.from("profiles").select("*").order("created_at", { ascending: false }).limit(2000);
-  if (error) throw new Error(error.message);
-  return data || [];
+  try {
+    await verifyAdmin(token);
+    const { data, error } = await supabaseAdmin.from("profiles").select("*").order("created_at", { ascending: false }).limit(2000);
+    if (error) throw new Error(error.message);
+    return data || [];
+  } catch (e: any) { return { error: e.message }; }
 }
 
 export async function fetchAdminRegistrations(token: string) {
-  await verifyAdmin(token);
-  const { data, error } = await supabaseAdmin.from("registrations").select("*").order("created_at", { ascending: false }).limit(2000);
-  if (error) throw new Error(error.message);
-  return data || [];
+  try {
+    await verifyAdmin(token);
+    const { data, error } = await supabaseAdmin.from("registrations").select("*").order("created_at", { ascending: false }).limit(2000);
+    if (error) throw new Error(error.message);
+    return data || [];
+  } catch (e: any) { return { error: e.message }; }
 }
 
 export async function fetchAdminOrders(token: string) {
-  await verifyAdmin(token);
-  const { data, error } = await supabaseAdmin.from("orders").select("*, order_items(*)").order("created_at", { ascending: false }).limit(2000);
-  if (error) throw new Error(error.message);
-  return data || [];
+  try {
+    await verifyAdmin(token);
+    const { data, error } = await supabaseAdmin.from("orders").select("*, order_items(*)").order("created_at", { ascending: false }).limit(2000);
+    if (error) throw new Error(error.message);
+    return data || [];
+  } catch (e: any) { return { error: e.message }; }
 }
 
 export async function fetchAdminMessages(token: string) {
-  await verifyAdmin(token);
-  const { data, error } = await supabaseAdmin.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(2000);
-  if (error) throw new Error(error.message);
-  return data || [];
+  try {
+    await verifyAdmin(token);
+    const { data, error } = await supabaseAdmin.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(2000);
+    if (error) throw new Error(error.message);
+    return data || [];
+  } catch (e: any) { return { error: e.message }; }
 }
 
 export async function fetchAdminTestimonials(token: string) {
-  await verifyAdmin(token);
-  const { data, error } = await supabaseAdmin.from("testimonials").select("*").order("created_at", { ascending: false }).limit(2000);
-  if (error) throw new Error(error.message);
-  return data || [];
+  try {
+    await verifyAdmin(token);
+    const { data, error } = await supabaseAdmin.from("testimonials").select("*").order("created_at", { ascending: false }).limit(2000);
+    if (error) throw new Error(error.message);
+    return data || [];
+  } catch (e: any) { return { error: e.message }; }
 }
 
 export async function updateRegistrationStatusAction(token: string, id: string, status: string) {
-  await verifyAdmin(token);
-  const { error } = await supabaseAdmin.from("registrations").update({ status }).eq("id", id);
-  if (error) throw new Error(error.message);
-  return true;
+  try {
+    await verifyAdmin(token);
+    const { error } = await supabaseAdmin.from("registrations").update({ status }).eq("id", id);
+    if (error) throw new Error(error.message);
+    return true;
+  } catch (e: any) { return { error: e.message }; }
 }
 
 export async function updateOrderStatusAction(token: string, id: string, status: string) {
-  await verifyAdmin(token);
-  const { error } = await supabaseAdmin.from("orders").update({ status }).eq("id", id);
-  if (error) throw new Error(error.message);
-  return true;
+  try {
+    await verifyAdmin(token);
+    const { error } = await supabaseAdmin.from("orders").update({ status }).eq("id", id);
+    if (error) throw new Error(error.message);
+    return true;
+  } catch (e: any) { return { error: e.message }; }
 }
 
 export async function deleteRecordAction(token: string, table: string, id: string) {
-  await verifyAdmin(token);
+  try {
+    await verifyAdmin(token);
 
-  // Handle specific tables to avoid Foreign Key constraint violations
-  if (table === "orders") {
-    await supabaseAdmin.from("order_items").delete().eq("order_id", id);
-  } else if (table === "profiles") {
-    // Try to delete children first if they exist
-    await supabaseAdmin.from("children").delete().eq("parent_id", id);
-    await supabaseAdmin.from("registrations").delete().eq("user_id", id);
-    await supabaseAdmin.from("orders").delete().eq("user_id", id);
+    if (table === "orders") {
+      await supabaseAdmin.from("order_items").delete().eq("order_id", id);
+    } else if (table === "profiles") {
+      await supabaseAdmin.from("children").delete().eq("parent_id", id);
+      await supabaseAdmin.from("registrations").delete().eq("user_id", id);
+      await supabaseAdmin.from("orders").delete().eq("user_id", id);
+      await supabaseAdmin.auth.admin.deleteUser(id).catch(() => { });
+    }
 
-    // Attempt to delete from Auth as well (if this fails, we still proceed to delete the profile)
-    await supabaseAdmin.auth.admin.deleteUser(id).catch(() => { });
-  }
-
-  const { error } = await supabaseAdmin.from(table).delete().eq("id", id);
-  if (error) throw new Error(error.message);
-  return true;
+    const { error } = await supabaseAdmin.from(table).delete().eq("id", id);
+    if (error) throw new Error(error.message);
+    return true;
+  } catch (e: any) { return { error: e.message }; }
 }
 
 export async function toggleUserRoleAction(token: string, id: string, newRole: string) {
-  await verifyAdmin(token);
-  const { error } = await supabaseAdmin.from("profiles").update({ role: newRole }).eq("id", id);
-  if (error) throw new Error(error.message);
-  return true;
+  try {
+    await verifyAdmin(token);
+    const { error } = await supabaseAdmin.from("profiles").update({ role: newRole }).eq("id", id);
+    if (error) throw new Error(error.message);
+    return true;
+  } catch (e: any) { return { error: e.message }; }
 }
