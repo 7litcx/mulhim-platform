@@ -34,15 +34,6 @@ export const metadata: Metadata = {
     description: "منصة ملهم تهدف لتمكين الشباب وتوفير فرص استثنائية للنمو والتعلم في بيئة مجتمعية محفزة عبر برامج، أكاديميات، رحلات استكشافية ومتجر متكامل.",
     images: ["/mulhim_open_graph.png"],
   },
-  icons: {
-    icon: [
-      { url: "/mulihmlogo.svg", type: "image/svg+xml" },
-      { url: "/icon.svg", type: "image/svg+xml" }
-    ],
-    apple: [
-      { url: "/mulihmlogo.svg" }
-    ],
-  },
 };
 
 export default function RootLayout({

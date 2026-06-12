@@ -175,6 +175,7 @@ function RegisterContent() {
 
   const handleRegisterSubmit = async (e?: React.SyntheticEvent) => {
     if (e) e.preventDefault();
+    if (isRegistering) return; // Prevent double-clicks
     if (!regForm.guardian1Name || !regForm.email || !regForm.guardian1Phone || !regForm.password || !regForm.confirmPassword) {
       showToast("الرجاء تعبئة كافة الحقول المطلوبة للتسجيل.", "warning");
       return;
@@ -215,8 +216,15 @@ function RegisterContent() {
           });
         }, 4000);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Signup failed:", err);
+      if (err.message?.includes("User already registered") || err.message?.includes("already registered") || err.message?.includes("already exists")) {
+        showToast("هذا البريد الإلكتروني مسجل مسبقاً. تم تحويلك لصفحة تسجيل الدخول، يرجى إدخال كلمة المرور.", "info");
+        setMode("login");
+        setLoginForm(prev => ({ ...prev, email: regForm.email }));
+      } else {
+        showToast(`فشل التسجيل: ${err.message || "حدث خطأ غير متوقع"}`, "error");
+      }
     } finally {
       setIsRegistering(false);
     }
@@ -224,6 +232,7 @@ function RegisterContent() {
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoggingIn) return; // Prevent double-clicks
     if (!loginForm.email) {
       showToast("الرجاء إدخال البريد الإلكتروني.", "warning");
       return;

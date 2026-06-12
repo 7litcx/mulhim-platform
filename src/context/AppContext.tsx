@@ -434,12 +434,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const fetchUserData = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (session?.user) {
-      // Fetch user profile from Supabase profiles
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session.user.id)
-        .single();
+      // Fetch all user data in parallel to reduce login latency
+      const [
+        { data: profile },
+        { data: regsData },
+        { data: childrenData },
+        { data: ordersData }
+      ] = await Promise.all([
+        supabase.from("profiles").select("*").eq("id", session.user.id).single(),
+        supabase.from("registrations").select("*").eq("user_id", session.user.id),
+        supabase.from("children").select("*").eq("parent_id", session.user.id),
+        supabase.from("orders").select("*, order_items(*)").eq("user_id", session.user.id)
+      ]);
 
       const user = {
         id: session.user.id,
@@ -448,26 +454,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         phone: profile?.phone || session.user.user_metadata.phone || "",
         guardian2Name: profile?.guardian2_name || session.user.user_metadata.guardian2_name || "",
         guardian2Phone: profile?.guardian2_phone || session.user.user_metadata.guardian2_phone || "",
-        role: profile?.role || "user"
+        role: profile?.role || "user",
+        createdAt: session.user.created_at || new Date().toISOString()
       };
       setCurrentUser(user);
       saveToLocalStorage("mulhim_user", user);
-
-      // Fetch user's children and registrations from Supabase
-      const { data: regsData } = await supabase
-        .from("registrations")
-        .select("*")
-        .eq("user_id", session.user.id);
-
-      const { data: childrenData } = await supabase
-        .from("children")
-        .select("*")
-        .eq("parent_id", session.user.id);
-
-      const { data: ordersData } = await supabase
-        .from("orders")
-        .select("*, order_items(*)")
-        .eq("user_id", session.user.id);
 
       if (regsData) {
         const formattedRegs: Registration[] = regsData.map((r: any) => ({
@@ -479,7 +470,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           interests: r.interests || [],
           type: r.type,
           targetName: r.target_name || "",
-          date: new Date(r.created_at).toLocaleDateString("ar-SA"),
+          date: new Date(r.created_at).toLocaleString("ar-SA", { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }),
           status: r.status || "pending",
           paymentMethod: r.payment_method
         }));
@@ -501,7 +492,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           total: Number(o.total),
           paymentMethod: o.payment_method,
           status: o.status,
-          date: new Date(o.created_at).toLocaleDateString("ar-SA"),
+          date: new Date(o.created_at).toLocaleString("ar-SA", { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }),
           items: (o.order_items || []).map((oi: any) => ({
             product: {
               id: oi.product_id,

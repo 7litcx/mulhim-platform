@@ -145,14 +145,14 @@ export default function AdminDashboardPage() {
 
       const possibleError = [usersData, registrationsData, ordersData, messagesData, testimonialsData].find((res: any) => res && !Array.isArray(res) && res.error);
       if (possibleError) {
-        throw new Error(possibleError.error);
+        throw new Error((possibleError as any).error);
       }
 
-      setUsers(usersData.filter((u: any) => u.email !== "guest_public@mulhim.com"));
-      setRegistrations(registrationsData);
-      setOrders(ordersData);
-      setMessages(messagesData);
-      setTestimonials(testimonialsData);
+      setUsers((usersData as any[]).filter((u: any) => u.email !== "guest_public@mulhim.com"));
+      setRegistrations(registrationsData as any[]);
+      setOrders(ordersData as any[]);
+      setMessages(messagesData as any[]);
+      setTestimonials(testimonialsData as any[]);
 
       // Give a tiny bit of time for initial queries to resolve before removing skeleton
       setTimeout(() => setLoading(false), 500);
@@ -609,6 +609,7 @@ export default function AdminDashboardPage() {
                         <th className="px-4 py-3">حساسية</th>
                         <th className="px-4 py-3">طريقة الدفع</th>
                         <th className="px-4 py-3">الحالة</th>
+                        <th className="px-4 py-3">توقيت التسجيل</th>
                         <th className="px-4 py-3 text-center">إجراء</th>
                       </tr>
                     </thead>
@@ -650,8 +651,10 @@ export default function AdminDashboardPage() {
                                 <option value="approved">تم التسجيل</option>
                               </select>
                             </td>
-                            <td className="px-4 py-3 text-slate-500 text-xs text-center flex flex-col gap-2 items-center">
-                              <span>{new Date(r.created_at).toLocaleString('ar-SA', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                            <td className="px-4 py-3 text-slate-500 text-xs">
+                              {new Date(r.created_at).toLocaleString('ar-SA', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                            </td>
+                            <td className="px-4 py-3 text-center flex flex-col gap-2 items-center">
                               {ed.formType === 'summer_program' && (
                                 <button
                                   onClick={() => handleExportPDF(r)}
