@@ -156,7 +156,7 @@ export default function DashboardPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           
           {/* Welcome Section */}
-          <div className="bg-gradient-to-r from-primary-navy to-slate-900 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl border border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="bg-gradient-to-r from-primary-teal to-slate-900 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl border border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-accent-yellow/10 rounded-full blur-2xl" />
             <div className="absolute right-1/3 -top-12 w-60 h-60 bg-blue-500/5 rounded-full blur-3xl" />
             
@@ -235,7 +235,7 @@ export default function DashboardPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
         {/* Welcome Section */}
-        <div className="bg-gradient-to-r from-primary-navy to-slate-900 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl border border-slate-800">
+        <div className="bg-gradient-to-r from-primary-teal to-slate-900 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl border border-slate-800">
           <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-accent-yellow/10 rounded-full blur-2xl" />
           <div className="absolute right-1/3 -top-12 w-60 h-60 bg-blue-500/5 rounded-full blur-3xl" />
           
