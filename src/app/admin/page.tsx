@@ -310,7 +310,7 @@ export default function AdminDashboardPage() {
     const headers = [
       "الاسم الرباعي", "رقم الهوية", "الصف الدراسي", "تاريخ الميلاد", "الجنس", "العمر", "الحي",
       "اسم ولي الأمر", "جوال ولي الأمر", "جوال آخر", "الأمراض", "الحساسية", "كيف عرفت عن البرنامج",
-      "البرنامج/الرحلة", "البريد الإلكتروني", "طريقة الدفع", "الحالة", "تاريخ التسجيل"
+      "البرنامج/الرحلة", "البريد الإلكتروني", "طريقة الدفع", "الحالة", "توقيت التسجيل"
     ];
     const csvContent = [
       headers.join(","),
@@ -337,7 +337,7 @@ export default function AdminDashboardPage() {
           `"${r.email || ""}"`,
           `"${r.payment_method || "غير محدد"}"`,
           `"${statusText}"`,
-          `"${new Date(r.created_at).toLocaleDateString('ar-SA')}"`
+          `"${new Date(r.created_at).toLocaleString('ar-SA', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}"`
         ].join(",");
       })
     ].join("\n");
@@ -496,7 +496,7 @@ export default function AdminDashboardPage() {
                         <th className="px-6 py-4">البريد الإلكتروني</th>
                         <th className="px-6 py-4">رقم الهاتف</th>
                         <th className="px-6 py-4">الصلاحية</th>
-                        <th className="px-6 py-4">تاريخ التسجيل</th>
+                        <th className="px-6 py-4">توقيت التسجيل</th>
                         <th className="px-6 py-4 text-center">إجراءات</th>
                       </tr>
                     </thead>
@@ -511,7 +511,7 @@ export default function AdminDashboardPage() {
                               {u.role === 'admin' ? 'مشرف' : 'مستخدم'}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-slate-500 text-xs">{new Date(u.created_at).toLocaleDateString('ar-SA')}</td>
+                          <td className="px-6 py-4 text-slate-500 text-xs">{new Date(u.created_at).toLocaleString('ar-SA', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
                           <td className="px-6 py-4 flex items-center justify-center gap-2">
                             <button onClick={() => toggleUserRole(u.id, u.role)} className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-bold transition-colors">الصلاحية</button>
                             <button onClick={() => deleteRecord("profiles", u.id, setUsers)} className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-bold transition-colors">حذف</button>
@@ -537,7 +537,7 @@ export default function AdminDashboardPage() {
                       </div>
 
                       <div className="flex justify-between items-center text-sm text-slate-600">
-                        <span className="text-xs text-slate-400">{new Date(u.created_at).toLocaleDateString('ar-SA')}</span>
+                        <span className="text-xs text-slate-400">{new Date(u.created_at).toLocaleString('ar-SA', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                         <span dir="ltr" className="font-medium">{u.phone}</span>
                       </div>
 
@@ -642,7 +642,7 @@ export default function AdminDashboardPage() {
                               </select>
                             </td>
                             <td className="px-4 py-3 text-slate-500 text-xs text-center flex flex-col gap-2 items-center">
-                              <span>{new Date(r.created_at).toLocaleDateString('ar-SA')}</span>
+                              <span>{new Date(r.created_at).toLocaleString('ar-SA', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                               {ed.formType === 'summer_program' && (
                                 <button
                                   onClick={() => handleExportPDF(r)}
@@ -710,7 +710,7 @@ export default function AdminDashboardPage() {
                             }`}>
                             {r.payment_method || 'غير محدد'}
                           </span>
-                          <span className="text-xs text-slate-400">{new Date(r.created_at).toLocaleDateString('ar-SA')}</span>
+                          <span className="text-xs text-slate-400">{new Date(r.created_at).toLocaleString('ar-SA', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                         </div>
 
                         <div className="flex flex-col gap-2 mt-2">
