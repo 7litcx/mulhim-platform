@@ -13,6 +13,7 @@ import {
   fetchAdminOrders,
   fetchAdminMessages,
   fetchAdminTestimonials,
+  fetchAdminOverviewStats,
   updateRegistrationStatusAction,
   updateOrderStatusAction,
   deleteRecordAction,
@@ -35,6 +36,7 @@ export default function AdminDashboardPage() {
   const [messages, setMessages] = useState<any[]>([]);
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({ users: 0, registrations: 0, orders: 0, revenue: 0 });
 
   const [page, setPage] = useState(1);
   const ITEMS_PER_PAGE = 20;
@@ -134,28 +136,33 @@ export default function AdminDashboardPage() {
       const token = session?.access_token;
       if (!token) throw new Error("Unauthorized: لا توجد جلسة صالحة. يرجى تسجيل الدخول مجدداً.");
 
-      // Fetch independently but await all to catch Unauthorized errors from server actions
-      const [usersData, registrationsData, ordersData, messagesData, testimonialsData] = await Promise.all([
-        fetchAdminUsers(token),
-        fetchAdminRegistrations(token),
-        fetchAdminOrders(token),
-        fetchAdminMessages(token),
-        fetchAdminTestimonials(token)
-      ]);
-
-      const possibleError = [usersData, registrationsData, ordersData, messagesData, testimonialsData].find((res: any) => res && !Array.isArray(res) && res.error);
-      if (possibleError) {
-        throw new Error((possibleError as any).error);
+      if (activeTab === "overview") {
+        const res = await fetchAdminOverviewStats(token);
+        if (res && !(res as any).error) setStats(res as any);
+        else if ((res as any)?.error) throw new Error((res as any).error);
+      } else if (activeTab === "users" && users.length === 0) {
+        const res = await fetchAdminUsers(token);
+        if (res && !(res as any).error) setUsers((res as any[]).filter((u: any) => u.email !== "guest_public@mulhim.com"));
+        else if ((res as any)?.error) throw new Error((res as any).error);
+      } else if (activeTab === "registrations" && registrations.length === 0) {
+        const res = await fetchAdminRegistrations(token);
+        if (res && !(res as any).error) setRegistrations(res as any[]);
+        else if ((res as any)?.error) throw new Error((res as any).error);
+      } else if (activeTab === "orders" && orders.length === 0) {
+        const res = await fetchAdminOrders(token);
+        if (res && !(res as any).error) setOrders(res as any[]);
+        else if ((res as any)?.error) throw new Error((res as any).error);
+      } else if (activeTab === "messages" && messages.length === 0) {
+        const res = await fetchAdminMessages(token);
+        if (res && !(res as any).error) setMessages(res as any[]);
+        else if ((res as any)?.error) throw new Error((res as any).error);
+      } else if (activeTab === "testimonials" && testimonials.length === 0) {
+        const res = await fetchAdminTestimonials(token);
+        if (res && !(res as any).error) setTestimonials(res as any[]);
+        else if ((res as any)?.error) throw new Error((res as any).error);
       }
 
-      setUsers((usersData as any[]).filter((u: any) => u.email !== "guest_public@mulhim.com"));
-      setRegistrations(registrationsData as any[]);
-      setOrders(ordersData as any[]);
-      setMessages(messagesData as any[]);
-      setTestimonials(testimonialsData as any[]);
-
-      // Give a tiny bit of time for initial queries to resolve before removing skeleton
-      setTimeout(() => setLoading(false), 500);
+      setLoading(false);
 
     } catch (error: any) {
       console.error("Error fetching admin data:", error);
@@ -174,7 +181,7 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     fetchAdminData();
-  }, [currentUser, router]);
+  }, [currentUser, router, activeTab]);
 
   const updateRegistrationStatus = async (id: string, status: string) => {
     try {
@@ -369,8 +376,6 @@ export default function AdminDashboardPage() {
     );
   }
 
-  const totalRevenue = orders.reduce((sum, o) => o.status === "paid" ? sum + Number(o.total) : sum, 0);
-
   return (
     <div className="bg-slate-50 min-h-screen pt-28 pb-10 text-right font-tajawal">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
@@ -438,7 +443,7 @@ export default function AdminDashboardPage() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-500">إجمالي الحسابات</h3>
-                    <p className="text-2xl font-black text-slate-800">{users.length}</p>
+                    <p className="text-2xl font-black text-slate-800">{stats.users}</p>
                   </div>
                 </div>
 
@@ -448,7 +453,7 @@ export default function AdminDashboardPage() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-500">الاشتراكات الكلية</h3>
-                    <p className="text-2xl font-black text-slate-800">{registrations.length}</p>
+                    <p className="text-2xl font-black text-slate-800">{stats.registrations}</p>
                   </div>
                 </div>
 
@@ -458,7 +463,7 @@ export default function AdminDashboardPage() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-500">طلبات المتجر</h3>
-                    <p className="text-2xl font-black text-slate-800">{orders.length}</p>
+                    <p className="text-2xl font-black text-slate-800">{stats.orders}</p>
                   </div>
                 </div>
 
@@ -468,7 +473,7 @@ export default function AdminDashboardPage() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-500">المبيعات المدفوعة</h3>
-                    <p className="text-2xl font-black text-slate-800">{totalRevenue} ر.س</p>
+                    <p className="text-2xl font-black text-slate-800">{stats.revenue} ر.س</p>
                   </div>
                 </div>
               </div>

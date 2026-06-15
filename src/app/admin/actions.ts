@@ -71,6 +71,32 @@ export async function fetchAdminTestimonials(token: string) {
   } catch (e: any) { return { error: e.message }; }
 }
 
+export async function fetchAdminOverviewStats(token: string) {
+  try {
+    await verifyAdmin(token);
+    const [
+      { count: usersCount },
+      { count: registrationsCount },
+      { count: ordersCount },
+      { data: ordersData }
+    ] = await Promise.all([
+      supabaseAdmin.from("profiles").select("*", { count: "exact", head: true }),
+      supabaseAdmin.from("registrations").select("*", { count: "exact", head: true }),
+      supabaseAdmin.from("orders").select("*", { count: "exact", head: true }),
+      supabaseAdmin.from("orders").select("total").eq("status", "paid")
+    ]);
+
+    const revenue = ordersData?.reduce((sum, o) => sum + Number(o.total), 0) || 0;
+
+    return {
+      users: usersCount || 0,
+      registrations: registrationsCount || 0,
+      orders: ordersCount || 0,
+      revenue
+    };
+  } catch (e: any) { return { error: e.message }; }
+}
+
 export async function updateRegistrationStatusAction(token: string, id: string, status: string) {
   try {
     await verifyAdmin(token);
