@@ -22,15 +22,17 @@ export async function POST(req: Request) {
     const targetId = targetName.includes(":") ? targetName.split(":")[1]?.trim() : targetName.replace(/\s+/g, "-");
 
     if (extraData?.idNumber) {
-      const { data: existingRegs, error: fetchErr } = await supabaseAdmin
-        .from("registrations")
-        .select("id")
-        .eq("target_name", targetName)
-        .eq("extra_data->>idNumber", extraData.idNumber)
-        .limit(1);
+      const cleanId = String(extraData.idNumber).trim();
+      if (cleanId) {
+        const { data: existingRegs, error: fetchErr } = await supabaseAdmin
+          .from("registrations")
+          .select("id")
+          .eq("extra_data->>idNumber", cleanId)
+          .limit(1);
 
-      if (!fetchErr && existingRegs && existingRegs.length > 0) {
-        return NextResponse.json({ success: false, error: "تم التسجيل مسبقاً باستخدام رقم الهوية هذا." }, { status: 400 });
+        if (!fetchErr && existingRegs && existingRegs.length > 0) {
+          return NextResponse.json({ success: false, error: "تم التسجيل مسبقاً باستخدام رقم الهوية هذا." }, { status: 400 });
+        }
       }
     }
 
