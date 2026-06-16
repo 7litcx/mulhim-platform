@@ -21,6 +21,19 @@ export async function POST(req: Request) {
     const regId = uuidv4();
     const targetId = targetName.includes(":") ? targetName.split(":")[1]?.trim() : targetName.replace(/\s+/g, "-");
 
+    if (extraData?.idNumber) {
+      const { data: existingRegs, error: fetchErr } = await supabaseAdmin
+        .from("registrations")
+        .select("id")
+        .eq("target_name", targetName)
+        .eq("extra_data->>idNumber", extraData.idNumber)
+        .limit(1);
+
+      if (!fetchErr && existingRegs && existingRegs.length > 0) {
+        return NextResponse.json({ success: false, error: "تم التسجيل مسبقاً باستخدام رقم الهوية هذا." }, { status: 400 });
+      }
+    }
+
     // We need a valid user_id from auth.users to attach this public registration to.
     let finalUserId = userId;
     
