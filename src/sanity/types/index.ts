@@ -156,22 +156,6 @@ export interface HeroBanner {
   seo?: SeoFields;
 }
 
-export interface Testimonial {
-  _id: string;
-  _type: "testimonial";
-  _createdAt: string;
-  title: string; // Author name
-  slug: Slug;
-  role?: string;
-  description: string; // Quote
-  images?: SanityImage[];
-  price?: number;
-  startDate?: string;
-  endDate?: string;
-  featured: boolean;
-  seo?: SeoFields;
-}
-
 export interface FAQ {
   _id: string;
   _type: "faq";

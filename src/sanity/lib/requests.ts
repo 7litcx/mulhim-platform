@@ -101,12 +101,6 @@ export async function getProductBySlug(slug: string, preview?: boolean): Promise
   return activeClient.fetch(queries.productBySlugQuery, { slug }, getFetchOptions([`product:${slug}`]));
 }
 
-// --- TESTIMONIALS ---
-export async function getFeaturedTestimonials(preview?: boolean): Promise<types.Testimonial[]> {
-  const activeClient = await getSanityClient(preview);
-  return activeClient.fetch(queries.featuredTestimonialsQuery, {}, getFetchOptions(["testimonials"]));
-}
-
 // --- FAQS ---
 export async function getFAQs(preview?: boolean): Promise<types.FAQ[]> {
   const activeClient = await getSanityClient(preview);

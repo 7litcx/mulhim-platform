@@ -350,19 +350,6 @@ export const productBySlugQuery = groq`
   }
 `;
 
-// --- TESTIMONIALS ---
-export const featuredTestimonialsQuery = groq`
-  *[_type == "testimonial" && featured != false] | order(_createdAt desc) {
-    _id,
-    title,
-    slug,
-    role,
-    description,
-    rating,
-    featured
-  }
-`;
-
 // --- FAQS ---
 export const allFAQsQuery = groq`
   *[_type == "faq"] | order(_createdAt desc) {

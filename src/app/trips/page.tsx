@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { getTrips, getFeaturedTestimonials, getCategories, getHeroBanners } from "@/sanity/lib/requests";
+import { getTrips, getCategories, getHeroBanners } from "@/sanity/lib/requests";
 import TripsClient from "./trips-client";
 
 export const revalidate = 60; // Revalidate every 60 seconds
@@ -10,9 +10,8 @@ export const metadata: Metadata = {
 };
 
 export default async function TripsPage() {
-  const [sanityTrips, sanityTestimonials, sanityCategories, sanityHeroBanners] = await Promise.all([
+  const [sanityTrips, sanityCategories, sanityHeroBanners] = await Promise.all([
     getTrips().catch(() => []),
-    getFeaturedTestimonials().catch(() => []),
     getCategories().catch(() => []),
     getHeroBanners().catch(() => []),
   ]);
@@ -20,8 +19,8 @@ export default async function TripsPage() {
   return (
     <TripsClient
       sanityTrips={sanityTrips || []}
-      sanityTestimonials={sanityTestimonials || []}
       sanityCategories={sanityCategories || []}
+
       sanityHeroBanners={sanityHeroBanners || []}
     />
   );

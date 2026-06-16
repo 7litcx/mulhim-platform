@@ -56,14 +56,12 @@ const resolveImage = (img: any, width = 800, height = 500) => {
 
 interface TripsClientProps {
   sanityTrips: any[];
-  sanityTestimonials: any[];
   sanityCategories?: any[];
   sanityHeroBanners?: any[];
 }
 
 export default function TripsClient({
   sanityTrips,
-  sanityTestimonials,
   sanityCategories = [],
   sanityHeroBanners = []
 }: TripsClientProps) {
