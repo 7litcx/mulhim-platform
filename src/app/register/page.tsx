@@ -203,6 +203,7 @@ function RegisterContent() {
 
       if (!activityType) {
         window.location.href = "/dashboard";
+        return; // Keep spinner running during redirect
       } else {
         setIsSuccess(true);
         setTimeout(() => {
@@ -214,6 +215,7 @@ function RegisterContent() {
             password: "",
             confirmPassword: ""
           });
+          setIsRegistering(false);
         }, 4000);
       }
     } catch (err: any) {
@@ -225,7 +227,6 @@ function RegisterContent() {
       } else {
         showToast(`فشل التسجيل: ${err.message || "حدث خطأ غير متوقع"}`, "error");
       }
-    } finally {
       setIsRegistering(false);
     }
   };
@@ -248,16 +249,17 @@ function RegisterContent() {
       
       if (!activityType) {
         window.location.href = "/dashboard";
+        return; // Keep spinner running during redirect
       } else {
         setIsSuccess(true);
         setTimeout(() => {
           setIsSuccess(false);
           setLoginForm({ email: "", password: "" });
+          setIsLoggingIn(false);
         }, 3000);
       }
     } catch (err) {
       console.error("Login failed:", err);
-    } finally {
       setIsLoggingIn(false);
     }
   };
