@@ -23,6 +23,16 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { SummerProgramPDF } from "@/components/SummerProgramPDF";
 
+// Cache to prevent excessive refetching when navigating in/out of admin dashboard
+const adminCache = {
+  users: [] as any[],
+  registrations: [] as any[],
+  orders: [] as any[],
+  messages: [] as any[],
+  testimonials: [] as any[],
+  stats: null as any
+};
+
 export default function AdminDashboardPage() {
   const { currentUser, showToast, logoutUser, deleteRegistrationFromState, deleteOrderFromState } = useApp();
   const router = useRouter();
@@ -30,13 +40,13 @@ export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<"overview" | "users" | "registrations" | "orders" | "messages" | "testimonials">("overview");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [users, setUsers] = useState<any[]>([]);
-  const [registrations, setRegistrations] = useState<any[]>([]);
-  const [orders, setOrders] = useState<any[]>([]);
-  const [messages, setMessages] = useState<any[]>([]);
-  const [testimonials, setTestimonials] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({ users: 0, registrations: 0, orders: 0, revenue: 0 });
+  const [users, setUsers] = useState<any[]>(adminCache.users);
+  const [registrations, setRegistrations] = useState<any[]>(adminCache.registrations);
+  const [orders, setOrders] = useState<any[]>(adminCache.orders);
+  const [messages, setMessages] = useState<any[]>(adminCache.messages);
+  const [testimonials, setTestimonials] = useState<any[]>(adminCache.testimonials);
+  const [loading, setLoading] = useState(!adminCache.stats);
+  const [stats, setStats] = useState(adminCache.stats || { users: 0, registrations: 0, orders: 0, revenue: 0 });
 
   const [page, setPage] = useState(1);
   const ITEMS_PER_PAGE = 20;
@@ -131,35 +141,67 @@ export default function AdminDashboardPage() {
   };
 
   const fetchAdminData = async () => {
-    setLoading(true);
+    const needsLoading = 
+      (activeTab === "overview" && !adminCache.stats) ||
+      (activeTab === "users" && adminCache.users.length === 0) ||
+      (activeTab === "registrations" && adminCache.registrations.length === 0) ||
+      (activeTab === "orders" && adminCache.orders.length === 0) ||
+      (activeTab === "messages" && adminCache.messages.length === 0) ||
+      (activeTab === "testimonials" && adminCache.testimonials.length === 0);
+
+    if (needsLoading) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
       if (!token) throw new Error("Unauthorized: لا توجد جلسة صالحة. يرجى تسجيل الدخول مجدداً.");
 
-      if (activeTab === "overview") {
+      if (activeTab === "overview" && !adminCache.stats) {
         const res = await fetchAdminOverviewStats(token);
-        if (res && !(res as any).error) setStats(res as any);
+        if (res && !(res as any).error) {
+          setStats(res as any);
+          adminCache.stats = res as any;
+        }
         else if ((res as any)?.error) throw new Error((res as any).error);
-      } else if (activeTab === "users" && users.length === 0) {
+      } else if (activeTab === "users" && adminCache.users.length === 0) {
         const res = await fetchAdminUsers(token);
-        if (res && !(res as any).error) setUsers((res as any[]).filter((u: any) => u.email !== "guest_public@mulhim.com"));
+        if (res && !(res as any).error) {
+          const fetched = (res as any[]).filter((u: any) => u.email !== "guest_public@mulhim.com");
+          setUsers(fetched);
+          adminCache.users = fetched;
+        }
         else if ((res as any)?.error) throw new Error((res as any).error);
-      } else if (activeTab === "registrations" && registrations.length === 0) {
+      } else if (activeTab === "registrations" && adminCache.registrations.length === 0) {
         const res = await fetchAdminRegistrations(token);
-        if (res && !(res as any).error) setRegistrations(res as any[]);
+        if (res && !(res as any).error) {
+          setRegistrations(res as any[]);
+          adminCache.registrations = res as any[];
+        }
         else if ((res as any)?.error) throw new Error((res as any).error);
-      } else if (activeTab === "orders" && orders.length === 0) {
+      } else if (activeTab === "orders" && adminCache.orders.length === 0) {
         const res = await fetchAdminOrders(token);
-        if (res && !(res as any).error) setOrders(res as any[]);
+        if (res && !(res as any).error) {
+          setOrders(res as any[]);
+          adminCache.orders = res as any[];
+        }
         else if ((res as any)?.error) throw new Error((res as any).error);
-      } else if (activeTab === "messages" && messages.length === 0) {
+      } else if (activeTab === "messages" && adminCache.messages.length === 0) {
         const res = await fetchAdminMessages(token);
-        if (res && !(res as any).error) setMessages(res as any[]);
+        if (res && !(res as any).error) {
+          setMessages(res as any[]);
+          adminCache.messages = res as any[];
+        }
         else if ((res as any)?.error) throw new Error((res as any).error);
-      } else if (activeTab === "testimonials" && testimonials.length === 0) {
+      } else if (activeTab === "testimonials" && adminCache.testimonials.length === 0) {
         const res = await fetchAdminTestimonials(token);
-        if (res && !(res as any).error) setTestimonials(res as any[]);
+        if (res && !(res as any).error) {
+          setTestimonials(res as any[]);
+          adminCache.testimonials = res as any[];
+        }
         else if ((res as any)?.error) throw new Error((res as any).error);
       }
 
@@ -192,7 +234,11 @@ export default function AdminDashboardPage() {
 
       const res = await updateRegistrationStatusAction(token, id, status);
       if (res && typeof res === 'object' && (res as any).error) throw new Error((res as any).error);
-      setRegistrations(prev => prev.map(r => r.id === id ? { ...r, status } : r));
+      setRegistrations(prev => {
+        const updated = prev.map(r => r.id === id ? { ...r, status } : r);
+        adminCache.registrations = updated;
+        return updated;
+      });
       showToast("تم تحديث حالة التسجيل بنجاح.", "success");
     } catch (e: any) {
       showToast("فشل تحديث الحالة: " + e.message, "error");
@@ -207,7 +253,11 @@ export default function AdminDashboardPage() {
 
       const res = await updateOrderStatusAction(token, id, status);
       if (res && typeof res === 'object' && (res as any).error) throw new Error((res as any).error);
-      setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
+      setOrders(prev => {
+        const updated = prev.map(o => o.id === id ? { ...o, status } : o);
+        adminCache.orders = updated;
+        return updated;
+      });
       showToast("تم تحديث حالة الطلب بنجاح.", "success");
     } catch (e: any) {
       showToast("فشل تحديث حالة الطلب: " + e.message, "error");
@@ -226,7 +276,15 @@ export default function AdminDashboardPage() {
 
           const res = await deleteRecordAction(token, table, id);
           if (res && typeof res === 'object' && (res as any).error) throw new Error((res as any).error);
-          stateUpdater((prev: any[]) => prev.filter((item: any) => item.id !== id));
+          stateUpdater((prev: any[]) => {
+            const updated = prev.filter((item: any) => item.id !== id);
+            if (table === "registrations") adminCache.registrations = updated;
+            if (table === "orders") adminCache.orders = updated;
+            if (table === "profiles") adminCache.users = updated;
+            if (table === "contact_messages") adminCache.messages = updated;
+            if (table === "testimonials") adminCache.testimonials = updated;
+            return updated;
+          });
           
           if (table === "registrations" && deleteRegistrationFromState) {
             deleteRegistrationFromState(id);
@@ -255,7 +313,11 @@ export default function AdminDashboardPage() {
 
           const res = await toggleUserRoleAction(token, id, newRole);
           if (res && typeof res === 'object' && (res as any).error) throw new Error((res as any).error);
-          setUsers(prev => prev.map(u => u.id === id ? { ...u, role: newRole } : u));
+          setUsers(prev => {
+            const updated = prev.map(u => u.id === id ? { ...u, role: newRole } : u);
+            adminCache.users = updated;
+            return updated;
+          });
           showToast("تم تحديث الصلاحية بنجاح.", "success");
         } catch (e: any) {
           showToast("فشل التحديث: " + e.message, "error");
@@ -302,14 +364,18 @@ export default function AdminDashboardPage() {
       const newId = data.user.id;
 
       // Add to local state
-      setUsers(prev => [{
-        id: newId,
-        full_name: newUser.fullName,
-        email: newUser.email,
-        phone: newUser.phone,
-        role: newUser.role,
-        created_at: new Date().toISOString()
-      }, ...prev]);
+      setUsers(prev => {
+        const updated = [{
+          id: newId,
+          full_name: newUser.fullName,
+          email: newUser.email,
+          phone: newUser.phone,
+          role: newUser.role,
+          created_at: new Date().toISOString()
+        }, ...prev];
+        adminCache.users = updated;
+        return updated;
+      });
 
       showToast("تم إنشاء المستخدم بنجاح.", "success");
       setCreateUserModal(false);
