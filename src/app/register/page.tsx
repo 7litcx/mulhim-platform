@@ -201,11 +201,12 @@ function RegisterContent() {
         true
       );
 
+      setIsSuccess(true);
       if (!activityType) {
-        router.push("/dashboard");
-        return; // Keep spinner running during redirect
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 1500);
       } else {
-        setIsSuccess(true);
         setTimeout(() => {
           setIsSuccess(false);
           setRegForm({
@@ -247,11 +248,12 @@ function RegisterContent() {
       const simulatedName = loginForm.email.split("@")[0];
       await loginUser(simulatedName, loginForm.email, "", loginForm.password, false);
       
+      setIsSuccess(true);
       if (!activityType) {
-        router.push("/dashboard");
-        return; // Keep spinner running during redirect
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 1500);
       } else {
-        setIsSuccess(true);
         setTimeout(() => {
           setIsSuccess(false);
           setLoginForm({ email: "", password: "" });
