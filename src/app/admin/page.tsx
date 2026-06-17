@@ -24,13 +24,14 @@ import html2canvas from "html2canvas";
 import { SummerProgramPDF } from "@/components/SummerProgramPDF";
 
 // Cache to prevent excessive refetching when navigating in/out of admin dashboard
-const adminCache = {
+const adminCache: any = {
   users: [] as any[],
   registrations: [] as any[],
   orders: [] as any[],
   messages: [] as any[],
   testimonials: [] as any[],
-  stats: null as any
+  stats: null as any,
+  fetching: {} as Record<string, boolean>
 };
 
 export default function AdminDashboardPage() {
@@ -141,6 +142,8 @@ export default function AdminDashboardPage() {
   };
 
   const fetchAdminData = async () => {
+    if (adminCache.fetching[activeTab]) return;
+
     const needsLoading = 
       (activeTab === "overview" && !adminCache.stats) ||
       (activeTab === "users" && adminCache.users.length === 0) ||
@@ -154,6 +157,8 @@ export default function AdminDashboardPage() {
     } else {
       setLoading(false);
     }
+
+    adminCache.fetching[activeTab] = true;
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -218,13 +223,15 @@ export default function AdminDashboardPage() {
       } else {
         showToast(error.message || "حدث خطأ أثناء جلب بيانات الإدارة.", "error");
       }
+    } finally {
+      adminCache.fetching[activeTab] = false;
       setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchAdminData();
-  }, [currentUser, router, activeTab]);
+  }, [activeTab]);
 
   const updateRegistrationStatus = async (id: string, status: string) => {
     try {
