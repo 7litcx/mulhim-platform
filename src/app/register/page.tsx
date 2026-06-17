@@ -202,7 +202,7 @@ function RegisterContent() {
       );
 
       if (!activityType) {
-        window.location.href = "/dashboard";
+        router.push("/dashboard");
         return; // Keep spinner running during redirect
       } else {
         setIsSuccess(true);
@@ -248,7 +248,7 @@ function RegisterContent() {
       await loginUser(simulatedName, loginForm.email, "", loginForm.password, false);
       
       if (!activityType) {
-        window.location.href = "/dashboard";
+        router.push("/dashboard");
         return; // Keep spinner running during redirect
       } else {
         setIsSuccess(true);
