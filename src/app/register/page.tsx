@@ -202,7 +202,7 @@ function RegisterContent() {
       );
 
       if (!activityType) {
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
       } else {
         setIsSuccess(true);
         setTimeout(() => {
@@ -247,7 +247,7 @@ function RegisterContent() {
       await loginUser(simulatedName, loginForm.email, "", loginForm.password, false);
       
       if (!activityType) {
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
       } else {
         setIsSuccess(true);
         setTimeout(() => {
