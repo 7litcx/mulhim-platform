@@ -54,6 +54,7 @@ export default function AdminDashboardPage() {
 
   const filteredRegistrations = registrations.filter(r =>
     (r.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (r.extra_data?.idNumber || "").includes(searchQuery) ||
     (r.target_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
     (r.phone || "").includes(searchQuery) ||
     (r.email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -581,7 +582,7 @@ export default function AdminDashboardPage() {
                   <div className="flex gap-2 w-full sm:w-auto">
                     <input
                       type="text"
-                      placeholder="بحث عن مشترك..."
+                      placeholder="بحث بالاسم أو رقم الهوية..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:border-accent-yellow w-full sm:w-64"
