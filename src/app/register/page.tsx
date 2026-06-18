@@ -201,11 +201,10 @@ function RegisterContent() {
         true
       );
 
-      setIsSuccess(true);
       if (!activityType) {
-        setTimeout(() => {
-          window.location.href = "/dashboard";
-        }, 1500);
+        router.push("/dashboard");
+        // Keep isRegistering true to maintain loading state during redirect
+        return;
       } else {
         setTimeout(() => {
           setIsSuccess(false);
@@ -248,11 +247,10 @@ function RegisterContent() {
       const simulatedName = loginForm.email.split("@")[0];
       await loginUser(simulatedName, loginForm.email, "", loginForm.password, false);
       
-      setIsSuccess(true);
       if (!activityType) {
-        setTimeout(() => {
-          window.location.href = "/dashboard";
-        }, 1500);
+        router.push("/dashboard");
+        // Keep isLoggingIn true to maintain loading state during redirect
+        return;
       } else {
         setTimeout(() => {
           setIsSuccess(false);
@@ -323,7 +321,7 @@ function RegisterContent() {
         </p>
       </div>
 
-      {currentUser ? (
+      {currentUser && !isLoggingIn && !isRegistering ? (
         activityType && activityName ? (
           // RENDER QUICK ACTIVITY REGISTRATION FOR LOGGED IN PARENTS
           <div className="bg-white rounded-3xl border border-slate-100 shadow-xl max-w-2xl mx-auto w-full p-8 text-right space-y-6 animate-in zoom-in-95 duration-200 relative overflow-hidden">
