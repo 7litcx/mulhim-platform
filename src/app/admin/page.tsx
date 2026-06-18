@@ -442,6 +442,31 @@ export default function AdminDashboardPage() {
     document.body.removeChild(link);
   };
 
+  const exportUsersCSV = () => {
+    const headers = ["الاسم", "البريد الإلكتروني", "رقم الهاتف", "الصلاحية", "توقيت التسجيل"];
+    const csvContent = [
+      headers.join(","),
+      ...users.map(u => {
+        return [
+          `"${u.full_name || ""}"`,
+          `"${u.email || ""}"`,
+          `"${u.phone || ""}"`,
+          `"${u.role === 'admin' ? 'مشرف' : 'مستخدم'}"`,
+          `"${new Date(u.created_at).toLocaleString('ar-SA', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}"`
+        ].join(",");
+      })
+    ].join("\n");
+
+    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `users_report_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (!currentUser || currentUser.role !== "admin") {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -566,6 +591,13 @@ export default function AdminDashboardPage() {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:border-accent-yellow w-full sm:w-64"
                     />
+                    <button
+                      onClick={exportUsersCSV}
+                      className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 border border-emerald-200 whitespace-nowrap"
+                    >
+                      <Download className="w-4 h-4" />
+                      تصدير (CSV)
+                    </button>
                     <button
                       onClick={() => setCreateUserModal(true)}
                       className="flex items-center gap-1.5 px-4 py-2 bg-accent-yellow hover:bg-yellow-600 text-primary-navy rounded-lg text-sm font-bold transition-colors whitespace-nowrap"
