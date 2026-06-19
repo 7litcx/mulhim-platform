@@ -40,7 +40,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 
-    const resetLink = data.properties.action_link;
+    // Use hashed_token instead of action_link to prevent email scanners from consuming the token
+    const resetLink = `${siteUrl}/reset-password?token_hash=${data.properties.hashed_token}&type=recovery`;
 
     // SMTP configuration
     const host = process.env.EMAIL_HOST;

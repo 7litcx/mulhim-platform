@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/utils/supabase";
 import { Lock, CheckCircle, KeyRound, Eye, EyeOff } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const { showToast } = useApp();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -17,11 +18,11 @@ export default function ResetPasswordPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
-    // Check if the user is logged in (Supabase sets session from recovery link hash automatically)
+    // Check if the user is logged in
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        console.log("No active session found on reset page mount yet.");
+        console.log("No active session found on reset page mount.");
       }
     };
     checkSession();
@@ -48,10 +49,28 @@ export default function ResetPasswordPage() {
     setIsLoading(true);
 
     try {
-      // Check for active session first to prevent hanging if the link is invalid/expired
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        showToast("رابط إعادة التعيين غير صالح أو منتهي الصلاحية. الرجاء طلب رابط جديد.", "error");
+      let currentSession = null;
+      
+      const token_hash = searchParams.get("token_hash");
+      const type = searchParams.get("type") as any;
+
+      if (token_hash && type === "recovery") {
+        // Verify the OTP using the hashed token from the URL
+        const { data, error } = await supabase.auth.verifyOtp({ token_hash, type });
+        if (error) {
+          showToast(`الرابط غير صالح أو منتهي الصلاحية: ${error.message}`, "error");
+          setIsLoading(false);
+          return;
+        }
+        currentSession = data.session;
+      } else {
+        // Fallback to checking existing session
+        const { data: { session } } = await supabase.auth.getSession();
+        currentSession = session;
+      }
+
+      if (!currentSession) {
+        showToast("لا يوجد جلسة صالحة. الرجاء طلب رابط جديد.", "error");
         setIsLoading(false);
         return;
       }
@@ -171,5 +190,13 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">جاري التحميل...</div>}>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }
