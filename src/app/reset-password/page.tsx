@@ -7,7 +7,7 @@ import { Lock, CheckCircle, KeyRound, Eye, EyeOff } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 function ResetPasswordContent() {
-  const { showToast } = useApp();
+  const { showToast, logoutUser } = useApp();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [password, setPassword] = useState("");
@@ -85,7 +85,7 @@ function ResetPasswordContent() {
         showToast("تم تحديث كلمة المرور بنجاح!", "success");
         setIsSuccess(true);
         // Automatically log out user so they can log in with new password cleanly
-        await supabase.auth.signOut();
+        await logoutUser();
         setTimeout(() => {
           router.push("/register?mode=login");
         }, 3000);
