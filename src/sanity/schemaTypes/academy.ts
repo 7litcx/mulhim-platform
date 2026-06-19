@@ -80,12 +80,7 @@ export const academy = defineType({
         },
       ],
     }),
-    defineField({
-      name: "featured",
-      title: "أكاديمية مميزة ونشطة",
-      type: "boolean",
-      initialValue: false,
-    }),
+
     defineField({
       name: "registrationOpen",
       title: "التسجيل متاح (مفتوح)",

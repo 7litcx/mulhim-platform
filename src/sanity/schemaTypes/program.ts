@@ -96,12 +96,7 @@ export const program = defineType({
       title: "موقع / مكان إقامة البرنامج",
       type: "string",
     }),
-    defineField({
-      name: "featured",
-      title: "برنامج مميز ونشط",
-      type: "boolean",
-      initialValue: false,
-    }),
+
   ],
 
   preview: {

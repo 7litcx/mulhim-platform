@@ -4,6 +4,8 @@ import { visionTool } from "@sanity/vision";
 import { schemaTypes } from "./src/sanity/schemaTypes";
 import { sanityConfig } from "./src/sanity/config";
 
+import { StudioNavbar } from "./src/sanity/components/StudioNavbar";
+
 export default defineConfig({
   name: "mulhim-studio",
   title: "Mulhim CMS Studio (منصة ملهم)",
@@ -22,5 +24,10 @@ export default defineConfig({
 
   schema: {
     types: schemaTypes,
+  },
+  studio: {
+    components: {
+      navbar: StudioNavbar,
+    },
   },
 });

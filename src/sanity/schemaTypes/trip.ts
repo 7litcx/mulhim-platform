@@ -28,12 +28,7 @@ export const trip = defineType({
       description: "مثال: مغامرة (Adventure)، ثقافية (Cultural)، تعليمية (Educational)",
       validation: (rule) => rule.required(),
     }),
-    defineField({
-      name: "category",
-      title: "التصنيف / الفئة",
-      type: "reference",
-      to: [{ type: "category" }],
-    }),
+
     defineField({
       name: "location",
       title: "الوجهة / الموقع",
@@ -79,12 +74,7 @@ export const trip = defineType({
       title: "الحد الأقصى للمشاركين",
       type: "number",
     }),
-    defineField({
-      name: "featured",
-      title: "رحلة مميزة ونشطة",
-      type: "boolean",
-      initialValue: false,
-    }),
+
     defineField({
       name: "registrationOpen",
       title: "التسجيل متاح (مفتوح)",

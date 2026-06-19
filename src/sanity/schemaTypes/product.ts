@@ -104,12 +104,7 @@ export const product = defineType({
         layout: "tags",
       },
     }),
-    defineField({
-      name: "featured",
-      title: "منتج مميز ونشط",
-      type: "boolean",
-      initialValue: false,
-    }),
+
   ],
 
   preview: {

@@ -52,13 +52,7 @@ export const faq = defineType({
       type: "datetime",
       description: "تاريخ انتهاء اختياري للأسئلة الشائعة المرتبطة بفترة زمنية محددة.",
     }),
-    defineField({
-      name: "featured",
-      title: "سؤال شائك مميز",
-      type: "boolean",
-      description: "عرض هذا السؤال في الصفحة الرئيسية أو صفحة المساعدة.",
-      initialValue: true,
-    }),
+
   ],
 
 });
