@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
     await transporter.sendMail({
       from: `"دعم منصة مُلهم" <${user}>`,
       to: email,
-      subject: "إعادة تعيين كلمة المرور - منصة مُلهم",
+      subject: `إعادة تعيين كلمة المرور - منصة مُلهم (${new Date().toLocaleTimeString('ar-SA')})`,
       html: htmlContent,
     });
 
