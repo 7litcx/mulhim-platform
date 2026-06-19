@@ -431,9 +431,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  const fetchUserData = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.user) {
+  const fetchUserData = async (providedUserId?: string) => {
+    let userId = providedUserId;
+    let userEmail = "";
+    
+    if (!userId) {
+      const { data: { session } } = await supabase.auth.getSession();
+      userId = session?.user?.id;
+      userEmail = session?.user?.email || "";
+    }
+
+    if (userId) {
       // Fetch all user data in parallel to reduce login latency
       const [
         { data: profile },
@@ -441,21 +449,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         { data: childrenData },
         { data: ordersData }
       ] = await Promise.all([
-        supabase.from("profiles").select("*").eq("id", session.user.id).single(),
-        supabase.from("registrations").select("*").eq("user_id", session.user.id),
-        supabase.from("children").select("*").eq("parent_id", session.user.id),
-        supabase.from("orders").select("*, order_items(*)").eq("user_id", session.user.id)
+        supabase.from("profiles").select("*").eq("id", userId).single(),
+        supabase.from("registrations").select("*").eq("user_id", userId),
+        supabase.from("children").select("*").eq("parent_id", userId),
+        supabase.from("orders").select("*, order_items(*)").eq("user_id", userId)
       ]);
 
       const user = {
-        id: session.user.id,
-        fullName: profile?.full_name || session.user.user_metadata.full_name || session.user.email?.split("@")[0] || "عضو ملهم",
-        email: session.user.email || "",
-        phone: profile?.phone || session.user.user_metadata.phone || "",
-        guardian2Name: profile?.guardian2_name || session.user.user_metadata.guardian2_name || "",
-        guardian2Phone: profile?.guardian2_phone || session.user.user_metadata.guardian2_phone || "",
+        id: userId,
+        fullName: profile?.full_name || "عضو ملهم",
+        email: profile?.email || userEmail,
+        phone: profile?.phone || "",
+        guardian2Name: profile?.guardian2_name || "",
+        guardian2Phone: profile?.guardian2_phone || "",
         role: profile?.role || "user",
-        createdAt: session.user.created_at || new Date().toISOString()
+        createdAt: profile?.created_at || new Date().toISOString()
       };
       setCurrentUser(user);
       saveToLocalStorage("mulhim_user", user);
@@ -537,7 +545,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // 2. Real-time Supabase Auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        await fetchUserData();
+        await fetchUserData(session.user.id);
       } else {
         const localUserAfter = localStorage.getItem("mulhim_user");
         if (!localUserAfter) {

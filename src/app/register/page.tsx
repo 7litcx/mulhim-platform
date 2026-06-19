@@ -245,9 +245,12 @@ function RegisterContent() {
     setIsLoggingIn(true);
     try {
       const simulatedName = loginForm.email.split("@")[0];
+      console.log("[handleLoginSubmit] calling loginUser");
       await loginUser(simulatedName, loginForm.email, "", loginForm.password, false);
+      console.log("[handleLoginSubmit] loginUser finished!");
       
       if (!activityType) {
+        console.log("[handleLoginSubmit] router.push('/dashboard')");
         router.push("/dashboard");
         // Keep isLoggingIn true to maintain loading state during redirect
         return;
