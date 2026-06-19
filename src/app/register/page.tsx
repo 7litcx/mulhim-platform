@@ -18,9 +18,16 @@ function RegisterContent() {
   const activityName = searchParams.get("name");
 
   // Mode: "register", "login", or "forgot"
+  const urlMode = searchParams.get("mode");
   const [mode, setMode] = useState<"register" | "login" | "forgot">("register");
   const [forgotEmail, setForgotEmail] = useState("");
   const [isSendingReset, setIsSendingReset] = useState(false);
+
+  React.useEffect(() => {
+    if (urlMode === "login" || urlMode === "register" || urlMode === "forgot") {
+      setMode(urlMode);
+    }
+  }, [urlMode]);
 
   // Form states
   const [regForm, setRegForm] = useState({

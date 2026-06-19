@@ -431,7 +431,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
+  const isLoggingOutRef = React.useRef(false);
+
   const fetchUserData = async (providedUserId?: string) => {
+    if (isLoggingOutRef.current) return;
+
     let userId = providedUserId;
     let userEmail = "";
     
@@ -442,6 +446,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     if (userId) {
+      // Prevent race conditions: Ensure session still exists before proceeding (user might have logged out instantly)
+      if (providedUserId) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+      }
       // Fetch all user data in parallel to reduce login latency
       const [
         { data: profile },
@@ -454,6 +463,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         supabase.from("children").select("*").eq("parent_id", userId),
         supabase.from("orders").select("*, order_items(*)").eq("user_id", userId)
       ]);
+
+      // Final check: did the user log out while we were fetching data?
+      if (providedUserId) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+      }
 
       const user = {
         id: userId,
@@ -1046,6 +1061,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const logoutUser = async () => {
+    isLoggingOutRef.current = true;
+    
     // Clear local state and localStorage immediately to ensure instant UI response and prevent race conditions
     setCurrentUser(null);
     setRegistrations([]);
@@ -1061,6 +1078,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       await supabase.auth.signOut();
     } catch (e) {
       console.error("Error during Supabase signout:", e);
+    } finally {
+      // Small delay to ensure all async callbacks have died before allowing fetches again
+      setTimeout(() => {
+        isLoggingOutRef.current = false;
+      }, 1000);
     }
   };
 
