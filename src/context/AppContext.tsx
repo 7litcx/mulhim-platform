@@ -545,7 +545,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // 2. Real-time Supabase Auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        await fetchUserData(session.user.id);
+        // Wrap in setTimeout to escape the Supabase auth lock. Database requests (like supabase.from) 
+        // call getSession() under the hood, which deadlocks if called inside the auth lock.
+        setTimeout(() => {
+          fetchUserData(session.user.id);
+        }, 0);
       } else {
         const localUserAfter = localStorage.getItem("mulhim_user");
         if (!localUserAfter) {
