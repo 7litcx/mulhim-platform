@@ -898,18 +898,16 @@ export default function HomeClient({
                           {acad.price} ر.س
                         </span>
                       )}
-                      <MotionLink
-                        href={acadLink}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={`px-4 py-2 text-white rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer text-center ${
-                          acad.registrationOpen === false
-                            ? "bg-accent-teal hover:bg-primary-teal w-full"
-                            : "bg-accent-teal hover:bg-primary-teal"
-                        }`}
-                      >
-                        {acad.registrationOpen === false ? "التفاصيل" : "التفاصيل والتسجيل"}
-                      </MotionLink>
+                      {acad.registrationOpen !== false && (
+                        <MotionLink
+                          href={acadLink}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-4 py-2 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer"
+                        >
+                          التفاصيل والتسجيل
+                        </MotionLink>
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -1019,18 +1017,16 @@ export default function HomeClient({
                           <span className="text-accent-yellow font-bold text-base">{trip.price} ر.س</span>
                         </div>
                       )}
-                      <MotionLink
-                        href={tripLink}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={`px-5 py-2.5 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer text-center ${
-                          trip.registrationOpen === false
-                            ? "bg-accent-teal hover:bg-primary-teal w-full"
-                            : "bg-accent-teal hover:bg-primary-teal"
-                        }`}
-                      >
-                        {trip.registrationOpen === false ? "التفاصيل" : "التفاصيل والتسجيل"}
-                      </MotionLink>
+                      {trip.registrationOpen !== false && (
+                        <MotionLink
+                          href={tripLink}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-5 py-2.5  bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
+                        >
+                          التفاصيل والتسجيل
+                        </MotionLink>
+                      )}
                     </div>
                   </div>
                 </motion.div>

@@ -329,18 +329,16 @@ export default function AcademiesClient({
                       </span>
                     ) : <span />}
                     <div className="flex gap-2">
-                      <MotionLink
-                        href={acadLink}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={`px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer text-center ${
-                          acad.registrationOpen === false 
-                            ? "bg-accent-teal hover:bg-primary-teal text-white px-5" 
-                            : "bg-slate-100 hover:bg-slate-200 text-slate-700"
-                        }`}
-                      >
-                        التفاصيل
-                      </MotionLink>
+                      {acad.registrationOpen !== false && (
+                        <MotionLink
+                          href={acadLink}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer"
+                        >
+                          التفاصيل
+                        </MotionLink>
+                      )}
                       {acad.registrationOpen !== false && (
                         <motion.button
                           whileHover={{ scale: 1.05 }}
