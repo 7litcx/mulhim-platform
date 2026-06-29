@@ -864,21 +864,13 @@ export default function HomeClient({
                 >
                   {/* Image Block */}
                   <div className="h-52 w-full overflow-hidden relative">
-                    {acad.registrationOpen !== false ? (
-                      <Link href={acadLink}>
-                        <img
-                          src={acadImg}
-                          alt={acad.title}
-                          className="w-full h-full object-cover object-top group-hover:scale-105 transition-all duration-500"
-                        />
-                      </Link>
-                    ) : (
+                    <Link href={acadLink}>
                       <img
                         src={acadImg}
                         alt={acad.title}
-                        className="w-full h-full object-cover object-top opacity-80"
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-all duration-500"
                       />
-                    )}
+                    </Link>
                     <span className="absolute z-20 top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-accent-yellow px-3 py-1 rounded-full text-[10px] font-bold">
                       {acad.ageGroup || acad.targetAge || "جميع الأعمار"}
                     </span>
@@ -887,22 +879,14 @@ export default function HomeClient({
                   {/* Info Block */}
                   <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                     <div className="space-y-2">
-                      {acad.registrationOpen !== false ? (
-                        <Link href={acadLink}>
-                          <h3 className="font-extrabold text-slate-800 text-base group-hover:text-accent-yellow transition-all duration-200 line-clamp-1">
-                            {acad.title}
-                          </h3>
-                        </Link>
-                      ) : (
-                        <h3 className="font-extrabold text-slate-800 text-base opacity-80 line-clamp-1">
+                      <Link href={acadLink}>
+                        <h3 className="font-extrabold text-slate-800 text-base group-hover:text-accent-yellow transition-all duration-200 line-clamp-1">
                           {acad.title}
                         </h3>
-                      )}
-                      {acad.registrationOpen !== false && (
-                        <p className="text-xs text-slate-405 font-medium leading-relaxed">
-                          {acad.schedule || acad.startDate || ""}
-                        </p>
-                      )}
+                      </Link>
+                      <p className="text-xs text-slate-405 font-medium leading-relaxed">
+                        {acad.schedule || acad.startDate || ""}
+                      </p>
                       <p className="text-sm text-slate-800 leading-relaxed line-clamp-2 pt-1">
                         {acad.description}
                       </p>
@@ -914,16 +898,18 @@ export default function HomeClient({
                           {acad.price} ر.س
                         </span>
                       )}
-                      {acad.registrationOpen !== false && (
-                        <MotionLink
-                          href={acadLink}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="px-4 py-2  bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer"
-                        >
-                          التفاصيل والتسجيل
-                        </MotionLink>
-                      )}
+                      <MotionLink
+                        href={acadLink}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`px-4 py-2 text-white rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer text-center ${
+                          acad.registrationOpen === false
+                            ? "bg-accent-teal hover:bg-primary-teal w-full"
+                            : "bg-accent-teal hover:bg-primary-teal"
+                        }`}
+                      >
+                        {acad.registrationOpen === false ? "التفاصيل" : "التفاصيل والتسجيل"}
+                      </MotionLink>
                     </div>
                   </div>
                 </motion.div>
@@ -985,25 +971,15 @@ export default function HomeClient({
                 >
                   {/* Trip Image */}
                   <div className="h-52 w-full overflow-hidden relative">
-                    {trip.registrationOpen !== false ? (
-                      <Link href={tripLink}>
-                        <Image
-                          src={tripImg || "/images/About.png"}
-                          alt={trip.title || "Trip"}
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          className="object-cover object-top group-hover:scale-105 transition-transform duration-500 z-10"
-                        />
-                      </Link>
-                    ) : (
+                    <Link href={tripLink}>
                       <Image
                         src={tripImg || "/images/About.png"}
                         alt={trip.title || "Trip"}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-cover object-top opacity-80 z-10"
+                        className="object-cover object-top group-hover:scale-105 transition-transform duration-500 z-10"
                       />
-                    )}
+                    </Link>
                     <span className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-bold z-20">
                       {trip.typeName}
                     </span>
@@ -1012,25 +988,19 @@ export default function HomeClient({
                   {/* Content */}
                   <div className="p-6 flex-1 flex flex-col justify-between space-y-4 text-right">
                     <div className="space-y-2">
-                      {trip.registrationOpen !== false ? (
-                        <Link href={tripLink}>
-                          <h3 className="font-bold text-slate-800 text-base group-hover:text-accent-yellow transition-all duration-200 line-clamp-1">
-                            {trip.title}
-                          </h3>
-                        </Link>
-                      ) : (
-                        <h3 className="font-bold text-slate-800 text-base opacity-80 line-clamp-1">
+                      <Link href={tripLink}>
+                        <h3 className="font-bold text-slate-800 text-base group-hover:text-accent-yellow transition-all duration-200 line-clamp-1">
                           {trip.title}
                         </h3>
-                      )}
+                      </Link>
                       <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-slate-400 font-medium justify-end">
-                        {trip.registrationOpen !== false && tripDate && (
+                        {tripDate && (
                           <span className="flex items-center gap-1">
                             <span>{tripDate}</span>
                             <Calendar className="w-3.5 h-3.5 text-slate-400" />
                           </span>
                         )}
-                        {trip.registrationOpen !== false && trip.location && (
+                        {trip.location && (
                           <span className="flex items-center gap-1">
                             <span>{trip.location}</span>
                             <MapPin className="w-3.5 h-3.5 text-slate-400" />
@@ -1049,16 +1019,18 @@ export default function HomeClient({
                           <span className="text-accent-yellow font-bold text-base">{trip.price} ر.س</span>
                         </div>
                       )}
-                      {trip.registrationOpen !== false && (
-                        <MotionLink
-                          href={tripLink}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="px-5 py-2.5  bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
-                        >
-                          التفاصيل والتسجيل
-                        </MotionLink>
-                      )}
+                      <MotionLink
+                        href={tripLink}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`px-5 py-2.5 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer text-center ${
+                          trip.registrationOpen === false
+                            ? "bg-accent-teal hover:bg-primary-teal w-full"
+                            : "bg-accent-teal hover:bg-primary-teal"
+                        }`}
+                      >
+                        {trip.registrationOpen === false ? "التفاصيل" : "التفاصيل والتسجيل"}
+                      </MotionLink>
                     </div>
                   </div>
                 </motion.div>

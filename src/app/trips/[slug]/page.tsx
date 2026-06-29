@@ -56,20 +56,6 @@ export default async function TripDetailsPage({ params }: PageProps) {
     notFound();
   }
 
-  if (trip.registrationOpen === false) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-6 text-center">
-        <h1 className="text-3xl md:text-4xl font-black text-rose-500 mb-4 font-tajawal">التسجيل مغلق</h1>
-        <p className="text-slate-600 mb-8 max-w-md leading-relaxed">
-          نعتذر، التسجيل في هذه الرحلة غير متاح حالياً، ولا يمكن عرض التفاصيل. يرجى متابعة رحلاتنا القادمة.
-        </p>
-        <Link href="/trips" className="px-6 py-3 bg-primary-navy text-white rounded-xl font-bold hover:bg-slate-800 transition-colors">
-          العودة للرحلات
-        </Link>
-      </div>
-    );
-  }
-
   const startDateFormatted = trip.startDate || null;
   const endDateFormatted = trip.endDate || null;
 
@@ -168,7 +154,7 @@ export default async function TripDetailsPage({ params }: PageProps) {
           {/* Sidebar */}
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6 text-right">
-              {typeof trip.price !== "undefined" && trip.price !== null && (
+              {trip.registrationOpen !== false && typeof trip.price !== "undefined" && trip.price !== null && (
                 <div className="space-y-1">
                   <span className="text-xs text-slate-400 font-medium">تكلفة الاشتراك</span>
                   <div className="text-2xl font-black text-accent-yellow font-sans">
@@ -211,12 +197,18 @@ export default async function TripDetailsPage({ params }: PageProps) {
                 </div>
               )}
 
-              <Link
-                href={`/register?type=trip&name=${encodeURIComponent(trip.title)}`}
-                className="w-full block text-center py-4 bg-primary-navy hover:bg-slate-800 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300"
-              >
-                احجز مقعدك في الرحلة
-              </Link>
+              {trip.registrationOpen !== false ? (
+                <Link
+                  href={`/register?type=trip&name=${encodeURIComponent(trip.title)}`}
+                  className="w-full block text-center py-4 bg-primary-navy hover:bg-slate-800 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300"
+                >
+                  احجز مقعدك في الرحلة
+                </Link>
+              ) : (
+                <div className="w-full block text-center py-4 bg-slate-200 text-slate-400 rounded-xl text-sm font-bold cursor-not-allowed">
+                  التسجيل مغلق حالياً
+                </div>
+              )}
             </div>
 
             {/* Note */}

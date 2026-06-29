@@ -58,20 +58,6 @@ export default async function AcademyDetailsPage({ params }: PageProps) {
     notFound();
   }
 
-  if (academy.registrationOpen === false) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-6 text-center">
-        <h1 className="text-3xl md:text-4xl font-black text-rose-500 mb-4 font-tajawal">التسجيل مغلق</h1>
-        <p className="text-slate-600 mb-8 max-w-md leading-relaxed">
-          نعتذر، التسجيل في هذه الأكاديمية غير متاح حالياً، ولا يمكن عرض التفاصيل. يرجى متابعة برامجنا القادمة.
-        </p>
-        <Link href="/academies" className="px-6 py-3 bg-primary-navy text-white rounded-xl font-bold hover:bg-slate-800 transition-colors">
-          العودة للأكاديميات
-        </Link>
-      </div>
-    );
-  }
-
   const startDateFormatted = academy.startDate || null;
 
   return (
@@ -195,7 +181,7 @@ export default async function AcademyDetailsPage({ params }: PageProps) {
           {/* Left column: Sidebar actions */}
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6 text-right">
-              {typeof academy.price !== "undefined" && academy.price !== null && (
+              {academy.registrationOpen !== false && typeof academy.price !== "undefined" && academy.price !== null && (
                 <div className="space-y-1">
                   <span className="text-xs text-slate-400 font-medium">قيمة الاشتراك</span>
                   <div className="text-2xl font-black text-accent-yellow font-sans">
@@ -224,12 +210,18 @@ export default async function AcademyDetailsPage({ params }: PageProps) {
                 </div>
               </div>
 
-              <Link
-                href={`/register?type=academy&name=${encodeURIComponent(academy.title)}`}
-                className="w-full block text-center py-4 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300"
-              >
-                انضم الآن وسجل اهتمامك
-              </Link>
+              {academy.registrationOpen !== false ? (
+                <Link
+                  href={`/register?type=academy&name=${encodeURIComponent(academy.title)}`}
+                  className="w-full block text-center py-4 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300"
+                >
+                  انضم الآن وسجل اهتمامك
+                </Link>
+              ) : (
+                <div className="w-full block text-center py-4 bg-slate-200 text-slate-400 rounded-xl text-sm font-bold cursor-not-allowed">
+                  التسجيل مغلق حالياً
+                </div>
+              )}
               
               <p className="text-[10px] text-slate-400 text-center leading-normal">
                 سنقوم بالتواصل معكم في غضون 24 ساعة لشرح كافة خطوات الحضور والجدول الزمني.

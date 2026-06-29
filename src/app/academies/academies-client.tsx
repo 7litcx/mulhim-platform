@@ -280,21 +280,13 @@ export default function AcademiesClient({
                 className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col md:flex-row group text-right"
               >
                 <div className="md:w-2/5 h-64 md:h-auto overflow-hidden relative">
-                  {acad.registrationOpen !== false ? (
-                    <Link href={acadLink}>
-                      <img
-                        src={acadImg}
-                        alt={acad.title}
-                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-all duration-500"
-                      />
-                    </Link>
-                  ) : (
+                  <Link href={acadLink}>
                     <img
                       src={acadImg}
                       alt={acad.title}
-                      className="w-full h-full object-cover object-top opacity-80"
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-all duration-500"
                     />
-                  )}
+                  </Link>
                   <span className="absolute z-20 top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-accent-yellow px-3 py-1 rounded-full text-[10px] font-bold">
                     {acad.ageGroup || acad.targetAge || "جميع الأعمار"}
                   </span>
@@ -303,18 +295,12 @@ export default function AcademiesClient({
                 {/* Info Block */}
                 <div className="md:w-3/5 p-6 flex flex-col justify-between space-y-4">
                   <div className="space-y-2">
-                    {acad.registrationOpen !== false ? (
-                      <Link href={acadLink}>
-                        <h3 className="font-extrabold text-slate-800 text-lg group-hover:text-accent-yellow transition-all duration-200">
-                          {acad.title}
-                        </h3>
-                      </Link>
-                    ) : (
-                      <h3 className="font-extrabold text-slate-800 text-lg opacity-80">
+                    <Link href={acadLink}>
+                      <h3 className="font-extrabold text-slate-800 text-lg group-hover:text-accent-yellow transition-all duration-200">
                         {acad.title}
                       </h3>
-                    )}
-                    {(acad.schedule || acad.startDate) && acad.registrationOpen !== false && (
+                    </Link>
+                    {(acad.schedule || acad.startDate) && (
                       <p className="text-xs text-slate-405 font-medium leading-relaxed">
                         {acad.schedule || acad.startDate || ""}
                       </p>
@@ -343,16 +329,18 @@ export default function AcademiesClient({
                       </span>
                     ) : <span />}
                     <div className="flex gap-2">
-                      {acad.registrationOpen !== false && (
-                        <MotionLink
-                          href={acadLink}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer"
-                        >
-                          التفاصيل
-                        </MotionLink>
-                      )}
+                      <MotionLink
+                        href={acadLink}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer text-center ${
+                          acad.registrationOpen === false 
+                            ? "bg-accent-teal hover:bg-primary-teal text-white px-5" 
+                            : "bg-slate-100 hover:bg-slate-200 text-slate-700"
+                        }`}
+                      >
+                        التفاصيل
+                      </MotionLink>
                       {acad.registrationOpen !== false && (
                         <motion.button
                           whileHover={{ scale: 1.05 }}
