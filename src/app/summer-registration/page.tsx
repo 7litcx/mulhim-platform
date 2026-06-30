@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/context/AppContext";
 import SignatureCanvas from "react-signature-canvas";
 import { supabase } from "@/utils/supabase";
-import { Sparkles, CreditCard, CheckCircle } from "lucide-react";
+import { Sparkles, CreditCard, CheckCircle, Lock } from "lucide-react";
 
 export default function SummerRegistrationPage() {
   const router = useRouter();
@@ -15,8 +16,29 @@ export default function SummerRegistrationPage() {
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const [isRegistrationClosed, setIsRegistrationClosed] = useState(false);
+  const [isLoadingClosedCheck, setIsLoadingClosedCheck] = useState(true);
+
   useEffect(() => {
     setMounted(true);
+    
+    import("@/sanity/lib/client").then(({ client }) => {
+      client
+        .fetch(
+          `*[_type == "program" && (title == "برنامج لون صيفك 3" || title == "لون صيفك" || title match "صيفك")][0] { registrationClosed }`
+        )
+        .then((res) => {
+          if (res && res.registrationClosed === true) {
+            setIsRegistrationClosed(true);
+          }
+        })
+        .catch((err) => {
+          console.error("Error checking registration status:", err);
+        })
+        .finally(() => {
+          setIsLoadingClosedCheck(false);
+        });
+    });
   }, []);
 
   const [formData, setFormData] = useState({
@@ -221,8 +243,42 @@ export default function SummerRegistrationPage() {
     }
   };
 
-  if (!mounted) {
-    return null; // Or a loading spinner
+  if (!mounted || isLoadingClosedCheck) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-10 h-10 border-4 border-accent-teal border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-slate-400 font-tajawal">جاري التحقق من حالة التسجيل...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isRegistrationClosed) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center px-4" dir="rtl">
+        <div className="bg-white rounded-3xl border border-slate-100 shadow-xl max-w-md w-full p-8 text-center space-y-6 animate-in zoom-in-95 duration-200 relative overflow-hidden">
+          <div className="absolute top-0 right-0 left-0 h-1.5 bg-red-500" />
+          <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
+            <Lock className="w-8 h-8" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold text-slate-800 font-tajawal">التسجيل مغلق!</h2>
+            <p className="text-xs text-slate-500 leading-relaxed font-tajawal text-right">
+              عذراً، لقد تم إغلاق التسجيل في <strong>برنامج لون صيفك 3</strong>.
+            </p>
+          </div>
+          <div className="pt-4">
+            <Link
+              href="/programs"
+              className="w-full block text-center py-3 bg-primary-navy hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-md font-tajawal"
+            >
+              استكشف البرامج الأخرى المتاحة
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (isSuccess) {
