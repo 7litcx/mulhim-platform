@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from 'uuid';
+import { client, previewClient } from "@/sanity/lib/client";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,24 @@ export async function POST(req: Request) {
 
     if (!fullName || !phone) {
       return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 });
+    }
+
+    // Check if registration is closed for this program in Sanity
+    if (targetName) {
+      try {
+        const query = `*[_type == "program" && (title == $target || title == "لون صيفك" || title match "صيفك")][0] { registrationClosed }`;
+        const program = await previewClient.fetch(query, { target: targetName })
+          .catch(() => client.fetch(query, { target: targetName }));
+          
+        if (program && program.registrationClosed === true) {
+          return NextResponse.json(
+            { success: false, error: "عذراً، لقد تم إغلاق التسجيل في هذا البرنامج." },
+            { status: 400 }
+          );
+        }
+      } catch (err) {
+        console.error("Error checking program status in API:", err);
+      }
     }
 
     const regId = uuidv4();
