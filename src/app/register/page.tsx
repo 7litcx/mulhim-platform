@@ -22,6 +22,48 @@ function RegisterContent() {
   const [mode, setMode] = useState<"register" | "login" | "forgot">("register");
   const [forgotEmail, setForgotEmail] = useState("");
   const [isSendingReset, setIsSendingReset] = useState(false);
+  const [isRegistrationClosed, setIsRegistrationClosed] = useState(false);
+  const [isLoadingClosedCheck, setIsLoadingClosedCheck] = useState(false);
+
+  React.useEffect(() => {
+    if (activityType && activityName) {
+      setIsLoadingClosedCheck(true);
+      
+      let query = "";
+      if (activityType === "program") {
+        query = `*[_type == "program" && title == $title][0] { registrationClosed }`;
+      } else if (activityType === "trip") {
+        query = `*[_type == "trip" && title == $title][0] { registrationOpen }`;
+      } else if (activityType === "academy") {
+        query = `*[_type == "academy" && title == $title][0] { registrationOpen }`;
+      }
+
+      if (!query) {
+        setIsLoadingClosedCheck(false);
+        return;
+      }
+
+      import("@/sanity/lib/client").then(({ client }) => {
+        client
+          .fetch(query, { title: activityName })
+          .then((res) => {
+            if (res) {
+              if (activityType === "program" && res.registrationClosed === true) {
+                setIsRegistrationClosed(true);
+              } else if ((activityType === "trip" || activityType === "academy") && res.registrationOpen === false) {
+                setIsRegistrationClosed(true);
+              }
+            }
+          })
+          .catch((err) => {
+            console.error("Error checking registration status:", err);
+          })
+          .finally(() => {
+            setIsLoadingClosedCheck(false);
+          });
+      });
+    }
+  }, [activityType, activityName]);
 
   React.useEffect(() => {
     if (urlMode === "login" || urlMode === "register" || urlMode === "forgot") {
@@ -314,6 +356,44 @@ function RegisterContent() {
       setMode("forgot");
     }
   }, [searchParams]);
+
+  if (isLoadingClosedCheck) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16 flex-grow flex flex-col justify-center items-center">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-10 h-10 border-4 border-accent-teal border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-slate-400 font-tajawal">جاري التحقق من حالة التسجيل...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isRegistrationClosed) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16 flex-grow flex flex-col justify-center items-center">
+        <div className="bg-white rounded-3xl border border-slate-100 shadow-xl max-w-md w-full p-8 text-center space-y-6 animate-in zoom-in-95 duration-200 relative overflow-hidden">
+          <div className="absolute top-0 right-0 left-0 h-1.5 bg-red-500" />
+          <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
+            <Lock className="w-8 h-8" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold text-slate-800 font-tajawal">التسجيل مغلق!</h2>
+            <p className="text-xs text-slate-500 leading-relaxed font-tajawal text-right">
+              عذراً، لقد تم إغلاق التسجيل في {activityType === "trip" ? "رحلة" : activityType === "academy" ? "أكاديمية" : "برنامج"} <strong>{activityName}</strong>.
+            </p>
+          </div>
+          <div className="pt-4">
+            <Link
+              href={activityType === "trip" ? "/trips" : activityType === "academy" ? "/academies" : "/programs"}
+              className="w-full block text-center py-3 bg-primary-navy hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-md"
+            >
+              {activityType === "trip" ? "استكشف الرحلات الأخرى المتاحة" : activityType === "academy" ? "استكشف الأكاديميات الأخرى المتاحة" : "استكشف البرامج الأخرى المتاحة"}
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16 flex-grow flex flex-col justify-center">
