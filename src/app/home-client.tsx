@@ -782,28 +782,37 @@ export default function HomeClient({
                         >
                           التفاصيل
                         </MotionLink>
-                        <motion.button
-                          onClick={() => {
-                            const isSummerProgram = program.title?.includes("صيف");
-                            
-                            if (isSummerProgram) {
-                              router.push('/summer-registration');
-                              return;
-                            }
+                        {program.registrationClosed === true ? (
+                          <button
+                            disabled
+                            className="px-4 py-2.5 bg-slate-100 text-slate-400 rounded-xl text-xs font-bold cursor-not-allowed font-tajawal"
+                          >
+                            التسجيل مغلق
+                          </button>
+                        ) : (
+                          <motion.button
+                            onClick={() => {
+                              const isSummerProgram = program.title?.includes("صيف");
+                              
+                              if (isSummerProgram) {
+                                router.push('/summer-registration');
+                                return;
+                              }
 
-                            if (!currentUser) {
-                              router.push('/register?type=program&name=' + encodeURIComponent(program.title));
-                              return;
-                            }
-                            setSelectedProgram(program);
-                            setShowRegModal(true);
-                          }}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="px-4 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
-                        >
-                          سجل الآن
-                        </motion.button>
+                              if (!currentUser) {
+                                router.push('/register?type=program&name=' + encodeURIComponent(program.title));
+                                return;
+                              }
+                              setSelectedProgram(program);
+                              setShowRegModal(true);
+                            }}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="px-4 py-2.5 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
+                          >
+                            سجل الآن
+                          </motion.button>
+                        )}
                       </div>
                     </div>
                   </div>

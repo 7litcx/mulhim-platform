@@ -96,7 +96,13 @@ export const program = defineType({
       title: "موقع / مكان إقامة البرنامج",
       type: "string",
     }),
-
+    defineField({
+      name: "registrationClosed",
+      title: "التسجيل مغلق",
+      type: "boolean",
+      description: "إذا تم تفعيله، لن يتمكن المستخدمون من التسجيل في هذا البرنامج وسيظهر لهم أن التسجيل مغلق.",
+      initialValue: false,
+    }),
   ],
 
   preview: {

@@ -60,7 +60,8 @@ export const allProgramsQuery = groq`
     startDate,
     endDate,
     location,
-    featured
+    featured,
+    registrationClosed
   }
 `;
 
@@ -80,7 +81,8 @@ export const featuredProgramsQuery = groq`
     startDate,
     endDate,
     location,
-    featured
+    featured,
+    registrationClosed
   }
 `;
 
@@ -100,7 +102,8 @@ export const programsByTargetQuery = groq`
     startDate,
     endDate,
     location,
-    featured
+    featured,
+    registrationClosed
   }
 `;
 
@@ -122,7 +125,8 @@ export const programBySlugQuery = groq`
     endDate,
     registrationDeadline,
     location,
-    featured
+    featured,
+    registrationClosed
   }
 `;
 

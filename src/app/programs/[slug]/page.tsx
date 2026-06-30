@@ -193,12 +193,18 @@ export default async function ProgramDetailsPage({ params }: PageProps) {
                 </div>
               </div>
 
-              <Link
-                href={program.title?.includes("صيف") ? "/summer-registration" : `/register?type=program&name=${encodeURIComponent(program.title)}`}
-                className="w-full block text-center py-4 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-base font-bold shadow-md hover:shadow-lg transition-all duration-300"
-              >
-                احجز مقعدك الآن
-              </Link>
+              {program.registrationClosed === true ? (
+                <div className="w-full block text-center py-4 bg-slate-200 text-slate-400 rounded-xl text-base font-bold cursor-not-allowed font-tajawal">
+                  التسجيل مغلق حالياً
+                </div>
+              ) : (
+                <Link
+                  href={program.title?.includes("صيف") ? "/summer-registration" : `/register?type=program&name=${encodeURIComponent(program.title)}`}
+                  className="w-full block text-center py-4 bg-accent-teal hover:bg-primary-teal text-white rounded-xl text-base font-bold shadow-md hover:shadow-lg transition-all duration-300"
+                >
+                  احجز مقعدك الآن
+                </Link>
+              )}
               
               <p className="text-[10px] text-slate-400 text-center leading-normal">
                 بمجرد الحجز، سيتواصل معك منسقو البرنامج لتأكيد التسجيل وإرسال تفاصيل التجمع.

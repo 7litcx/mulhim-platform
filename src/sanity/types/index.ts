@@ -61,6 +61,7 @@ export interface Program {
   registrationDeadline?: string;
   location?: string;
   featured: boolean;
+  registrationClosed?: boolean;
   seo?: SeoFields;
 }
 

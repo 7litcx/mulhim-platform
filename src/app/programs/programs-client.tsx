@@ -353,31 +353,40 @@ export default function ProgramsClient({
                         >
                           التفاصيل
                         </MotionLink>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => {
-                            const isSummerProgram = program.title?.includes("صيف");
-                            
-                            if (isSummerProgram) {
-                              router.push('/summer-registration');
-                              return;
-                            }
+                        {program.registrationClosed === true ? (
+                          <button
+                            disabled
+                            className="px-4 py-2.5 bg-slate-100 text-slate-400 rounded-xl text-xs font-bold cursor-not-allowed font-tajawal"
+                          >
+                            التسجيل مغلق
+                          </button>
+                        ) : (
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => {
+                              const isSummerProgram = program.title?.includes("صيف");
+                              
+                              if (isSummerProgram) {
+                                router.push('/summer-registration');
+                                return;
+                              }
 
-                            if (!currentUser) {
-                              router.push('/register?type=program&name=' + encodeURIComponent(program.title));
-                              return;
-                            }
-                            setSelectedProgram(program);
-                            setShowRegModal(true);
-                          }}
-                          className={`px-4 py-2.5 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg ${activeGender === "girls"
-                              ? "bg-accent-teal hover:bg-primary-teal"
-                              : "bg-accent-teal hover:bg-primary-teal"
-                            }`}
-                        >
-                          سجل الآن
-                        </motion.button>
+                              if (!currentUser) {
+                                router.push('/register?type=program&name=' + encodeURIComponent(program.title));
+                                return;
+                              }
+                              setSelectedProgram(program);
+                              setShowRegModal(true);
+                            }}
+                            className={`px-4 py-2.5 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md hover:shadow-lg ${activeGender === "girls"
+                                ? "bg-accent-teal hover:bg-primary-teal"
+                                : "bg-accent-teal hover:bg-primary-teal"
+                              }`}
+                          >
+                            سجل الآن
+                          </motion.button>
+                        )}
                       </div>
                     </div>
                   </div>
