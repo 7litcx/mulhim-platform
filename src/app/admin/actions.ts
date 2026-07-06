@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@supabase/supabase-js";
+import { client as sanityClient } from "@/sanity/lib/client";
 
 // Initialize Supabase admin client with service_role key to bypass RLS
 const supabaseAdmin = createClient(
@@ -78,21 +79,102 @@ export async function fetchAdminOverviewStats(token: string) {
       { count: usersCount },
       { count: registrationsCount },
       { count: ordersCount },
-      { data: ordersData }
+      { data: ordersData },
+      { data: regsData }
     ] = await Promise.all([
       supabaseAdmin.from("profiles").select("*", { count: "exact", head: true }),
       supabaseAdmin.from("registrations").select("*", { count: "exact", head: true }),
       supabaseAdmin.from("orders").select("*", { count: "exact", head: true }),
-      supabaseAdmin.from("orders").select("total").eq("status", "paid")
+      supabaseAdmin.from("orders").select("total").eq("status", "paid"),
+      supabaseAdmin.from("registrations").select("type, target_name, status, payment_method")
     ]);
 
     const revenue = ordersData?.reduce((sum, o) => sum + Number(o.total), 0) || 0;
+
+    // Fetch Sanity programs, academies, and trips
+    let sanityItems: { title: string; price: number; type: string }[] = [];
+    try {
+      const sanityRes = await sanityClient.fetch(`
+        *[_type in ["program", "academy", "trip"]]{
+          "title": title,
+          "price": price,
+          "_type": _type
+        }
+      `);
+      if (Array.isArray(sanityRes)) {
+        sanityItems = sanityRes.map(item => ({
+          title: item.title || "",
+          price: Number(item.price) || 0,
+          type: item._type
+        }));
+      }
+    } catch (err) {
+      console.error("Failed to fetch sanity prices:", err);
+    }
+
+    const staticPrices: Record<string, number> = {
+      // Trips
+      "رحلة جبال طويق الاستكشافية": 250,
+      "مخيم العقبة القيادي": 450,
+      "رحلة الكهوف والوديان": 350,
+      // Academies
+      "أكاديمية الفرسان للفروسية والرماية": 800,
+      "أكاديمية القادة الشباب": 600,
+      "أكاديمية ملهم للبرمجة والذكاء الاصطناعي": 600,
+      "أكاديمية الفنون التشكيلية": 400,
+      // Programs
+      "برنامج تطوير المهارات الرقمية للفتيات": 350,
+      "مخيم القياديات الواعدات": 450,
+      "بطولة التنس والأنشطة الترفيهية": 200,
+      "برنامج القادة الشباب": 400,
+      "بطولة ملهم للفروسية والرماية": 300,
+      "المخيم الشتوي الاستكشافي": 500,
+      "برنامج لون صيفك 3": 1200,
+      "لون صيفك": 1200,
+    };
+
+    const getPrice = (targetName: string, paymentMethod: string) => {
+      const cleanTargetName = targetName.split(" - ")[0].trim();
+      
+      const sanityMatch = sanityItems.find(item => 
+        item.title.trim().toLowerCase() === cleanTargetName.toLowerCase() ||
+        cleanTargetName.toLowerCase().includes(item.title.trim().toLowerCase()) ||
+        item.title.trim().toLowerCase().includes(cleanTargetName.toLowerCase())
+      );
+      
+      let basePrice = 0;
+      if (sanityMatch && sanityMatch.price > 0) {
+        basePrice = sanityMatch.price;
+      } else {
+        const staticMatchKey = Object.keys(staticPrices).find(key =>
+          key.toLowerCase() === cleanTargetName.toLowerCase() ||
+          cleanTargetName.toLowerCase().includes(key.toLowerCase()) ||
+          key.toLowerCase().includes(cleanTargetName.toLowerCase())
+        );
+        if (staticMatchKey) {
+          basePrice = staticPrices[staticMatchKey];
+        }
+      }
+      return basePrice;
+    };
+
+    const approvedRegistrations = regsData?.filter(r => 
+      r.status === 'approved' || 
+      r.status === 'registered' || 
+      r.status === 'completed'
+    ) || [];
+
+    const regRevenue = approvedRegistrations.reduce((sum, r) => {
+      const price = getPrice(r.target_name || "", r.payment_method || "");
+      return sum + price;
+    }, 0);
 
     return {
       users: usersCount || 0,
       registrations: registrationsCount || 0,
       orders: ordersCount || 0,
-      revenue
+      revenue,
+      regRevenue
     };
   } catch (e: any) { return { error: e.message }; }
 }

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useApp } from "@/context/AppContext";
 import { supabase } from "@/utils/supabase";
 import {
-  Users, ShoppingBag, ClipboardList, MessageSquare, TrendingUp, ShieldCheck, Download, AlertCircle, Plus, X
+  Users, ShoppingBag, ClipboardList, MessageSquare, TrendingUp, ShieldCheck, Download, AlertCircle, Plus, X, CreditCard
 } from "lucide-react";
 import {
   fetchAdminUsers,
@@ -47,14 +47,20 @@ export default function AdminDashboardPage() {
   const [messages, setMessages] = useState<any[]>(adminCache.messages);
   const [testimonials, setTestimonials] = useState<any[]>(adminCache.testimonials);
   const [loading, setLoading] = useState(!adminCache.stats);
-  const [stats, setStats] = useState(adminCache.stats || { users: 0, registrations: 0, orders: 0, revenue: 0 });
+  const [stats, setStats] = useState(adminCache.stats || { users: 0, registrations: 0, orders: 0, revenue: 0, regRevenue: 0 });
 
   const [page, setPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const ITEMS_PER_PAGE = 20;
 
   useEffect(() => {
     setPage(1);
-  }, [activeTab, searchQuery]);
+    setStatusFilter("all");
+  }, [activeTab]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery, statusFilter]);
 
   // Derived filtered data
   const filteredUsers = users.filter(u =>
@@ -63,14 +69,25 @@ export default function AdminDashboardPage() {
     (u.phone || "").includes(searchQuery)
   );
 
-  const filteredRegistrations = registrations.filter(r =>
-    (r.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (r.extra_data?.idNumber || "").includes(searchQuery) ||
-    (r.target_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (r.phone || "").includes(searchQuery) ||
-    (r.email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (r.payment_method || "").includes(searchQuery)
-  );
+  const filteredRegistrations = registrations.filter(r => {
+    const matchesSearch = (
+      (r.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (r.extra_data?.idNumber || "").includes(searchQuery) ||
+      (r.target_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (r.phone || "").includes(searchQuery) ||
+      (r.email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (r.payment_method || "").includes(searchQuery)
+    );
+
+    if (statusFilter === "all") return matchesSearch;
+    if (statusFilter === "pending") {
+      return matchesSearch && r.status === "pending";
+    }
+    if (statusFilter === "approved") {
+      return matchesSearch && (r.status === "approved" || r.status === "registered" || r.status === "completed");
+    }
+    return matchesSearch;
+  });
 
   const filteredOrders = orders.filter(o =>
     (o.id || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -535,7 +552,7 @@ export default function AdminDashboardPage() {
 
             {/* OVERVIEW TAB */}
             {activeTab === "overview" && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-in fade-in">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 animate-in fade-in">
                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
                   <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
                     <Users className="w-6 h-6" />
@@ -571,8 +588,18 @@ export default function AdminDashboardPage() {
                     <TrendingUp className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-slate-500">المبيعات المدفوعة</h3>
+                    <h3 className="text-sm font-bold text-slate-500">مبيعات المتجر المدفوعة</h3>
                     <p className="text-2xl font-black text-slate-800">{stats.revenue} ر.س</p>
+                  </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                  <div className="w-12 h-12 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center">
+                    <CreditCard className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-500">مدفوعات الاشتراكات (تم التسجيل)</h3>
+                    <p className="text-2xl font-black text-slate-800">{stats.regRevenue} ر.س</p>
                   </div>
                 </div>
               </div>
@@ -685,6 +712,15 @@ export default function AdminDashboardPage() {
                 <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
                   <h2 className="font-bold text-slate-700">سجل المشتركين</h2>
                   <div className="flex gap-2 w-full sm:w-auto">
+                    <select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      className="px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:border-accent-yellow bg-white text-slate-700 font-medium cursor-pointer"
+                    >
+                      <option value="all">جميع الحالات</option>
+                      <option value="pending">قيد المراجعة</option>
+                      <option value="approved">تم التسجيل</option>
+                    </select>
                     <input
                       type="text"
                       placeholder="بحث بالاسم أو رقم الهوية..."
