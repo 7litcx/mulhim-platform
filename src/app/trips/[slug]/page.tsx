@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Calendar, MapPin, Compass, Users, Clock, ArrowRight, ShieldCheck } from "lucide-react";
 import { getTripBySlug, getTrips } from "@/sanity/lib/requests";
-import { urlFor } from "@/sanity/lib/image";
+import { urlFor, isValidSanityImage } from "@/sanity/lib/image";
 import { PortableText } from "@portabletext/react";
 
 interface PageProps {
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const ogImage = trip.images?.[0]
+  const ogImage = trip.images?.[0] && isValidSanityImage(trip.images[0])
     ? urlFor(trip.images[0]).width(1200).height(630).url()
     : "/og-default.jpg";
 
@@ -63,7 +63,7 @@ export default async function TripDetailsPage({ params }: PageProps) {
     <div className="min-h-screen pb-20 bg-slate-50/50">
       {/* Cover Header */}
       <div className="relative h-[300px] md:h-[400px] bg-slate-900 overflow-hidden">
-        {trip.images?.[0] && (
+        {trip.images?.[0] && isValidSanityImage(trip.images[0]) && (
           <img
             src={urlFor(trip.images[0]).width(1600).height(800).url()}
             alt={trip.title}
@@ -133,11 +133,11 @@ export default async function TripDetailsPage({ params }: PageProps) {
             )}
 
             {/* Gallery */}
-            {trip.images && trip.images.length > 1 && (
+            {trip.images && trip.images.filter(isValidSanityImage).length > 1 && (
               <div className="space-y-4 pt-8 border-t border-slate-100">
                 <h3 className="font-bold text-slate-800 font-tajawal">معرض الصور الاستكشافية</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  {trip.images.slice(1).map((img, idx) => (
+                  {trip.images.filter(isValidSanityImage).slice(1).map((img, idx) => (
                     <div key={idx} className="h-32 rounded-xl overflow-hidden bg-slate-100">
                       <img
                         src={urlFor(img).width(400).height(300).url()}
