@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { getProductBySlug, getProducts } from "@/sanity/lib/requests";
-import { urlFor, isValidSanityImage } from "@/sanity/lib/image";
+import { urlFor } from "@/sanity/lib/image";
 import ProductClient from "./ProductClient";
 
 interface PageProps {
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const ogImage = product.images?.[0] && isValidSanityImage(product.images[0])
+  const ogImage = product.images?.[0]
     ? urlFor(product.images[0]).width(1200).height(630).url()
     : "/og-default.jpg";
 
